@@ -3,7 +3,7 @@ package com.stitchumsdev.fyp
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.rememberNavController
 import com.stitchumsdev.fyp.core.navigation.AppNavigation
-import com.stitchumsdev.fyp.ui.theme.FypTheme
+import com.stitchumsdev.fyp.core.ui.theme.FypTheme
 
 @Composable
 fun AppContent() {
