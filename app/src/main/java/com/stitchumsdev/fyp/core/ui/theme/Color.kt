@@ -1,4 +1,4 @@
-package com.stitchumsdev.fyp.ui.theme
+package com.stitchumsdev.fyp.core.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

@@ -16,6 +16,7 @@ import com.stitchumsdev.fyp.core.navigation.Home
 import com.stitchumsdev.fyp.core.navigation.Map
 import com.stitchumsdev.fyp.core.navigation.Scan
 import com.stitchumsdev.fyp.core.navigation.Search
+import com.stitchumsdev.fyp.core.ui.theme.fypColours
 
 sealed class NavItem(
     val route: Any,
@@ -40,6 +41,7 @@ fun BottomNavigationBar(navHostController: NavHostController) {
     }
 
     NavigationBar(
+        containerColor = fypColours.navBar,
         modifier = Modifier
             .height(100.dp)
     ) {
