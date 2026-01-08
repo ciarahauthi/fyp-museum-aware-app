@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">fyp</string>
+    <string name="oops">Oops!</string>
+    <string name="internet_try_again">Something went wrong. Please check your internet connection and try again.</string>
 </resources>
