@@ -9,7 +9,10 @@ import com.stitchumsdev.fyp.feature.map.MapScreen
 import com.stitchumsdev.fyp.feature.scan.ScanScreen
 import com.stitchumsdev.fyp.feature.search.SearchScreen
 import com.stitchumsdev.fyp.feature.splash.SplashScreen
+import com.stitchumsdev.fyp.feature.test.TestScreen
+import com.stitchumsdev.fyp.feature.test.TestScreenViewModel
 import kotlinx.serialization.Serializable
+import org.koin.androidx.compose.koinViewModel
 
 @Serializable
 object Splash
@@ -21,10 +24,14 @@ object Map
 object Search
 @Serializable
 object Scan
+// ToDo: remove on deployment
+@Serializable
+object Test
 
 @Composable
 fun AppNavigation(
-    navHostController: NavHostController
+    navHostController: NavHostController,
+    testViewModel: TestScreenViewModel = koinViewModel()
 ) {
     NavHost(
         navController = navHostController,
@@ -44,6 +51,10 @@ fun AppNavigation(
         }
         composable<Scan> {
             ScanScreen(navHostController)
+        }
+        // ToDo: remove on deployment
+        composable<Test> {
+            TestScreen(navHostController, onAction = { action -> testViewModel.onAction(action) } )
         }
     }
 }
