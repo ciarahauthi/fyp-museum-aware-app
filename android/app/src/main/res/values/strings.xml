@@ -2,4 +2,5 @@
     <string name="app_name">fyp</string>
     <string name="oops">Oops!</string>
     <string name="internet_try_again">Something went wrong. Please check your internet connection and try again.</string>
+    <string name="long_string_placeholder">This is a long string. A substantially long string. Blah blah blah blah Blah blah blah blah. How does it look? Is it formatted correctly? Blah blah blah blah Blah blah blah blah Blah blah blah blah Blah blah blah blah Blah blah blah blah Blah blah blah blah Blah blah blah blah</string>
 </resources>
