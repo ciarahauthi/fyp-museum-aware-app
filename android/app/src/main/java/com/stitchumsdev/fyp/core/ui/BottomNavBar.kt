@@ -16,6 +16,7 @@ import com.stitchumsdev.fyp.core.navigation.Home
 import com.stitchumsdev.fyp.core.navigation.Map
 import com.stitchumsdev.fyp.core.navigation.Scan
 import com.stitchumsdev.fyp.core.navigation.Search
+import com.stitchumsdev.fyp.core.navigation.Test
 import com.stitchumsdev.fyp.core.ui.theme.fypColours
 
 sealed class NavItem(
@@ -26,6 +27,7 @@ sealed class NavItem(
     data object MapItem: NavItem(Map, R.drawable.ic_map)
     data object SearchItem: NavItem(Search, R.drawable.ic_search)
     data object ScanItem: NavItem(Scan, R.drawable.ic_scan)
+    data object TestItem: NavItem(Test, R.drawable.ic_launcher_foreground)
 }
 
 @Composable
@@ -36,7 +38,8 @@ fun BottomNavigationBar(navHostController: NavHostController) {
             NavItem.HomeItem,
             NavItem.MapItem,
             NavItem.SearchItem,
-            NavItem.ScanItem
+            NavItem.ScanItem,
+            NavItem.TestItem
         )
     }
 
