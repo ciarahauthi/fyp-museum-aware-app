@@ -68,4 +68,5 @@ dependencies {
     implementation(libs.retrofit2.kotlinx.serialization.converter)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.logging.interceptor)
+    implementation(libs.subsampling.scale.image.view)
 }
