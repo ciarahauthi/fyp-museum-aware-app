@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.stitchumsdev.fyp.core.ui.ExhibitScreen
 import com.stitchumsdev.fyp.feature.home.HomeScreen
 import com.stitchumsdev.fyp.feature.map.MapScreen
 import com.stitchumsdev.fyp.feature.scan.ScanScreen
@@ -24,6 +25,8 @@ object Map
 object Search
 @Serializable
 object Scan
+@Serializable
+object Exhibit
 // ToDo: remove on deployment
 @Serializable
 object Test
@@ -51,6 +54,9 @@ fun AppNavigation(
         }
         composable<Scan> {
             ScanScreen(navHostController)
+        }
+        composable<Exhibit> {
+            ExhibitScreen(navHostController)
         }
         // ToDo: remove on deployment
         composable<Test> {

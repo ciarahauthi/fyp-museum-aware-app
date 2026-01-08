@@ -9,7 +9,7 @@ import androidx.navigation.NavHostController
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.stitchumsdev.fyp.R
-import com.stitchumsdev.fyp.core.ui.BottomNavigationBar
+import com.stitchumsdev.fyp.core.ui.components.BottomNavigationBar
 
 @Composable
 fun MapScreen(

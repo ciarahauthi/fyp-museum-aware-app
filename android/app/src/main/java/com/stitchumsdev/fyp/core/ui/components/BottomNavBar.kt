@@ -1,4 +1,4 @@
-package com.stitchumsdev.fyp.core.ui
+package com.stitchumsdev.fyp.core.ui.components
 
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
@@ -31,7 +31,9 @@ sealed class NavItem(
 }
 
 @Composable
-fun BottomNavigationBar(navHostController: NavHostController) {
+fun BottomNavigationBar(
+    navHostController: NavHostController
+) {
     val currentScreen = navHostController.currentBackStackEntry?.destination?.route
     val navBarItems = remember {
         listOf(
