@@ -1,6 +1,7 @@
 package com.stitchumsdev.fyp.core.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -8,6 +9,7 @@ import com.stitchumsdev.fyp.core.ui.ExhibitScreen
 import com.stitchumsdev.fyp.feature.home.HomeScreen
 import com.stitchumsdev.fyp.feature.map.MapScreen
 import com.stitchumsdev.fyp.feature.scan.ScanScreen
+import com.stitchumsdev.fyp.feature.scan.ScanViewModel
 import com.stitchumsdev.fyp.feature.search.SearchScreen
 import com.stitchumsdev.fyp.feature.splash.SplashScreen
 import com.stitchumsdev.fyp.feature.test.TestScreen
@@ -34,7 +36,8 @@ object Test
 @Composable
 fun AppNavigation(
     navHostController: NavHostController,
-    testViewModel: TestScreenViewModel = koinViewModel()
+    testViewModel: TestScreenViewModel = koinViewModel(),
+    scanViewModel: ScanViewModel = koinViewModel()
 ) {
     NavHost(
         navController = navHostController,
@@ -49,11 +52,17 @@ fun AppNavigation(
         composable<Map> {
             MapScreen(navHostController)
         }
+        composable<Scan> {
+            val uiState = scanViewModel.uiState.collectAsState()
+            ScanScreen(
+                navHostController = navHostController,
+                uiState = uiState.value,
+                onAction = { action ->
+                scanViewModel.onAction(action) }
+            )
+        }
         composable<Search> {
             SearchScreen(navHostController)
-        }
-        composable<Scan> {
-            ScanScreen(navHostController)
         }
         composable<Exhibit> {
             ExhibitScreen(navHostController)
