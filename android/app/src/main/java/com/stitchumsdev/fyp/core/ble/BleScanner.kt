@@ -20,6 +20,7 @@ class BleScanner(
     private val scanner get() = btManager?.adapter?.bluetoothLeScanner
     private var scanning = false
 
+    // Function that starts the BLE service
     @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
     @RequiresApi(Build.VERSION_CODES.S)
     fun start() {
@@ -54,6 +55,7 @@ class BleScanner(
         s.stopScan(scanCallback)
     }
 
+    // Callback used to capture packets. ToDo: do the post API call periodically
     private val scanCallback = object : ScanCallback() {
         override fun onScanFailed(e: Int) {
             scanning = false
@@ -61,14 +63,14 @@ class BleScanner(
         }
 
         override fun onScanResult(callbackType: Int, result: ScanResult) {
-
             val record = result.scanRecord?.bytes ?: return
-
             val beacon = IBeaconParser.parse(record, result.rssi)
+
             if (beacon != null) {
                 // ToDo make this UUID dynamic
                 if (!beacon.uuid.equals("B9407F30-F5F8-466E-AFF9-25556B57FE6D", ignoreCase = true)) return
                 Timber.d("!! UUID: ${beacon.uuid}, major: ${beacon.major}, minor: ${beacon.minor}, rssi: ${beacon.rssi}, tx pow: ${beacon.txPower}")
+                onBeacon(beacon)
             }
         }
     }
