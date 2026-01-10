@@ -21,7 +21,9 @@ import com.stitchumsdev.fyp.core.ui.theme.FypTheme
 import com.stitchumsdev.fyp.core.ui.theme.Typography
 
 @Composable
-fun OfflineScreen() {
+fun OfflineScreen(
+    onTryAgain: () -> Unit
+) {
     Scaffold(
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
@@ -64,6 +66,6 @@ fun OfflineScreen() {
 @Composable
 fun OfflineScreenPreview() {
     FypTheme {
-        OfflineScreen()
+        OfflineScreen {}
     }
 }

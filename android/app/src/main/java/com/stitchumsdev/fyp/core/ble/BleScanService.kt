@@ -11,15 +11,26 @@ import android.os.IBinder
 import androidx.annotation.RequiresPermission
 import androidx.core.app.NotificationCompat
 import com.stitchumsdev.fyp.R
+import com.stitchumsdev.fyp.core.data.repository.BeaconRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 
 class BleScanService: Service() {
     private lateinit var scanner: BleScanner
+    private val repository: BeaconRepository by inject()
+    private val scope = CoroutineScope(Dispatchers.IO)
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
     override fun onCreate() {
         super.onCreate()
+
         scanner = BleScanner(this) { beacon ->
-            //ToDo send api call here
+            scope.launch {
+                repository.onBeacon(beacon)
+            }
         }
         startForeground(1, createNotification())
         scanner.start()
@@ -27,15 +38,17 @@ class BleScanService: Service() {
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
     override fun onDestroy() {
-        scanner.stop()
         super.onDestroy()
+
+        scanner.stop()
+        scope.cancel()
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onTaskRemoved(rootIntent: Intent?) {
-        stopSelf()
         super.onTaskRemoved(rootIntent)
+        stopSelf()
     }
     private fun createNotification(): Notification {
         val channelId = "ble_scan"

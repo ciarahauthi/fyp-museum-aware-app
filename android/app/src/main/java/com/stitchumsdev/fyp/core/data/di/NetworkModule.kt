@@ -9,9 +9,13 @@ import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.dsl.module
 import retrofit2.Retrofit
 
-private const val BASE_URL = "http://10.0.2.2:8000/" // ToDo change to real api on deployment
+// For Emulator
+//private const val BASE_URL = "http://10.0.2.2:8000/" // ToDo change to real api on deployment
 
+// For tethered device
+private const val BASE_URL = "http://192.168.178.132:8000/"
 val networkModule = module {
+    // For dealing with JSON
     single {
         Json {
             ignoreUnknownKeys = true
@@ -20,16 +24,14 @@ val networkModule = module {
         }
     }
 
+    // For logging
     single {
-        val logging = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
-        }
-
         OkHttpClient.Builder()
-            .addInterceptor(logging)
+            .addInterceptor(HttpLoggingInterceptor().setLevel( HttpLoggingInterceptor.Level.BODY))
             .build()
     }
 
+    // Retrofit instance
     single {
         val contentType = "application/json".toMediaType()
 
@@ -40,6 +42,7 @@ val networkModule = module {
             .build()
     }
 
+    // Api Service instance
     single<ApiService> {
         get<Retrofit>().create(ApiService::class.java)
     }
