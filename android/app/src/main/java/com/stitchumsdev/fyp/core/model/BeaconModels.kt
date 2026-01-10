@@ -21,4 +21,8 @@ data class BeaconId(
     val uuid: String,
     val major: Int,
     val minor: Int
-)
+) {
+    fun convertToQuery(): String {
+        return "${this.uuid}:${this.major}:${this.minor}"
+    }
+}

@@ -7,5 +7,5 @@ import org.koin.dsl.module
 
 val viewModelModule = module {
     viewModel { TestScreenViewModel(get()) }
-    viewModel { ScanViewModel(get()) }
+    viewModel { ScanViewModel(get(), get()) }
 }
