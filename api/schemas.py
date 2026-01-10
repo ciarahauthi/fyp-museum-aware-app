@@ -55,3 +55,13 @@ class ExhibitRead(BaseModel):
     employee_id: int
     created_at: datetime
     model_config = ConfigDict(from_attributes=True)
+
+class ExhibitReadPublic(BaseModel):
+    id: int
+    title: str
+    description: str
+    category: str
+    child_friendly: bool
+    likes: int
+    dislikes: int
+    model_config = ConfigDict(from_attributes=True)

@@ -1,8 +1,10 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
+from sqlalchemy import tuple_
 from database import get_db
 from models import *
 from schemas import *
+from typing import Annotated
 
 app = FastAPI()
 
@@ -61,6 +63,41 @@ def get_beacon(beacon_id: int, db: Session = Depends(get_db)):
 @app.get("/api/exhibits/", response_model= list[ExhibitRead])
 def get_exhibits(db: Session = Depends(get_db)):
     return db.query(Exhibit).all()
+
+@app.get("/api/exhibits/lookup", response_model= ExhibitRead)
+def get_exhibit_by_beacon(beacon_uuid: str, beacon_major: int, beacon_minor: int, db: Session = Depends(get_db)):
+    exhibit = db.query(Exhibit).join(Beacon, Exhibit.beacon_id == Beacon.id).filter(Beacon.uuid == beacon_uuid, Beacon.major == beacon_major, Beacon.minor == beacon_minor).first()
+
+    if exhibit is None:
+        raise HTTPException(status_code=404, detail="Exhibit could not be found.")
+    return exhibit
+
+@app.get("/api/exhibits/lookup_many", response_model= list[ExhibitReadPublic])
+def get_exhibits_by_beacons(data: Annotated[list[str], Query()], db: Session = Depends(get_db)):
+    if not data:
+        return []
+    
+    keys = []
+    for beacon in data:
+        parts = beacon.split(":")
+        if len(parts) != 3:
+            raise HTTPException(400, detail=f"Invalid format: {beacon}")
+
+        uuid = parts[0]
+        try:
+            major = int(parts[1])
+            minor = int(parts[2])
+        except ValueError:
+            raise HTTPException(400, detail=f"Major and/or Minor must be of type Integer.")
+        
+        keys.append((uuid, major, minor))
+
+    exhibits = (
+        db.query(Exhibit)
+        .join(Beacon, Exhibit.beacon_id == Beacon.id)
+        .outerjoin(Category, Exhibit.category_id == Category.id)
+        .filter(tuple_(Beacon.uuid, Beacon.major, Beacon.minor).in_(keys)).all())
+    return exhibits
 
 @app.get("/api/exhibits/{exhibit_id}", response_model= ExhibitRead)
 def get_exhibit(exhibit_id: int, db: Session = Depends(get_db)):

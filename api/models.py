@@ -1,5 +1,6 @@
 from database import Base
 from sqlalchemy import Column, Integer, String, Boolean, TIMESTAMP, text, ForeignKey
+from sqlalchemy.orm import relationship
 
 class User(Base):
     __tablename__ = "users"
@@ -18,12 +19,17 @@ class Exhibit(Base):
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
 
     beacon_id = Column(Integer, ForeignKey("beacon.id", ondelete="SET NULL"), nullable=True)
-    category_id = Column(Integer, ForeignKey("category.id", ondelete="SET NULL"), nullable=True)
+    category_id = Column(Integer, ForeignKey("category.id"), nullable=False)
     employee_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
     child_friendly = Column(Boolean, nullable=False)
     likes = Column(Integer, nullable=False, server_default="0")
     dislikes = Column(Integer, nullable=False, server_default="0")
+
+    category_obj = relationship("Category", lazy="joined")
+    @property
+    def category(self) -> str:
+        return self.category_obj.name
 
 class Category(Base):
     __tablename__ = "category"
