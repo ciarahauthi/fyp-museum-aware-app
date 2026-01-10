@@ -9,3 +9,24 @@ data class UserResponse(
     val surname: String,
     val email: String
 )
+
+@Serializable
+data class ObjectResponse(
+    val id: Int,
+    val title: String,
+    val description: String,
+    val category: String,
+    @SerialName("child_friendly") val childFriendly: Boolean,
+    val likes: Int,
+    val dislikes: Int
+) {
+    fun toObjectModel() = ObjectModel(
+        id = this.id,
+        title = this.title,
+        description = this.description,
+        category = this.category,
+        childFriendly = this.childFriendly,
+        likes = this.likes,
+        dislikes = this.dislikes
+    )
+}
