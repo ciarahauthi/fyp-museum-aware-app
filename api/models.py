@@ -27,6 +27,20 @@ class Exhibit(Base):
     dislikes = Column(Integer, nullable=False, server_default="0")
 
     category_obj = relationship("Category", lazy="joined")
+    beacon_obj = relationship("Beacon", lazy="joined")
+
+    @property
+    def uuid(self):
+        return self.beacon_obj.uuid if self.beacon_obj else None
+
+    @property
+    def major(self):
+        return self.beacon_obj.major if self.beacon_obj else None
+
+    @property
+    def minor(self):
+        return self.beacon_obj.minor if self.beacon_obj else None
+    
     @property
     def category(self) -> str:
         return self.category_obj.name

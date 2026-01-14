@@ -60,7 +60,7 @@ def get_beacon(beacon_id: int, db: Session = Depends(get_db)):
     return beacon
 
 # Exhibit Queries
-@app.get("/api/exhibits/", response_model= list[ExhibitRead])
+@app.get("/api/exhibits/", response_model= list[ExhibitReadPublic])
 def get_exhibits(db: Session = Depends(get_db)):
     return db.query(Exhibit).all()
 

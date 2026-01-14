@@ -64,4 +64,7 @@ class ExhibitReadPublic(BaseModel):
     child_friendly: bool
     likes: int
     dislikes: int
+    uuid: str
+    major: int
+    minor: int
     model_config = ConfigDict(from_attributes=True)
