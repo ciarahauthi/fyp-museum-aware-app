@@ -2,6 +2,7 @@ package com.stitchumsdev.fyp
 
 import android.app.Application
 import com.stitchumsdev.fyp.core.data.di.beaconModule
+import com.stitchumsdev.fyp.core.data.di.databaseModule
 import com.stitchumsdev.fyp.core.data.di.networkModule
 import com.stitchumsdev.fyp.core.data.di.repositoryModule
 import com.stitchumsdev.fyp.core.data.di.viewModelModule
@@ -16,7 +17,7 @@ class MainApplication: Application() {
         startKoin{
             androidLogger()
             androidContext(this@MainApplication)
-            modules(networkModule, repositoryModule, viewModelModule, beaconModule)
+            modules(networkModule, repositoryModule, viewModelModule, beaconModule, databaseModule)
         }
     }
 }
