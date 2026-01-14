@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.stitchumsdev.fyp.core.ui.ExhibitScreen
 import com.stitchumsdev.fyp.feature.home.HomeScreen
+import com.stitchumsdev.fyp.feature.home.HomeViewModel
 import com.stitchumsdev.fyp.feature.map.MapScreen
 import com.stitchumsdev.fyp.feature.scan.ScanScreen
 import com.stitchumsdev.fyp.feature.scan.ScanViewModel
@@ -37,7 +38,8 @@ object Test
 fun AppNavigation(
     navHostController: NavHostController,
     testViewModel: TestScreenViewModel = koinViewModel(),
-    scanViewModel: ScanViewModel = koinViewModel()
+    scanViewModel: ScanViewModel = koinViewModel(),
+    homeViewModel: HomeViewModel = koinViewModel(),
 ) {
     NavHost(
         navController = navHostController,
@@ -47,7 +49,10 @@ fun AppNavigation(
             SplashScreen(navigateHome = {navHostController.navigate(Home) })
         }
         composable<Home> {
-            HomeScreen(navHostController)
+            HomeScreen(
+                navHostController = navHostController,
+                onAction = { action -> homeViewModel.onAction(action) }
+            )
         }
         composable<Map> {
             MapScreen(navHostController)

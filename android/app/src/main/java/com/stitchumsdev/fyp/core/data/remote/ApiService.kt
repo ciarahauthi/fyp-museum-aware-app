@@ -13,4 +13,7 @@ interface ApiService {
     suspend fun getObjects(
         @Query("data") data: List<String>
     ): List<ObjectResponse>
+
+    @GET("api/exhibits/")
+    suspend fun getExhibits(): List<ObjectResponse>
 }
