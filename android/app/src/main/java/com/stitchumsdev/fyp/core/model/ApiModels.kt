@@ -1,4 +1,5 @@
 package com.stitchumsdev.fyp.core.model
+import com.stitchumsdev.fyp.core.data.database.entities.ExhibitItemEntity
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -18,15 +19,21 @@ data class ObjectResponse(
     val category: String,
     @SerialName("child_friendly") val childFriendly: Boolean,
     val likes: Int,
-    val dislikes: Int
+    val dislikes: Int,
+    val uuid: String,
+    val major: Int,
+    val minor: Int
 ) {
-    fun toObjectModel() = ObjectModel(
+    fun toExhibitEntity() = ExhibitItemEntity(
         id = this.id,
         title = this.title,
         description = this.description,
         category = this.category,
         childFriendly = this.childFriendly,
         likes = this.likes,
-        dislikes = this.dislikes
+        dislikes = this.dislikes,
+        uuid = this.uuid,
+        major = this.major,
+        minor = this.minor
     )
 }
