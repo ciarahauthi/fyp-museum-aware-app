@@ -1,13 +1,61 @@
-from fastapi import FastAPI, Depends, HTTPException, Query
+from fastapi import FastAPI, Depends, HTTPException, Query, Request
 from sqlalchemy.orm import Session
 from sqlalchemy import tuple_
-from database import get_db
+from database import get_db, SessionLocal
 from models import *
 from schemas import *
 from typing import Annotated
+import graph
+from contextlib import asynccontextmanager
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    db: Session = SessionLocal()
 
+    try:
+        app.state.graph = getGraphFromDb(db)
+
+    finally:
+        db.close()
+
+    yield 
+
+    # Clear graph on shutdown
+    app.state.graph = None
+
+app = FastAPI(lifespan=lifespan)
+
+
+# GRAPH
+def getGraphFromDb(db: Session):
+    nodes = db.query(Node).all()
+    edges = db.query(Edge).all()
+
+    nodeDict = {node.id: node.name for node in nodes}
+    edgeList = [(nodeDict[edge.node_id], nodeDict[edge.connected_node_id], edge.weight) for edge in edges]
+    nodeNames = [node.name for node in nodes]
+    
+    return graph.buildGraph(nodes=nodeNames, edges=edgeList)
+
+
+def getGraph(request: Request):
+    graph = request.app.state.graph
+    if graph is None:
+        raise HTTPException(status_code=503, detail="Graph not loaded")
+    return graph
+
+
+@app.get("/api/graph/test")
+def test_graph(db: Session = Depends(get_db)):
+    getGraphFromDb(db)
+
+@app.get("/api/route/test")
+def test_graph_route(request: Request):
+    g = getGraph(request)
+
+    return(graph.getRoute(g, "G", ["E", "A", "C"]))
+
+# API ROUTES
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
@@ -119,3 +167,8 @@ def get_category(category_id: int, db: Session = Depends(get_db)):
     if category is None:
         raise HTTPException(status_code=404, detail="Category could not be found.")
     return category
+
+# Location / Node queries
+@app.get("/api/locations/", response_model= list[NodeRead])
+def get_nodes(db: Session = Depends(get_db)):
+    return db.query(Node).all()
