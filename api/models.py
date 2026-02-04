@@ -1,5 +1,5 @@
 from database import Base
-from sqlalchemy import Column, Integer, String, Boolean, TIMESTAMP, text, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, TIMESTAMP, text, ForeignKey, Numeric
 from sqlalchemy.orm import relationship
 
 class User(Base):
@@ -42,6 +42,10 @@ class Exhibit(Base):
         return self.beacon_obj.minor if self.beacon_obj else None
     
     @property
+    def location(self):
+        return self.beacon_obj.location_id if self.beacon_obj else None
+    
+    @property
     def category(self) -> str:
         return self.category_obj.name
 
@@ -65,5 +69,34 @@ class Beacon(Base):
     major = Column(Integer, nullable=False, server_default="0")
     minor = Column(Integer, nullable=False, server_default="0")
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
+    location_id = Column(Integer, ForeignKey("node.id"), nullable=False)
 
     employee_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+
+''' 
+Nodes are locations.
+Location should be treated as a room. Each "Node" is a representation of the room in the graph.
+
+X = Coord x on the map on the phone.
+Y = Coord y on the map on the phone.
+'''
+class Node(Base):
+    __tablename__ = "node"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(100), unique=True, nullable=False)
+    x = Column(Numeric(3, 2), nullable=False)
+    y = Column(Numeric(3, 2), nullable=False)
+
+    # weight = Column(Integer, nullable=False, server_default="0")
+
+class Edge(Base):
+    __tablename__ = "edges"
+
+    id = Column(Integer, primary_key=True, index=True)
+    node_id = Column(Integer, ForeignKey("node.id", ondelete="CASCADE"), nullable=False)
+    connected_node_id = Column(Integer, ForeignKey("node.id", ondelete="CASCADE"), nullable=False)
+    weight = Column(Integer, nullable=False, server_default="0")
+
+    node_obj = relationship("Node", foreign_keys=[node_id], lazy="joined")
+    connected_node_obj = relationship("Node", foreign_keys=[connected_node_id],lazy="joined")
