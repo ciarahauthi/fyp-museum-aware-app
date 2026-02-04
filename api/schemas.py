@@ -67,4 +67,12 @@ class ExhibitReadPublic(BaseModel):
     uuid: str
     major: int
     minor: int
+    location: int
+
     model_config = ConfigDict(from_attributes=True)
+
+class NodeRead(BaseModel):
+    id: int
+    name: str
+    x: float
+    y: float
