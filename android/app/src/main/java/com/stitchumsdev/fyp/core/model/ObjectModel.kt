@@ -7,5 +7,6 @@ data class ObjectModel(
     val category: String,
     val childFriendly: Boolean,
     val likes: Int,
-    val dislikes: Int
+    val dislikes: Int,
+    val location: Int
 )
