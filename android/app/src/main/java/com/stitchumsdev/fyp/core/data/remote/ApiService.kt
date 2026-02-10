@@ -1,5 +1,6 @@
 package com.stitchumsdev.fyp.core.data.remote
 
+import com.stitchumsdev.fyp.core.model.LocationResponse
 import com.stitchumsdev.fyp.core.model.ObjectResponse
 import com.stitchumsdev.fyp.core.model.UserResponse
 import retrofit2.http.GET
@@ -16,4 +17,7 @@ interface ApiService {
 
     @GET("api/exhibits/")
     suspend fun getExhibits(): List<ObjectResponse>
+
+    @GET("api/locations/")
+    suspend fun getLocations(): List<LocationResponse>
 }

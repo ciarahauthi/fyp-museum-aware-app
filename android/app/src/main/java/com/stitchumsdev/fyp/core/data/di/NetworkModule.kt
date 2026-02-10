@@ -13,7 +13,7 @@ import retrofit2.Retrofit
 //private const val BASE_URL = "http://10.0.2.2:8000/" // ToDo change to real api on deployment
 
 // For tethered device
-private const val BASE_URL = "http://192.168.178.132:8000/"
+private const val BASE_URL = "http://192.168.178.165:8000/"
 val networkModule = module {
     // For dealing with JSON
     single {
