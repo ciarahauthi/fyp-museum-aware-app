@@ -4,4 +4,5 @@ import com.stitchumsdev.fyp.core.base.Action
 
 sealed class HomeScreenAction : Action() {
     object GetAllExhibits: HomeScreenAction()
+    object  GetAllLocations: HomeScreenAction()
 }

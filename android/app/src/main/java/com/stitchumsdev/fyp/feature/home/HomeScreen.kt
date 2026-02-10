@@ -19,7 +19,11 @@ fun HomeScreen(
     navHostController: NavHostController,
     onAction: (HomeScreenAction) -> Unit
 ) {
-    LaunchedEffect(Unit) { onAction(HomeScreenAction.GetAllExhibits) }
+    // ToDo move to splash screen, also move to init{}
+    LaunchedEffect(Unit) {
+        onAction(HomeScreenAction.GetAllExhibits)
+        onAction(HomeScreenAction.GetAllLocations)
+    }
 
     Scaffold(
         bottomBar = { BottomNavigationBar(navHostController) },
