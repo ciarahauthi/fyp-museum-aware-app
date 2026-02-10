@@ -9,6 +9,7 @@ import com.stitchumsdev.fyp.core.ui.ExhibitScreen
 import com.stitchumsdev.fyp.feature.home.HomeScreen
 import com.stitchumsdev.fyp.feature.home.HomeViewModel
 import com.stitchumsdev.fyp.feature.map.MapScreen
+import com.stitchumsdev.fyp.feature.map.MapViewModel
 import com.stitchumsdev.fyp.feature.scan.ScanScreen
 import com.stitchumsdev.fyp.feature.scan.ScanViewModel
 import com.stitchumsdev.fyp.feature.search.SearchScreen
@@ -40,6 +41,7 @@ fun AppNavigation(
     testViewModel: TestScreenViewModel = koinViewModel(),
     scanViewModel: ScanViewModel = koinViewModel(),
     homeViewModel: HomeViewModel = koinViewModel(),
+    mapViewModel: MapViewModel = koinViewModel()
 ) {
     NavHost(
         navController = navHostController,
@@ -55,7 +57,10 @@ fun AppNavigation(
             )
         }
         composable<Map> {
-            MapScreen(navHostController)
+            val uiState = mapViewModel.uiState.collectAsState()
+            MapScreen(
+                uiState = uiState.value,
+                navHostController)
         }
         composable<Scan> {
             val uiState = scanViewModel.uiState.collectAsState()
