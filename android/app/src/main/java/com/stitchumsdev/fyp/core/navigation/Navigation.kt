@@ -10,6 +10,8 @@ import com.stitchumsdev.fyp.feature.home.HomeScreen
 import com.stitchumsdev.fyp.feature.home.HomeViewModel
 import com.stitchumsdev.fyp.feature.map.MapScreen
 import com.stitchumsdev.fyp.feature.map.MapViewModel
+import com.stitchumsdev.fyp.feature.route.RouteScreen
+import com.stitchumsdev.fyp.feature.route.RouteViewModel
 import com.stitchumsdev.fyp.feature.scan.ScanScreen
 import com.stitchumsdev.fyp.feature.scan.ScanViewModel
 import com.stitchumsdev.fyp.feature.search.SearchScreen
@@ -30,6 +32,8 @@ object Search
 @Serializable
 object Scan
 @Serializable
+object Route
+@Serializable
 object Exhibit
 // ToDo: remove on deployment
 @Serializable
@@ -41,7 +45,8 @@ fun AppNavigation(
     testViewModel: TestScreenViewModel = koinViewModel(),
     scanViewModel: ScanViewModel = koinViewModel(),
     homeViewModel: HomeViewModel = koinViewModel(),
-    mapViewModel: MapViewModel = koinViewModel()
+    mapViewModel: MapViewModel = koinViewModel(),
+    routeViewModel: RouteViewModel = koinViewModel()
 ) {
     NavHost(
         navController = navHostController,
@@ -58,8 +63,10 @@ fun AppNavigation(
         }
         composable<Map> {
             val uiState = mapViewModel.uiState.collectAsState()
+            val routeUiState = routeViewModel.uiState.collectAsState()
             MapScreen(
                 uiState = uiState.value,
+                routeUiState = routeUiState.value,
                 navHostController)
         }
         composable<Scan> {
@@ -76,6 +83,14 @@ fun AppNavigation(
         }
         composable<Exhibit> {
             ExhibitScreen(navHostController)
+        }
+        composable<Route>{
+            val uiState = routeViewModel.uiState.collectAsState()
+            RouteScreen(
+                navHostController = navHostController,
+                uiState = uiState.value,
+                onAction = { action ->
+                    routeViewModel.onAction(action) })
         }
         // ToDo: remove on deployment
         composable<Test> {
