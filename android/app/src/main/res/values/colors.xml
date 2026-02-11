@@ -10,4 +10,6 @@
     // Theme colours
     <color name="charcoal">#FF262424</color>
     <color name="parchment">#FFEDEBE7</color>
+    <color name="bone">#FFE3D5CA</color>
+    <color name="deep_grey">#FF353535</color>
 </resources>
