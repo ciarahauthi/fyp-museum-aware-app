@@ -13,10 +13,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.stitchumsdev.fyp.R
 import com.stitchumsdev.fyp.core.navigation.Home
+import com.stitchumsdev.fyp.core.navigation.Map
 import com.stitchumsdev.fyp.core.navigation.Route
 import com.stitchumsdev.fyp.core.navigation.Scan
 import com.stitchumsdev.fyp.core.navigation.Search
-import com.stitchumsdev.fyp.core.navigation.Test
 import com.stitchumsdev.fyp.core.ui.theme.fypColours
 
 sealed class NavItem(
@@ -28,7 +28,6 @@ sealed class NavItem(
     data object SearchItem: NavItem(Search, R.drawable.ic_search)
     data object ScanItem: NavItem(Scan, R.drawable.ic_scan)
     data object RouteItem: NavItem(Route, R.drawable.ic_route)
-    data object TestItem: NavItem(Test, R.drawable.ic_launcher_foreground)
 }
 
 @Composable
@@ -42,8 +41,7 @@ fun BottomNavigationBar(
             NavItem.MapItem,
             NavItem.SearchItem,
             NavItem.ScanItem,
-            NavItem.RouteItem,
-            NavItem.TestItem
+            NavItem.RouteItem
         )
     }
 

@@ -5,7 +5,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.stitchumsdev.fyp.core.ui.ExhibitScreen
 import com.stitchumsdev.fyp.feature.home.HomeScreen
 import com.stitchumsdev.fyp.feature.home.HomeViewModel
 import com.stitchumsdev.fyp.feature.map.MapScreen
@@ -15,8 +14,8 @@ import com.stitchumsdev.fyp.feature.route.RouteViewModel
 import com.stitchumsdev.fyp.feature.scan.ScanScreen
 import com.stitchumsdev.fyp.feature.scan.ScanViewModel
 import com.stitchumsdev.fyp.feature.search.SearchScreen
+import com.stitchumsdev.fyp.feature.search.SearchViewModel
 import com.stitchumsdev.fyp.feature.splash.SplashScreen
-import com.stitchumsdev.fyp.feature.test.TestScreen
 import com.stitchumsdev.fyp.feature.test.TestScreenViewModel
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
@@ -33,8 +32,6 @@ object Search
 object Scan
 @Serializable
 object Route
-@Serializable
-object Exhibit
 // ToDo: remove on deployment
 @Serializable
 object Test
@@ -46,7 +43,8 @@ fun AppNavigation(
     scanViewModel: ScanViewModel = koinViewModel(),
     homeViewModel: HomeViewModel = koinViewModel(),
     mapViewModel: MapViewModel = koinViewModel(),
-    routeViewModel: RouteViewModel = koinViewModel()
+    routeViewModel: RouteViewModel = koinViewModel(),
+    searchViewModel: SearchViewModel = koinViewModel()
 ) {
     NavHost(
         navController = navHostController,
@@ -79,10 +77,10 @@ fun AppNavigation(
             )
         }
         composable<Search> {
-            SearchScreen(navHostController)
-        }
-        composable<Exhibit> {
-            ExhibitScreen(navHostController)
+            val uiState = searchViewModel.uiState.collectAsState()
+            SearchScreen(
+                navHostController = navHostController,
+                uiState = uiState.value )
         }
         composable<Route>{
             val uiState = routeViewModel.uiState.collectAsState()
@@ -91,10 +89,6 @@ fun AppNavigation(
                 uiState = uiState.value,
                 onAction = { action ->
                     routeViewModel.onAction(action) })
-        }
-        // ToDo: remove on deployment
-        composable<Test> {
-            TestScreen(navHostController, onAction = { action -> testViewModel.onAction(action) } )
         }
     }
 }
