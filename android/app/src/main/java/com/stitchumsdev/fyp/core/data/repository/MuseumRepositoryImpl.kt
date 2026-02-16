@@ -20,15 +20,19 @@ class MuseumRepositoryImpl(
         val built = withContext(Dispatchers.IO) {
             val objects = appDatabase.exhibitItemDao().getAll().map { it.toObjectModel() }
             val locations = appDatabase.locationItemDao().getAll().map { it.toLocationModel() }
+            val routes = appDatabase.routeItemDao().getAll().map { it.toRouteModel() }
 
             val locationById = locations.associateBy { it.id }
             val objectsByLocationId = objects.groupBy { it.location }
+            val routeById = routes.associateBy { it.id }
 
             MuseumCache(
                 locations = locations,
                 objects = objects,
+                routes = routes,
                 locationById = locationById,
-                objectsByLocationId = objectsByLocationId
+                objectsByLocationId = objectsByLocationId,
+                routeById = routeById
             )
         }
 
