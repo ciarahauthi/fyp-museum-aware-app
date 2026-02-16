@@ -14,8 +14,8 @@ import com.stitchumsdev.fyp.feature.route.RouteViewModel
 import com.stitchumsdev.fyp.feature.scan.ScanScreen
 import com.stitchumsdev.fyp.feature.scan.ScanViewModel
 import com.stitchumsdev.fyp.feature.search.SearchScreen
-import com.stitchumsdev.fyp.feature.search.SearchViewModel
 import com.stitchumsdev.fyp.feature.splash.SplashScreen
+import com.stitchumsdev.fyp.feature.splash.SplashViewModel
 import com.stitchumsdev.fyp.feature.test.TestScreenViewModel
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
@@ -44,14 +44,17 @@ fun AppNavigation(
     homeViewModel: HomeViewModel = koinViewModel(),
     mapViewModel: MapViewModel = koinViewModel(),
     routeViewModel: RouteViewModel = koinViewModel(),
-    searchViewModel: SearchViewModel = koinViewModel()
+    splashViewModel: SplashViewModel = koinViewModel()
 ) {
     NavHost(
         navController = navHostController,
         startDestination = Splash
     ) {
         composable<Splash> {
-            SplashScreen(navigateHome = {navHostController.navigate(Home) })
+            val uiState = splashViewModel.uiState.collectAsState()
+            SplashScreen(
+                uiState = uiState.value,
+                navigateHome = {navHostController.navigate(Home) })
         }
         composable<Home> {
             HomeScreen(
@@ -77,10 +80,8 @@ fun AppNavigation(
             )
         }
         composable<Search> {
-            val uiState = searchViewModel.uiState.collectAsState()
             SearchScreen(
-                navHostController = navHostController,
-                uiState = uiState.value )
+                navHostController = navHostController)
         }
         composable<Route>{
             val uiState = routeViewModel.uiState.collectAsState()
