@@ -10,10 +10,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ExhibitItemDao {
     @Query("SELECT * FROM exhibititementity")
-    fun getAll(): Flow<List<ExhibitItemEntity>>
+    suspend fun getAll(): List<ExhibitItemEntity>
 
     @Query("SELECT * FROM exhibititementity WHERE uuid = :uuid AND major = :major AND minor = :minor")
-    fun getByBeaconInfo(uuid: String, major: Int, minor: Int): Flow<List<ExhibitItemEntity>>
+    suspend fun getByBeaconInfo(uuid: String, major: Int, minor: Int): List<ExhibitItemEntity>
 
     @Upsert
     suspend fun upsertAll(items: List<ExhibitItemEntity>)

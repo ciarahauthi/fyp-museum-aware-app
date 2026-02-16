@@ -18,8 +18,8 @@ class MuseumRepositoryImpl(
         cache?.let { return it }
 
         val built = withContext(Dispatchers.IO) {
-            val objects = appDatabase.exhibitItemDao().getAll().first().map { it.toObjectModel() }
-            val locations = appDatabase.locationItemDao().getAll().first().map { it.toLocationModel() }
+            val objects = appDatabase.exhibitItemDao().getAll().map { it.toObjectModel() }
+            val locations = appDatabase.locationItemDao().getAll().map { it.toLocationModel() }
 
             val locationById = locations.associateBy { it.id }
             val objectsByLocationId = objects.groupBy { it.location }

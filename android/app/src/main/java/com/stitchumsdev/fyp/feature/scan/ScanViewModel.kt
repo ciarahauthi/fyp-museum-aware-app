@@ -42,7 +42,6 @@ class ScanViewModel(
                 for (b in beacons) {
                     val matches = appDatabase.exhibitItemDao()
                         .getByBeaconInfo(b.uuid, b.major, b.minor)
-                        .first()
                     all += matches
                 }
 
