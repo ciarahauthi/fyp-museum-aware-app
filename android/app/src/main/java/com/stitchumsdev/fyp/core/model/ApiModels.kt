@@ -1,6 +1,7 @@
 package com.stitchumsdev.fyp.core.model
 import com.stitchumsdev.fyp.core.data.database.entities.ExhibitItemEntity
 import com.stitchumsdev.fyp.core.data.database.entities.LocationItemEntity
+import com.stitchumsdev.fyp.core.data.database.entities.RouteItemEntity
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -53,5 +54,20 @@ data class LocationResponse(
         name = this.name,
         x = this.x,
         y = this.y
+    )
+}
+
+@Serializable
+data class AllRoutesResponse(
+    val id: Int,
+    val name: String,
+    val description: String,
+    @SerialName("node_ids") val nodeIds: List<Int>
+) {
+    fun toRouteItemEntity() = RouteItemEntity(
+        id = this.id,
+        name = this.name,
+        description = this.description,
+        nodeIds = this.nodeIds
     )
 }
