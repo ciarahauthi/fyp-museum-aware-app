@@ -27,8 +27,6 @@ fun SplashScreen(
         is SplashUiState.Error -> {} //ToDo
         is SplashUiState.Done -> SplashLoad()
     }
-
-
 }
 
 @Composable

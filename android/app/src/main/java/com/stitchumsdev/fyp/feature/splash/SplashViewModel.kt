@@ -29,10 +29,12 @@ class SplashViewModel(
                 try {
                     val exhibits = userRepository.getExhibits()
                     val locations = userRepository.getLocations()
+                    val routes = userRepository.getRoutes()
 
                     withContext(Dispatchers.IO) {
                         appDatabase.exhibitItemDao().upsertAll(exhibits.map { it.toExhibitEntity() })
                         appDatabase.locationItemDao().upsertAll(locations.map { it.toLocationItemEntity() })
+                        appDatabase.routeItemDao().upsertAll(routes.map { it.toRouteItemEntity() })
                     }
 
                     museumRepository.clearCache()
