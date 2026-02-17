@@ -59,9 +59,36 @@ def init():
             )
         db.commit()
 
+        # Dummy Routes
+        db.add_all([
+            Route(
+                name="Route 1",
+                description="G -> E -> D -> B -> C -> B -> A",
+                node_ids=[7, 5, 4, 2, 3, 2, 1],
+            ),
+            Route(
+                name="Route 2",
+                description="A -> B -> D -> F -> G",
+                node_ids=[1, 2, 4, 6, 7],
+            ),
+            Route(
+                name="Route 3",
+                description="C -> B -> D -> E -> G",
+                node_ids=[3, 2, 4, 5, 7],
+            ),
+            Route(
+                name="Route 4",
+                description="A -> C -> F -> G",
+                node_ids=[1, 3, 6, 7],
+            ),
+        ])
+        db.commit()
+
         user = User(first_name="Ciara", surname="Duffy", email="ciara@gmail.com")
         db.add(user)
         db.commit()
+
+        
     
         # Dummy Beacons
         beacon = Beacon(
