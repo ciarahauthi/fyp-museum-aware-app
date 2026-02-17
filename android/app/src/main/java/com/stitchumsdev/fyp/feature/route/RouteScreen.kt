@@ -1,25 +1,34 @@
 package com.stitchumsdev.fyp.feature.route
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.stitchumsdev.fyp.R
 import com.stitchumsdev.fyp.core.model.LocationModel
+import com.stitchumsdev.fyp.core.model.RouteModel
 import com.stitchumsdev.fyp.core.ui.components.BottomNavigationBar
 import com.stitchumsdev.fyp.core.ui.components.TopBar
 import com.stitchumsdev.fyp.core.ui.theme.Typography
@@ -34,7 +43,8 @@ fun RouteScreen(
     Scaffold(
         topBar = { TopBar(navHostController) },
         bottomBar = { BottomNavigationBar(navHostController) },
-        modifier = Modifier.fillMaxSize()) { innerPadding ->
+        modifier = Modifier.fillMaxSize()
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -47,6 +57,7 @@ fun RouteScreen(
                 RouteUiState.Error -> {}
                 RouteUiState.Loading -> {}
                 is RouteUiState.Default -> RouteDefault(
+                    uiState = uiState,
                     onCreateRoute = {  }, // ToDo
                     onAction = onAction
                 )
@@ -60,37 +71,96 @@ fun RouteScreen(
 
 @Composable
 fun RouteDefault(
+    uiState: RouteUiState.Default,
     onCreateRoute: () -> Unit,
     onAction: (RouteAction) -> Unit
 ) {
+    val routes = uiState.routes
     // List of predetermined routes
-    Column {  }
-
-    // Create routes
     Column(
-        modifier = Modifier
-            .background(color = fypColours.secondaryBackground),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_8)),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_8))
     ) {
-        Icon(
-            painter = painterResource(R.drawable.ic_route),
-            contentDescription = null,
-            tint = fypColours.mainText,
-            modifier = Modifier.size(dimensionResource(R.dimen.icon_medium)),
-        )
         Text(
-            text = stringResource(R.string.want_make_route),
+            "Routes",
+            style = Typography.headlineLarge,
+            color = fypColours.mainText
+        )
+        HorizontalDivider()
+
+        routes.forEach { route ->
+            RouteItem(
+                route,
+                Modifier.clickable( onClick = {} )
+            )
+        }
+
+        // Create routes
+        Column(
+            modifier = Modifier
+                .background(color = fypColours.secondaryBackground),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_route),
+                contentDescription = null,
+                tint = fypColours.mainText,
+                modifier = Modifier.size(dimensionResource(R.dimen.icon_medium)),
+            )
+            Text(
+                text = stringResource(R.string.want_make_route),
+                style = Typography.titleMedium.copy(
+                    color = fypColours.mainText
+                )
+            )
+            Button(
+                // ToDo finish ui.
+                onClick = { onAction(RouteAction.StartRouting(LocationModel.mock())) }
+            ) {
+                Text(stringResource(R.string.create_route))
+            }
+
+        }
+    }
+}
+
+@Composable
+fun RouteItem(
+    route: RouteModel,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+    ){
+        Box{
+            Image(
+                painter = painterResource(R.drawable.img_rusty),
+                contentDescription = null,
+                modifier = Modifier.heightIn(max = 200.dp),
+                contentScale = ContentScale.Crop
+            )
+            Box(
+                modifier = Modifier
+                    .padding(dimensionResource(R.dimen.padding_8))
+                    .background(fypColours.mainBackground)
+                    .align(Alignment.BottomStart)
+            ){
+                Text(
+                    "${route.nodeIds.size} stops",
+                    modifier = Modifier
+                        .background(fypColours.mainBackground)
+                        .padding(dimensionResource(R.dimen.padding_4)),
+                    style = Typography.labelLarge,
+                    color = fypColours.mainText
+                )
+            }
+        }
+        Text(route.name,
             style = Typography.titleMedium.copy(
                 color = fypColours.mainText
             )
         )
-        Button(
-            // ToDo finish ui.
-            onClick = { onAction(RouteAction.StartRouting(LocationModel.mock())) }
-        ) {
-            Text(stringResource(R.string.create_route))
-        }
-
+        Text(route.description)
     }
 }
 

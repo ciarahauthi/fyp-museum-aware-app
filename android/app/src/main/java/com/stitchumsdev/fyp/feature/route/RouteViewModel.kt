@@ -29,8 +29,9 @@ class RouteViewModel (
     init{
         viewModelScope.launch {
             try {
-                museumRepository.load()
-                _uiState.value = RouteUiState.Default()
+                val cache = museumRepository.load()
+                _uiState.value = RouteUiState.Default(routes = cache.routes)
+                Timber.d("!! routes: ${uiState.value}")
             } catch (t: Throwable) {
                 Timber.e("Error: $t")
                 _uiState.value = RouteUiState.Error
