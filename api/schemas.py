@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr, ConfigDict
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 # Users
 class UserCreate(BaseModel):
@@ -76,3 +76,11 @@ class NodeRead(BaseModel):
     name: str
     x: float
     y: float
+
+class RouteRead(BaseModel):
+    id: int
+    name: str
+    description: str
+    node_ids: list[int]
+
+    model_config = ConfigDict(from_attributes=True)
