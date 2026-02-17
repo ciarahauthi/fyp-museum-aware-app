@@ -3,12 +3,12 @@ from math import inf
 from sqlalchemy.orm import Session
 
 def buildGraph(nodes, edges):
-    # Where nodes is a list names
+    # Where nodes is a list ints (ids from the db)
     # Where edges is a list of triples (node, connected node, weight)
 
     graph = nx.Graph()
 
-    graph.add_nodes_from([name for name in nodes])
+    graph.add_nodes_from(nodes)
     graph.add_weighted_edges_from(edges)
 
     # for name, weight in nodes:
