@@ -1,5 +1,5 @@
 from database import Base
-from sqlalchemy import Column, Integer, String, Boolean, TIMESTAMP, text, ForeignKey, Numeric
+from sqlalchemy import Column, Integer, String, Boolean, TIMESTAMP, text, ForeignKey, Numeric, JSON
 from sqlalchemy.orm import relationship
 
 class User(Base):
@@ -100,3 +100,12 @@ class Edge(Base):
 
     node_obj = relationship("Node", foreign_keys=[node_id], lazy="joined")
     connected_node_obj = relationship("Node", foreign_keys=[connected_node_id],lazy="joined")
+
+class Route(Base):
+    __tablename__ = "route"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(100), unique=True, nullable=False)
+    description = Column(String(2000), nullable=False)
+
+    node_ids = Column(JSON, nullable=False)  # Stored as a list of ids [7, 3, 1, 4, 2]
