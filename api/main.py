@@ -28,14 +28,13 @@ app = FastAPI(lifespan=lifespan)
 
 # GRAPH
 def getGraphFromDb(db: Session):
-    nodes = db.query(Node).all()
-    edges = db.query(Edge).all()
+    node_rows = db.query(Node.id).all()
+    edge_rows = db.query(Edge.node_id, Edge.connected_node_id, Edge.weight).all()
 
-    nodeDict = {node.id: node.name for node in nodes}
-    edgeList = [(nodeDict[edge.node_id], nodeDict[edge.connected_node_id], edge.weight) for edge in edges]
-    nodeNames = [node.name for node in nodes]
-    
-    return graph.buildGraph(nodes=nodeNames, edges=edgeList)
+    node_ids = [r[0] for r in node_rows]
+    edge_list = [(e[0], e[1], e[2]) for e in edge_rows]
+
+    return graph.buildGraph(nodes=node_ids, edges=edge_list)
 
 
 def getGraph(request: Request):
@@ -45,15 +44,15 @@ def getGraph(request: Request):
     return graph
 
 
-@app.get("/api/graph/test")
-def test_graph(db: Session = Depends(get_db)):
-    getGraphFromDb(db)
+# @app.get("/api/graph/test")
+# def test_graph(db: Session = Depends(get_db)):
+#     getGraphFromDb(db)
 
-@app.get("/api/route/test")
-def test_graph_route(request: Request):
-    g = getGraph(request)
+# @app.get("/api/route/test")
+# def test_graph_route(request: Request):
+#     g = getGraph(request)
 
-    return(graph.getRoute(g, "G", ["E", "A", "C"]))
+#     return(graph.getRoute(g, 7, [5, 1, 3])) # G, [E, A, C]
 
 # API ROUTES
 @app.get("/")
@@ -172,3 +171,24 @@ def get_category(category_id: int, db: Session = Depends(get_db)):
 @app.get("/api/locations/", response_model= list[NodeRead])
 def get_nodes(db: Session = Depends(get_db)):
     return db.query(Node).all()
+
+# Routes
+@app.get("/api/routes/", response_model= list[RouteRead])
+def get_routes(db: Session = Depends(get_db)):
+    return db.query(Route).all()
+
+@app.get("/api/route", response_model=list[int])
+def get_route(
+    request: Request,
+    current: int,
+    targets: Annotated[list[int], Query(...)],
+):
+    g = getGraph(request)
+
+    if current not in g:
+        raise HTTPException(status_code=400, detail=f"current node {current} not in graph")
+    missing = [t for t in targets if t not in g]
+    if missing:
+        raise HTTPException(status_code=400, detail=f"target nodes not in graph: {missing}")
+
+    return graph.getRoute(g, current, targets)
