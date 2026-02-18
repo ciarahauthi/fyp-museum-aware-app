@@ -9,9 +9,8 @@ sealed class RouteAction : Action() {
     data object EndRouting : RouteAction()
     // Next stop in the route
     data object NextStop : RouteAction()
-    // Record/Update where user currently is
-    data class UpdateCurrent(val currentLoc: LocationModel?) : RouteAction()
     // For selecting custom routes.
     data class AddStop(val stop: LocationModel) : RouteAction()
     data class RemoveStop(val stop: LocationModel) : RouteAction()
+    data class SelectRoute(val routeId: Int) : RouteAction()
 }
