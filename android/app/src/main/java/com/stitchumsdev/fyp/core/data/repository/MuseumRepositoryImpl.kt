@@ -1,8 +1,9 @@
 package com.stitchumsdev.fyp.core.data.repository
 
 import com.stitchumsdev.fyp.core.data.database.AppDatabase
+import com.stitchumsdev.fyp.core.model.BeaconId
+import com.stitchumsdev.fyp.core.model.RouteModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -20,11 +21,27 @@ class MuseumRepositoryImpl(
         val built = withContext(Dispatchers.IO) {
             val objects = appDatabase.exhibitItemDao().getAll().map { it.toObjectModel() }
             val locations = appDatabase.locationItemDao().getAll().map { it.toLocationModel() }
-            val routes = appDatabase.routeItemDao().getAll().map { it.toRouteModel() }
+            val routeEntities = appDatabase.routeItemDao().getAll()
 
             val locationById = locations.associateBy { it.id }
+            val objectById = objects.associateBy { it.id }
+
             val objectsByLocationId = objects.groupBy { it.location }
+
+            val routes = routeEntities.map { route ->
+                RouteModel(
+                    id = route.id,
+                    name = route.name,
+                    description = route.description,
+                    nodes = route.nodeIds.mapNotNull { locationById[it] }, // location ids -> LocationModel
+                    stops = route.stops.mapNotNull { objectById[it] } // object ids -> ObjectModel
+                )
+            }
             val routeById = routes.associateBy { it.id }
+
+            val objectsByBeaconId = objects.associateBy { obj ->
+                BeaconId(obj.uuid, obj.major, obj.minor)
+            }
 
             MuseumCache(
                 locations = locations,
@@ -32,7 +49,8 @@ class MuseumRepositoryImpl(
                 routes = routes,
                 locationById = locationById,
                 objectsByLocationId = objectsByLocationId,
-                routeById = routeById
+                routeById = routeById,
+                objectsByBeaconId = objectsByBeaconId
             )
         }
 
