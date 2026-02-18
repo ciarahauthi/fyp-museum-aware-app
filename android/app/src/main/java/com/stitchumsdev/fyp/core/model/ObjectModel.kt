@@ -8,5 +8,8 @@ data class ObjectModel(
     val childFriendly: Boolean,
     val likes: Int,
     val dislikes: Int,
-    val location: Int
+    val location: Int,
+    val uuid: String,
+    val major: Int,
+    val minor: Int
 )
