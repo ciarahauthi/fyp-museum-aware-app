@@ -29,6 +29,7 @@ import androidx.navigation.NavHostController
 import com.stitchumsdev.fyp.R
 import com.stitchumsdev.fyp.core.model.LocationModel
 import com.stitchumsdev.fyp.core.model.RouteModel
+import com.stitchumsdev.fyp.core.navigation.RouteInfo
 import com.stitchumsdev.fyp.core.ui.components.BottomNavigationBar
 import com.stitchumsdev.fyp.core.ui.components.TopBar
 import com.stitchumsdev.fyp.core.ui.theme.Typography
@@ -57,6 +58,7 @@ fun RouteScreen(
                 RouteUiState.Error -> {}
                 RouteUiState.Loading -> {}
                 is RouteUiState.Default -> RouteDefault(
+                    navHostController = navHostController,
                     uiState = uiState,
                     onCreateRoute = {  }, // ToDo
                     onAction = onAction
@@ -71,6 +73,7 @@ fun RouteScreen(
 
 @Composable
 fun RouteDefault(
+    navHostController: NavHostController,
     uiState: RouteUiState.Default,
     onCreateRoute: () -> Unit,
     onAction: (RouteAction) -> Unit
@@ -91,7 +94,9 @@ fun RouteDefault(
         routes.forEach { route ->
             RouteItem(
                 route,
-                Modifier.clickable( onClick = {} )
+                Modifier.clickable(
+                    onClick = { navHostController.navigate(RouteInfo(route.id)) }
+                )
             )
         }
 
@@ -146,7 +151,7 @@ fun RouteItem(
                     .align(Alignment.BottomStart)
             ){
                 Text(
-                    "${route.nodeIds.size} stops",
+                    "${route.nodes.size} stops",
                     modifier = Modifier
                         .background(fypColours.mainBackground)
                         .padding(dimensionResource(R.dimen.padding_4)),
@@ -155,12 +160,18 @@ fun RouteItem(
                 )
             }
         }
-        Text(route.name,
+        Text(
+            text = route.name,
             style = Typography.titleMedium.copy(
                 color = fypColours.mainText
             )
         )
-        Text(route.description)
+        Text(
+            text = route.description,
+            style = Typography.bodyLarge.copy(
+                color = fypColours.secondaryText
+            )
+        )
     }
 }
 
