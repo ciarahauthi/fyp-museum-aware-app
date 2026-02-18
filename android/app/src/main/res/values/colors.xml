@@ -9,7 +9,9 @@
     <color name="white">#FFFFFFFF</color>
     // Theme colours
     <color name="charcoal">#FF262424</color>
+    <color name="dark">#FF141414</color>
     <color name="parchment">#FFEDEBE7</color>
     <color name="bone">#FFE3D5CA</color>
     <color name="deep_grey">#FF353535</color>
+    <color name="text_grey">#FF696969</color>
 </resources>
