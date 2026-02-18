@@ -10,12 +10,6 @@ data class RouteItemEntity(
     @PrimaryKey val id: Int,
     val name: String,
     val description: String,
-    val nodeIds: List<Int>
-) {
-    fun toRouteModel() = RouteModel(
-        id = this.id,
-        name = this.name,
-        description = this.description,
-        nodeIds = this.nodeIds
-    )
-}
+    val nodeIds: List<Int>,
+    val stops: List<Int>
+)

@@ -4,5 +4,6 @@ data class RouteModel(
     val id: Int,
     val name: String,
     val description: String,
-    val nodeIds: List<Int>
+    val nodes: List<LocationModel>,
+    val stops: List<ObjectModel>
 )
