@@ -13,9 +13,8 @@ val viewModelModule = module {
     viewModel { TestScreenViewModel(get()) }
     viewModel { ScanViewModel(get(), get()) }
     viewModel { HomeViewModel(get(), get()) }
-    viewModel { MapViewModel(get()) }
-    viewModel { RouteViewModel(get()) }
+    viewModel { MapViewModel(get(), get()) }
+    viewModel { RouteViewModel(get(), get(), get()) }
     // viewModel { SearchViewModel(get()) }
-    viewModel { RouteViewModel(get()) }
     viewModel { SplashViewModel(get(), get(), get()) }
 }
