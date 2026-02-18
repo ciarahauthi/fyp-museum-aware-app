@@ -21,6 +21,13 @@ interface ApiService {
 
     @GET("api/locations/")
     suspend fun getLocations(): List<LocationResponse>
+
     @GET("api/routes/")
     suspend fun getRoutes(): List<AllRoutesResponse>
+
+    @GET("/api/route")
+    suspend fun getRoute(
+        @Query("current") current: Int,
+        @Query("targets") targets: List<Int>
+    ): List<Int>
 }

@@ -14,4 +14,8 @@ class UserRepositoryImpl(
     override suspend fun getExhibits(): List<ObjectResponse> = api.getExhibits()
     override suspend fun getLocations(): List<LocationResponse> = api.getLocations()
     override suspend fun getRoutes(): List<AllRoutesResponse> = api.getRoutes()
+    override suspend fun getRoute(current: Int, targets: List<Int>): List<Int> = api.getRoute(
+        current = current,
+        targets = targets
+    )
 }

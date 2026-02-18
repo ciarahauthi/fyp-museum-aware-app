@@ -62,12 +62,14 @@ data class AllRoutesResponse(
     val id: Int,
     val name: String,
     val description: String,
-    @SerialName("node_ids") val nodeIds: List<Int>
+    @SerialName("node_ids") val nodeIds: List<Int>,
+    val stops: List<Int>
 ) {
     fun toRouteItemEntity() = RouteItemEntity(
         id = this.id,
         name = this.name,
         description = this.description,
-        nodeIds = this.nodeIds
+        nodeIds = this.nodeIds,
+        stops = this.stops
     )
 }
