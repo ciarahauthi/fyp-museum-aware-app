@@ -1,6 +1,7 @@
 package com.stitchumsdev.fyp.core.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -9,6 +10,8 @@ import com.stitchumsdev.fyp.feature.home.HomeScreen
 import com.stitchumsdev.fyp.feature.home.HomeViewModel
 import com.stitchumsdev.fyp.feature.map.MapScreen
 import com.stitchumsdev.fyp.feature.map.MapViewModel
+import com.stitchumsdev.fyp.feature.route.RouteAction
+import com.stitchumsdev.fyp.feature.route.RouteInformationScreen
 import com.stitchumsdev.fyp.feature.route.RouteScreen
 import com.stitchumsdev.fyp.feature.route.RouteViewModel
 import com.stitchumsdev.fyp.feature.scan.ScanScreen
@@ -32,6 +35,8 @@ object Search
 object Scan
 @Serializable
 object Route
+@Serializable
+data class RouteInfo(val routeId: Int)
 // ToDo: remove on deployment
 @Serializable
 object Test
@@ -83,13 +88,35 @@ fun AppNavigation(
             SearchScreen(
                 navHostController = navHostController)
         }
-        composable<Route>{
+        composable<Route> {
             val uiState = routeViewModel.uiState.collectAsState()
             RouteScreen(
                 navHostController = navHostController,
                 uiState = uiState.value,
                 onAction = { action ->
                     routeViewModel.onAction(action) })
+        }
+        composable<RouteInfo> { backStackEntry ->
+            val routeId = backStackEntry.arguments?.getInt("routeId") ?: return@composable
+
+            LaunchedEffect(routeId) {
+                routeViewModel.onAction(RouteAction.SelectRoute(routeId))
+            }
+
+            val routeInfo = routeViewModel.selectedRoute.collectAsState().value
+
+            if (routeInfo != null) {
+                RouteInformationScreen(
+                    navHostController = navHostController,
+                    routeInfo = routeInfo,
+                    onStartRoute = { route ->
+                        routeViewModel.onAction(RouteAction.StartRouting(route))
+                        navHostController.popBackStack()
+                    }
+                )
+            } else {
+                // ToDo Loading Screen
+            }
         }
     }
 }
