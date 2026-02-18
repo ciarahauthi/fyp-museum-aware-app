@@ -32,7 +32,7 @@ fun MapScreen(
     routeUiState: RouteUiState,
     navHostController: NavHostController
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
+    val snackbarHostState = remember { SnackbarHostState() } // ToDo replace with a modal
     val scope = androidx.compose.runtime.rememberCoroutineScope()
 
     Scaffold(
@@ -66,15 +66,19 @@ fun MapScreen(
     }
 }
 
+// Success state when map loads properly
+// Displays current user location
+// While routing, also shows current location, where the current targets are and where next stop is
 @Composable
 fun MapSuccess(
     uiState: MapUiState.Success,
     routeUiState: RouteUiState,
     onClick: (RoomHeatPoint) -> Unit
 ) {
-    val rooms = remember {
-        uiState.locations.keys.map { it.toHmPoint() }
-    }
+    val userLocId = uiState.currentLocation?.id
+    val rooms = remember { uiState.locations.keys.map { it.toHmPoint() } }
+
+    // For Routing state
     val routing = routeUiState as? RouteUiState.Routing
     val currentId = routing?.currentTarget?.id
     val nextId = routing?.nextTarget?.id
@@ -82,20 +86,27 @@ fun MapSuccess(
     AndroidView(
         modifier = Modifier
             .fillMaxSize(),
+
         factory = { context ->
+            // Container to place map view + overlay view on top of each other
             val container = FrameLayout(context)
 
+            // Zoom & pan image view
             val mapView = SubsamplingScaleImageView(context).apply {
                 setImage(ImageSource.resource(R.drawable.img_ground_floor))
             }
 
+
+            // Align heatmap points to map image
             val overlay = HeatOverlayView(context).apply {
                 imageView = mapView
                 points = rooms
                 currentTargetId = currentId
                 nextTargetId = nextId
+                userLocationId = userLocId
             }
 
+            // Detect point clicks
             val tapDetector = android.view.GestureDetector(
                 context,
                 object : android.view.GestureDetector.SimpleOnGestureListener() {
@@ -108,7 +119,7 @@ fun MapSuccess(
                     override fun onSingleTapUp(e: android.view.MotionEvent): Boolean {
                         if (!mapView.isReady) return false
 
-                        val hit = findHitRoom(mapView, rooms, e.x, e.y)
+                        val hit = findNearestRoom(mapView, rooms, e.x, e.y)
                         if (hit != null) {
                             onClick(hit)
                             return true
@@ -141,37 +152,45 @@ fun MapSuccess(
             overlay.points = rooms
             overlay.currentTargetId = currentId
             overlay.nextTargetId = nextId
+            overlay.userLocationId = userLocId
         }
     )
 }
 
 
-private fun findHitRoom(
-    iv: SubsamplingScaleImageView,
-    points: List<RoomHeatPoint>,
+private fun findNearestRoom(
+    imageView: SubsamplingScaleImageView,
+    roomPoints: List<RoomHeatPoint>,
     tapX: Float,
     tapY: Float
 ): RoomHeatPoint? {
 
-    var best: RoomHeatPoint? = null
-    var bestDist2 = Float.MAX_VALUE
+    var closestPoint: RoomHeatPoint? = null
+    var closestDistSquared = Float.MAX_VALUE
 
-    for (p in points) {
-        val sx = p.x * iv.sWidth
-        val sy = p.y * iv.sHeight
-        val v = iv.sourceToViewCoord(PointF(sx, sy)) ?: continue
+    for (point in roomPoints) {
+        // Convert coords to image pixels
+        val sourceX = point.x * imageView.sWidth
+        val sourceY = point.y * imageView.sHeight
 
-        val r = maxOf(28f, p.radiusPx * iv.scale) // min tap size
-        val dx = tapX - v.x
-        val dy = tapY - v.y
-        val dist2 = dx * dx + dy * dy
+        // Convert image pixels to screen/view coords taking pan and zoom into account
+        val viewCoord = imageView.sourceToViewCoord(PointF(sourceX, sourceY)) ?: continue
 
-        if (dist2 <= r * r && dist2 < bestDist2) {
-            best = p
-            bestDist2 = dist2
+        // Hit radius scales with zoom
+        val hitRadius = maxOf(28f, point.radiusPx * imageView.scale)
+
+        // Distance from tap to point
+        val dx = tapX - viewCoord.x
+        val dy = tapY - viewCoord.y
+        val distSquared = dx * dx + dy * dy
+
+        // Keep the closest point
+        if (distSquared <= hitRadius * hitRadius && distSquared < closestDistSquared) {
+            closestPoint = point
+            closestDistSquared = distSquared
         }
     }
-    return best
+    return closestPoint
 }
 
 class HeatOverlayView(context: Context) : View(context) {
@@ -183,6 +202,9 @@ class HeatOverlayView(context: Context) : View(context) {
         set(value) { field = value; invalidate() }
 
     var nextTargetId: Int? = null
+        set(value) { field = value; invalidate() }
+
+    var userLocationId: Int? = null
         set(value) { field = value; invalidate() }
 
     private val basePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
@@ -223,6 +245,7 @@ class HeatOverlayView(context: Context) : View(context) {
             val sx = p.x.coerceIn(0f, 1f) * iv.sWidth
             val sy = p.y.coerceIn(0f, 1f) * iv.sHeight
             val v = iv.sourceToViewCoord(PointF(sx, sy)) ?: continue
+            val isUserLocation = (p.id == userLocationId)
 
             val radius = p.radiusPx * iv.scale
 
@@ -235,13 +258,14 @@ class HeatOverlayView(context: Context) : View(context) {
 
             // Highlight styles
             when {
+                isUserLocation -> drawGlow(canvas, v.x, v.y, radius, Color.BLUE)
                 isCurrent -> drawGlow(canvas, v.x, v.y, radius, Color.GREEN)
                 isNext -> drawGlow(canvas, v.x, v.y, radius, Color.YELLOW)
             }
         }
     }
 
-    // For routing state, draw glow around map points
+    // Draw glow around map points
     private fun drawGlow(canvas: Canvas, x: Float, y: Float, r: Float, color: Int) {
         // Point glow
         val glowStrength = (0.25f + 0.75f * pulse) // pulse affects glow
