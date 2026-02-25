@@ -150,6 +150,12 @@ def init():
             employee_id=user.id)
         db.add(category)
         db.commit()
+        paintCategory = Category(
+            name="Painting", 
+            description="Paintings category",
+            employee_id=user.id)
+        db.add(paintCategory)
+        db.commit()
 
         # Dummy Exhibits
         exhibit = Exhibit(
@@ -166,14 +172,15 @@ def init():
         db.commit()
 
         exhibit1 = Exhibit(
-            title="Marmalade",
-            description="Cute cat.",
+            title="Monet's Water Lillies",
+            description="Water Lilies is a series of approximately 250 oil paintings by French Impressionist Claude Monet (1840–1926). The paintings depict his flower garden at his home in Giverny, and were the main focus of his artistic production during the last 31 years of his life. Many of the works were painted while Monet suffered from cataracts.",
             beacon_id=beacon2.id,
-            category_id=category.id,
+            category_id=paintCategory.id,
             employee_id=user.id,
             child_friendly=True,
-            likes=0,
-            dislikes=0
+            likes=50,
+            dislikes=2,
+            image_url="/api/static/exhibits/monet_water_lilies.jpg"
             )
         db.add(exhibit1)
         db.commit()

@@ -68,6 +68,7 @@ class ExhibitReadPublic(BaseModel):
     major: int
     minor: int
     location: int
+    image_url: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -83,5 +84,6 @@ class RouteRead(BaseModel):
     description: str
     node_ids: list[int]
     stops: list[int]
+    image_url: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)

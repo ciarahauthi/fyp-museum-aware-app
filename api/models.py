@@ -25,6 +25,7 @@ class Exhibit(Base):
     child_friendly = Column(Boolean, nullable=False)
     likes = Column(Integer, nullable=False, server_default="0")
     dislikes = Column(Integer, nullable=False, server_default="0")
+    image_url = Column(String(500), nullable=True)
 
     category_obj = relationship("Category", lazy="joined")
     beacon_obj = relationship("Beacon", lazy="joined")
@@ -110,3 +111,4 @@ class Route(Base):
 
     node_ids = Column(JSON, nullable=False)  # Stored as a list of node ids [7, 3, 1, 4, 2]
     stops = Column(JSON, nullable=False)  # Stored as a list of exhibit ids [7, 3, 1, 4, 2]
+    image_url = Column(String(500), nullable=True)

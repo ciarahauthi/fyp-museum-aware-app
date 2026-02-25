@@ -7,6 +7,7 @@ from schemas import *
 from typing import Annotated
 import graph
 from contextlib import asynccontextmanager
+from fastapi.staticfiles import StaticFiles
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -24,6 +25,7 @@ async def lifespan(app: FastAPI):
     app.state.graph = None
 
 app = FastAPI(lifespan=lifespan)
+app.mount("/api/static", StaticFiles(directory="static"), name="static")
 
 
 # GRAPH
@@ -107,9 +109,15 @@ def get_beacon(beacon_id: int, db: Session = Depends(get_db)):
     return beacon
 
 # Exhibit Queries
-@app.get("/api/exhibits/", response_model= list[ExhibitReadPublic])
-def get_exhibits(db: Session = Depends(get_db)):
-    return db.query(Exhibit).all()
+@app.get("/api/exhibits/", response_model=list[ExhibitReadPublic])
+def get_exhibits(request: Request, db: Session = Depends(get_db)):
+    exhibits = db.query(Exhibit).all()
+    base = str(request.base_url).rstrip("/")
+
+    for e in exhibits:
+        if e.image_url and not e.image_url.startswith("http"):
+            e.image_url = base + e.image_url
+    return exhibits
 
 @app.get("/api/exhibits/lookup", response_model= ExhibitRead)
 def get_exhibit_by_beacon(beacon_uuid: str, beacon_major: int, beacon_minor: int, db: Session = Depends(get_db)):
@@ -173,9 +181,15 @@ def get_nodes(db: Session = Depends(get_db)):
     return db.query(Node).all()
 
 # Routes
-@app.get("/api/routes/", response_model= list[RouteRead])
-def get_routes(db: Session = Depends(get_db)):
-    return db.query(Route).all()
+@app.get("/api/routes/", response_model=list[RouteRead])
+def get_routes(request: Request, db: Session = Depends(get_db)):
+    routes = db.query(Route).all()
+    base = str(request.base_url).rstrip("/")
+
+    for r in routes:
+        if r.image_url and not r.image_url.startswith("http"):
+            r.image_url = base + r.image_url 
+    return routes
 
 @app.get("/api/route", response_model=list[int])
 def get_route(
