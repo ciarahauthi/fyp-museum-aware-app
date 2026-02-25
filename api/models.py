@@ -108,4 +108,5 @@ class Route(Base):
     name = Column(String(100), unique=True, nullable=False)
     description = Column(String(2000), nullable=False)
 
-    node_ids = Column(JSON, nullable=False)  # Stored as a list of ids [7, 3, 1, 4, 2]
+    node_ids = Column(JSON, nullable=False)  # Stored as a list of node ids [7, 3, 1, 4, 2]
+    stops = Column(JSON, nullable=False)  # Stored as a list of exhibit ids [7, 3, 1, 4, 2]

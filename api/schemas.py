@@ -82,5 +82,6 @@ class RouteRead(BaseModel):
     name: str
     description: str
     node_ids: list[int]
+    stops: list[int]
 
     model_config = ConfigDict(from_attributes=True)

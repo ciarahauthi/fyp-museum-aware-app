@@ -65,21 +65,25 @@ def init():
                 name="Route 1",
                 description="G -> E -> D -> B -> C -> B -> A",
                 node_ids=[7, 5, 4, 2, 3, 2, 1],
+                stops = [1, 2, 3, 4]
             ),
             Route(
                 name="Route 2",
                 description="A -> B -> D -> F -> G",
                 node_ids=[1, 2, 4, 6, 7],
+                stops = [1, 2]
             ),
             Route(
                 name="Route 3",
                 description="C -> B -> D -> E -> G",
                 node_ids=[3, 2, 4, 5, 7],
+                stops = [3, 4]
             ),
             Route(
                 name="Route 4",
                 description="A -> C -> F -> G",
                 node_ids=[1, 3, 6, 7],
+                stops = [1, 3, 4]
             ),
         ])
         db.commit()
