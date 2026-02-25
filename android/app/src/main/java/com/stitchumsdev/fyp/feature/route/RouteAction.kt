@@ -9,8 +9,10 @@ sealed class RouteAction : Action() {
     data object EndRouting : RouteAction()
     // Next stop in the route
     data object NextStop : RouteAction()
-    // For selecting custom routes.
-    data class AddStop(val stop: LocationModel) : RouteAction()
-    data class RemoveStop(val stop: LocationModel) : RouteAction()
+    // For selecting custom routes
+    data object ClearStops : RouteAction()
+    data class ToggleStop(val stop: LocationModel) : RouteAction()
+    data class ToggleStopById(val locationId: Int) : RouteAction()
+
     data class SelectRoute(val routeId: Int) : RouteAction()
 }

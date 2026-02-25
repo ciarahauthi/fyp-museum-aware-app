@@ -27,12 +27,13 @@ class RouteViewModel (
 
     override fun onAction(action: RouteAction) {
         when (action) {
-            is RouteAction.AddStop -> TODO()
-            RouteAction.EndRouting -> TODO()
+            RouteAction.EndRouting -> endRouting()
             RouteAction.NextStop -> nextStop()
-            is RouteAction.RemoveStop -> TODO()
+            is RouteAction.ToggleStop -> toggleStop(action.stop)
+            RouteAction.ClearStops -> clearStops()
             is RouteAction.StartRouting -> startRoute(action.route)
             is RouteAction.SelectRoute -> getSelectedRoute(action.routeId)
+            is RouteAction.ToggleStopById -> toggleStopById(action.locationId)
         }
     }
 
@@ -88,7 +89,6 @@ class RouteViewModel (
                         return@launch
                     }
 
-
                 val targetIds: List<Int> = route.map { it.id }
 
                 val pathIds: List<Int> = userRepository.getRoute(
@@ -100,11 +100,18 @@ class RouteViewModel (
                     cache.locationById[id]
                 }
 
-                _uiState.value = RouteUiState.Routing(
+                val routingState = RouteUiState.Routing(
                     stops = pathStops,
                     currentIndex = 0,
                     currentLocation = currentLocation
                 )
+                _uiState.value = routingState
+
+                // Trigger if starting position == start of route
+                if (routingState.currentTarget?.id == currentLocation.id) {
+                    stopIndex = 0
+                    nextStop()
+                }
             } catch (e: Exception) {
                 Timber.e(e, "Failed to start route")
                 _uiState.value = RouteUiState.Error
@@ -133,6 +140,53 @@ class RouteViewModel (
         viewModelScope.launch {
             val cache = museumRepository.load()
             _selectedRoute.value = cache.routeById[routeId]
+        }
+    }
+
+    private fun toggleStop(stop: LocationModel) {
+        val state = _uiState.value as? RouteUiState.Default ?: return
+        val exists = state.selectedStops.any { it.id == stop.id }
+        _uiState.value = if (exists) {
+            state.copy(selectedStops = state.selectedStops.filterNot { it.id == stop.id })
+        } else {
+            state.copy(selectedStops = state.selectedStops + stop)
+        }
+    }
+
+    private fun clearStops() {
+        val state = _uiState.value as? RouteUiState.Default ?: return
+        _uiState.value = state.copy(selectedStops = emptyList())
+    }
+
+    private fun toggleStopById(locationId: Int) {
+        val state = _uiState.value as? RouteUiState.Default ?: return
+        viewModelScope.launch {
+            val cache = museumRepository.load()
+            val stop = cache.locationById[locationId] ?: return@launch
+
+            val exists = state.selectedStops.any { it.id == stop.id }
+            _uiState.value = if (exists) {
+                state.copy(selectedStops = state.selectedStops.filterNot { it.id == stop.id })
+            } else {
+                state.copy(selectedStops = state.selectedStops + stop)
+            }
+        }
+    }
+
+    private fun endRouting() {
+        stopIndex = null
+
+        viewModelScope.launch {
+            try {
+                val cache = museumRepository.load()
+                _uiState.value = RouteUiState.Default(
+                    routes = cache.routes,
+                    selectedStops = emptyList()
+                )
+            } catch (t: Throwable) {
+                Timber.e(t, "Failed to end routing")
+                _uiState.value = RouteUiState.Error
+            }
         }
     }
 }
