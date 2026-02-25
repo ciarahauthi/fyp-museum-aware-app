@@ -165,7 +165,6 @@ fun AppNavigation(
             val selectedIds = selectedStops.map { it.id }.toSet()
 
             RouteSelectionScreen(
-                navHostController = navHostController,
                 uiState = searchUiState.value,
                 onSearchAction = { searchViewModel.onAction(it) },
                 selectedStopsCount = selectedStops.size,

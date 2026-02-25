@@ -1,8 +1,8 @@
 package com.stitchumsdev.fyp.feature.scan
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,23 +21,19 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.stitchumsdev.fyp.R
-import com.stitchumsdev.fyp.core.model.BeaconId
 import com.stitchumsdev.fyp.core.model.ObjectModel
 import com.stitchumsdev.fyp.core.ui.OfflineScreen
 import com.stitchumsdev.fyp.core.ui.components.BottomNavigationBar
 import com.stitchumsdev.fyp.core.ui.theme.Typography
 import com.stitchumsdev.fyp.core.ui.theme.fypColours
-import kotlinx.coroutines.delay
 import timber.log.Timber
 
 @Composable
@@ -53,6 +49,7 @@ fun ScanScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .background(fypColours.mainBackground)
                 .padding(innerPadding)
                 .padding(horizontal = dimensionResource(R.dimen.padding_8))
         ) {
@@ -64,7 +61,8 @@ fun ScanScreen(
             ) {
                 Text(
                     text = "Search nearby",
-                    style = Typography.headlineMedium
+                    style = Typography.headlineMedium,
+                    color = fypColours.mainText
                 )
 
                 if (uiState is ScanUiState.Success) {
@@ -72,6 +70,7 @@ fun ScanScreen(
                         Icon(
                             painter = painterResource(R.drawable.ic_refresh),
                             contentDescription = null,
+                            tint = fypColours.mainText,
                             modifier = Modifier.size(dimensionResource(R.dimen.image_small))
                         )
                     }
@@ -127,9 +126,10 @@ fun NoContent(
         ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(
+        Icon(
             painter = painterResource(R.drawable.ic_start_scan),
             contentDescription = null,
+            tint = fypColours.mainText,
             modifier = Modifier
                 .size(dimensionResource(R.dimen.image_large))
         )
@@ -140,8 +140,8 @@ fun NoContent(
             Text(
                 text = stringResource(R.string.scan),
                 style = Typography.titleMedium,
-                textAlign = TextAlign.Center
-
+                textAlign = TextAlign.Center,
+                color = fypColours.mainText
             )
             ScanScreenButton(
                 stringResource(R.string.button_scan),
