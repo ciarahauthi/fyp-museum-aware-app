@@ -115,6 +115,13 @@ class BeaconRepositoryImpl(
 
         val bestLocationId = locationVotes.maxByOrNull { it.value }?.key
 
+        if (bestLocationId != null) {
+            _currentLocationId.value = bestLocationId
+            _currentLocation.value = cache.locationById[bestLocationId]
+        } else {
+            Timber.d("No beacons. Last locationId=${_currentLocationId.value}")
+        }
+
         _currentLocationId.value = bestLocationId
         _currentLocation.value = bestLocationId?.let { cache.locationById[it] }
     }
