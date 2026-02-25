@@ -1,5 +1,6 @@
 package com.stitchumsdev.fyp.feature.route
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,6 +14,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.navigation.NavHostController
 import com.stitchumsdev.fyp.R
 import com.stitchumsdev.fyp.core.model.LocationModel
+import com.stitchumsdev.fyp.core.model.ObjectModel
 import com.stitchumsdev.fyp.core.model.RouteModel
 import com.stitchumsdev.fyp.core.ui.InformationScreen
 import com.stitchumsdev.fyp.core.ui.components.ListItem
@@ -23,7 +25,8 @@ import com.stitchumsdev.fyp.core.ui.theme.fypColours
 fun RouteInformationScreen(
     navHostController: NavHostController,
     routeInfo: RouteModel,
-    onStartRoute: (List<LocationModel>) -> Unit
+    onStartRoute: (List<LocationModel>) -> Unit,
+    onObjectClick: (ObjectModel) -> Unit
 ) {
     InformationScreen(
         navHostController = navHostController,
@@ -53,7 +56,9 @@ fun RouteInformationScreen(
                 ListItem(
                     title = stop.title,
                     category = stop.category,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable{ onObjectClick(stop) }
                 )
             }
         }
