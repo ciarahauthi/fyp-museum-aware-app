@@ -9,23 +9,33 @@ import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,26 +53,33 @@ import com.stitchumsdev.fyp.core.ui.theme.fypColours
 import com.stitchumsdev.fyp.feature.route.RouteUiState
 import kotlinx.coroutines.launch
 import androidx.compose.ui.graphics.Color as composeColor
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapScreen(
     uiState: MapUiState,
     routeUiState: RouteUiState,
     navHostController: NavHostController
 ) {
-    val snackbarHostState = remember { SnackbarHostState() } // ToDo replace with a modal
-    val scope = androidx.compose.runtime.rememberCoroutineScope()
+    var selectedPoint by remember { mutableStateOf<RoomHeatPoint?>(null) }
+
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = false
+    )
 
     Scaffold(
         bottomBar = { BottomNavigationBar(navHostController) },
-        snackbarHost = { androidx.compose.material3.SnackbarHost(snackbarHostState) },
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
-        Column(
+
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
+
             when (uiState) {
                 MapUiState.Error -> {}
                 MapUiState.Loading -> {}
@@ -70,15 +87,23 @@ fun MapScreen(
                     uiState = uiState,
                     routeUiState = routeUiState,
                     onClick = { point ->
-                        val items = uiState.locations[point.toLocationModel()]
-                        scope.launch {
-                            snackbarHostState.showSnackbar(
-                                "${point.name}: x=${"%.3f".format(point.x)}, y=${"%.3f".format(point.y)}" +
-                                        "\n Items here: $items"
-                            )
-                        }
+                        selectedPoint = point
                     }
                 )
+            }
+
+            // Room detail modal
+            if (selectedPoint != null) {
+                ModalBottomSheet(
+                    onDismissRequest = { selectedPoint = null },
+                    sheetState = sheetState,
+                    containerColor = fypColours.secondaryBackground
+                ) {
+                    MapRoomSheet(
+                        uiState = uiState,
+                        selectedPoint = selectedPoint,
+                    )
+                }
             }
         }
     }
@@ -330,16 +355,17 @@ fun DotLegend(
         modifier = modifier
             .background(
                 color = fypColours.secondaryBackground,
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(dimensionResource(R.dimen.corner_medium))
             )
-            .padding(12.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+            .padding(dimensionResource(R.dimen.padding_8)),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_8))
     ) {
         Text(
             text = "Map key",
             style = Typography.titleSmall,
             color = fypColours.mainText
         )
+        HorizontalDivider()
 
         LegendRow(color = composeColor.Blue, label = "You are here")
         LegendRow(color = composeColor.Green, label = "Current stop")
@@ -352,18 +378,71 @@ private fun LegendRow(
     color: composeColor,
     label: String
 ) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_8))
+    ) {
         Box(
             modifier = Modifier
-                .size(12.dp)
+                .size(dimensionResource(R.dimen.size_small))
                 .clip(CircleShape)
                 .background(color)
         )
-        Spacer(Modifier.width(10.dp))
+
         Text(
             text = label,
             style = Typography.bodyMedium,
             color = fypColours.secondaryText
         )
+    }
+}
+
+@Composable
+private fun MapRoomSheet(
+    uiState: MapUiState,
+    selectedPoint: RoomHeatPoint?
+) {
+    val success = uiState as? MapUiState.Success
+    if (success == null || selectedPoint == null) return
+    val items = success.locations[selectedPoint.toLocationModel()].orEmpty()
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(dimensionResource(R.dimen.padding_16)),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_8))
+    ) {
+        Text(
+            text = selectedPoint.name,
+            style = Typography.titleMedium,
+            color = fypColours.mainText)
+
+        HorizontalDivider()
+
+        Text(
+            text = "Objects here (${items.size})",
+            style = Typography.titleSmall,
+            color = fypColours.mainText
+        )
+
+        if (items.isEmpty()) {
+            Text(
+                text = "No objects listed for this room.",
+                style = Typography.bodyMedium,
+                color = fypColours.secondaryText
+            )
+        } else {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_8))
+            ) {
+                items(items) { obj ->
+                    Text(
+                        text = "• ${obj.title}",
+                        style = Typography.bodyMedium,
+                        color = fypColours.secondaryText
+                    )
+                }
+            }
+        }
     }
 }
