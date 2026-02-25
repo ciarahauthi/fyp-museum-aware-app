@@ -28,7 +28,7 @@ fun ExhibitInformationScreen(
     InformationScreen(
         navHostController = navHostController,
         title = exhibit.title,
-        image = R.drawable.img_rusty //ToDo Change
+        imageUrl = exhibit.imageURl,
     ) {
         val childFriendly = if (exhibit.childFriendly) R.string.yes else R.string.no
         val likes = exhibit.likes

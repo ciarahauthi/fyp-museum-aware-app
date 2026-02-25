@@ -5,5 +5,6 @@ data class RouteModel(
     val name: String,
     val description: String,
     val nodes: List<LocationModel>,
-    val stops: List<ObjectModel>
+    val stops: List<ObjectModel>,
+    val imageUrl: String? = null
 )

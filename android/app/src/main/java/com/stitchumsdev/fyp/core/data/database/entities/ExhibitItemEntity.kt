@@ -17,7 +17,8 @@ data class ExhibitItemEntity(
     val uuid: String,
     val major: Int,
     val minor: Int,
-    val location: Int
+    val location: Int,
+    val imageUrl: String? = null
 ) {
     // Function to convert db item to model for Ui state.
     fun toObjectModel() = ObjectModel(
@@ -32,6 +33,7 @@ data class ExhibitItemEntity(
         uuid = this.uuid,
         major = this.major,
         minor = this.minor,
+        imageURl = this.imageUrl
     )
 }
 

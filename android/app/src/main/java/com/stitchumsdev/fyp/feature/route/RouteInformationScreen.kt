@@ -34,7 +34,7 @@ fun RouteInformationScreen(
     InformationScreen(
         navHostController = navHostController,
         title = routeInfo.name,
-        image = R.drawable.img_rusty // ToDo change
+        imageUrl = routeInfo.imageUrl,
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
