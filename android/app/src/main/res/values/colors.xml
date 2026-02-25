@@ -12,6 +12,7 @@
     <color name="dark">#FF141414</color>
     <color name="parchment">#FFEDEBE7</color>
     <color name="bone">#FFE3D5CA</color>
-    <color name="deep_grey">#FF353535</color>
     <color name="text_grey">#FF696969</color>
+    <color name="olive">#FF9DAB6D</color>
+    <color name="maroon">#FF370617</color>
 </resources>
