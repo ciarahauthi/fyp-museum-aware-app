@@ -119,7 +119,7 @@ class BeaconRepositoryImpl(
             _currentLocationId.value = bestLocationId
             _currentLocation.value = cache.locationById[bestLocationId]
         } else {
-            Timber.d("No beacons. Last locationId=${_currentLocationId.value}")
+            Timber.d("!! No beacons. Last locationId=${_currentLocationId.value}")
         }
 
         _currentLocationId.value = bestLocationId

@@ -2,17 +2,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavHostController
+import com.stitchumsdev.fyp.R
 import com.stitchumsdev.fyp.core.model.ObjectModel
+import com.stitchumsdev.fyp.core.ui.components.CommonTextButton
+import com.stitchumsdev.fyp.core.ui.components.TopBar
 import com.stitchumsdev.fyp.feature.search.SearchAction
 import com.stitchumsdev.fyp.feature.search.SearchUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RouteSelectionScreen(
+    navHostController: NavHostController,
     uiState: SearchUiState,
     onSearchAction: (SearchAction) -> Unit,
     selectedStopsCount: Int,
@@ -24,13 +28,20 @@ fun RouteSelectionScreen(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
+            TopBar(
+                navHostController = navHostController ,
                 title = { Text("Create a route") },
                 actions = {
-                    TextButton(enabled = canStart, onClick = onClearStops) { Text("Clear") }
-                    TextButton(enabled = canStart, onClick = onStart) {
-                        Text("Start ($selectedStopsCount)")
-                    }
+                    CommonTextButton(
+                        text = stringResource(R.string.clear),
+                        enabled = canStart,
+                        onClick = onClearStops
+                    )
+                    CommonTextButton(
+                        text = stringResource(R.string.start) + " ($selectedStopsCount)",
+                        enabled = canStart,
+                        onClick = onStart
+                    )
                 }
             )
         }

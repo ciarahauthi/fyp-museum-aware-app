@@ -14,6 +14,7 @@ data class FypColours(
     val secondaryText: Color = Color.Unspecified,
     val mainBackground: Color = Color.Unspecified,
     val secondaryBackground: Color = Color.Unspecified,
+    val tertiaryBackground: Color = Color.Unspecified,
     val navBar: Color = Color.Unspecified,
 )
 
@@ -22,6 +23,7 @@ fun getLightColors() = FypColours (
     mainText = colorResource(R.color.charcoal),
     mainBackground = colorResource(R.color.parchment),
     secondaryBackground = colorResource(R.color.bone),
+    tertiaryBackground = colorResource(R.color.olive),
     navBar = colorResource(R.color.parchment)
 )
 
@@ -30,8 +32,9 @@ fun getDarkColors() = FypColours (
     mainText = colorResource(R.color.parchment),
     secondaryText = colorResource(R.color.text_grey),
     mainBackground = colorResource(R.color.dark),
-    secondaryBackground = colorResource(R.color.deep_grey),
-    navBar = colorResource(R.color.charcoal)
+    secondaryBackground = colorResource(R.color.charcoal),
+    tertiaryBackground = colorResource(R.color.maroon),
+    navBar = colorResource(R.color.dark)
 )
 
 val fypColours: FypColours
