@@ -21,7 +21,18 @@ class MapViewModel (
     override fun onAction(action: MapScreenAction) {}
 
     init {
-        // Load map
+        // For tracking current location
+        viewModelScope.launch {
+            beaconRepository.currentLocation.collect { loc ->
+                val state = _uiState.value
+                if (state is MapUiState.Success) {
+                    _uiState.value = state.copy(currentLocation = loc)
+                }
+            }
+        }
+    }
+
+    fun loadMap() {
         viewModelScope.launch {
             try {
                 val cache = museumRepository.load()
@@ -38,15 +49,6 @@ class MapViewModel (
             } catch (t: Throwable) {
                 Timber.e(t, "MapViewModel load failed")
                 _uiState.value = MapUiState.Error
-            }
-        }
-        // For tracking current location
-        viewModelScope.launch {
-            beaconRepository.currentLocation.collect { loc ->
-                val state = _uiState.value
-                if (state is MapUiState.Success) {
-                    _uiState.value = state.copy(currentLocation = loc)
-                }
             }
         }
     }

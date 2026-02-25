@@ -66,7 +66,14 @@ fun AppNavigation(
             val uiState = splashViewModel.uiState.collectAsState()
             SplashScreen(
                 uiState = uiState.value,
-                navigateHome = {navHostController.navigate(Home) })
+                navigateHome = {
+                    navHostController.navigate(Home)
+                    // VMs was calling before the API call was finished on fresh install of app. Call only after Splash is done and navigating away.
+                    routeViewModel.loadRoutes()
+                    searchViewModel.loadObjects()
+                    mapViewModel.loadMap()
+                }
+            )
         }
         composable<Home> {
             HomeScreen(
