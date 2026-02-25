@@ -88,7 +88,10 @@ fun AppNavigation(
                 navHostController = navHostController,
                 uiState = uiState.value,
                 onAction = { action ->
-                scanViewModel.onAction(action) }
+                scanViewModel.onAction(action) },
+                onObjectClick = { obj ->
+                    navHostController.navigate(ExhibitInfo(exhibitId = obj.id))
+                },
             )
         }
         composable<Search> {
@@ -165,6 +168,7 @@ fun AppNavigation(
             val selectedIds = selectedStops.map { it.id }.toSet()
 
             RouteSelectionScreen(
+                navHostController = navHostController,
                 uiState = searchUiState.value,
                 onSearchAction = { searchViewModel.onAction(it) },
                 selectedStopsCount = selectedStops.size,
