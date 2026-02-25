@@ -8,14 +8,29 @@ import android.graphics.PointF
 import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
 import com.davemorrissey.labs.subscaleview.ImageSource
@@ -23,8 +38,11 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.stitchumsdev.fyp.R
 import com.stitchumsdev.fyp.core.model.RoomHeatPoint
 import com.stitchumsdev.fyp.core.ui.components.BottomNavigationBar
+import com.stitchumsdev.fyp.core.ui.theme.Typography
+import com.stitchumsdev.fyp.core.ui.theme.fypColours
 import com.stitchumsdev.fyp.feature.route.RouteUiState
 import kotlinx.coroutines.launch
+import androidx.compose.ui.graphics.Color as composeColor
 
 @Composable
 fun MapScreen(
@@ -83,78 +101,92 @@ fun MapSuccess(
     val currentId = routing?.currentTarget?.id
     val nextId = routing?.nextTarget?.id
 
-    AndroidView(
-        modifier = Modifier
-            .fillMaxSize(),
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        AndroidView(
+            modifier = Modifier
+                .fillMaxSize(),
 
-        factory = { context ->
-            // Container to place map view + overlay view on top of each other
-            val container = FrameLayout(context)
+            factory = { context ->
+                // Container to place map view + overlay view on top of each other
+                val container = FrameLayout(context)
 
-            // Zoom & pan image view
-            val mapView = SubsamplingScaleImageView(context).apply {
-                setImage(ImageSource.resource(R.drawable.img_ground_floor))
-            }
+                // Zoom & pan image view
+                val mapView = SubsamplingScaleImageView(context).apply {
+                    setImage(ImageSource.resource(R.drawable.img_ground_floor))
+                }
 
 
-            // Align heatmap points to map image
-            val overlay = HeatOverlayView(context).apply {
-                imageView = mapView
-                points = rooms
-                currentTargetId = currentId
-                nextTargetId = nextId
-                userLocationId = userLocId
-            }
+                // Align heatmap points to map image
+                val overlay = HeatOverlayView(context).apply {
+                    imageView = mapView
+                    points = rooms
+                    currentTargetId = currentId
+                    nextTargetId = nextId
+                    userLocationId = userLocId
+                }
 
-            // Detect point clicks
-            val tapDetector = android.view.GestureDetector(
-                context,
-                object : android.view.GestureDetector.SimpleOnGestureListener() {
+                // Detect point clicks
+                val tapDetector = android.view.GestureDetector(
+                    context,
+                    object : android.view.GestureDetector.SimpleOnGestureListener() {
 
-                    // OnClick detection
-                    override fun onDown(e: android.view.MotionEvent): Boolean {
-                        return true
-                    }
-
-                    override fun onSingleTapUp(e: android.view.MotionEvent): Boolean {
-                        if (!mapView.isReady) return false
-
-                        val hit = findNearestRoom(mapView, rooms, e.x, e.y)
-                        if (hit != null) {
-                            onClick(hit)
+                        // OnClick detection
+                        override fun onDown(e: android.view.MotionEvent): Boolean {
                             return true
                         }
-                        return false
+
+                        override fun onSingleTapUp(e: android.view.MotionEvent): Boolean {
+                            if (!mapView.isReady) return false
+
+                            val hit = findNearestRoom(mapView, rooms, e.x, e.y)
+                            if (hit != null) {
+                                onClick(hit)
+                                return true
+                            }
+                            return false
+                        }
                     }
+                )
+
+                mapView.setOnTouchListener { _, event ->
+                    if (event.pointerCount == 1) {
+                        tapDetector.onTouchEvent(event)
+                    }
+                    false
                 }
+
+                // keep overlay w/ points aligned to image
+                mapView.viewTreeObserver.addOnPreDrawListener {
+                    overlay.invalidate()
+                    true
+                }
+
+                container.addView(mapView, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
+                container.addView(overlay, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
+
+                container
+            },
+            update = { container ->
+                val overlay = container.getChildAt(1) as HeatOverlayView
+                overlay.points = rooms
+                overlay.currentTargetId = currentId
+                overlay.nextTargetId = nextId
+                overlay.userLocationId = userLocId
+            }
+        )
+
+        // Map Legend
+        if (routing != null) {
+            DotLegend(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(dimensionResource(R.dimen.padding_8))
+                    .wrapContentSize()
             )
-
-            mapView.setOnTouchListener { _, event ->
-                if (event.pointerCount == 1) {
-                    tapDetector.onTouchEvent(event)
-                }
-                false
-            }
-
-            // keep overlay w/ points aligned to image
-            mapView.viewTreeObserver.addOnPreDrawListener {
-                overlay.invalidate()
-                true
-            }
-
-            container.addView(mapView, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
-            container.addView(overlay, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
-
-            container
-        },
-        update = { container ->
-            val overlay = container.getChildAt(1) as HeatOverlayView
-            overlay.points = rooms
-            overlay.currentTargetId = currentId
-            overlay.nextTargetId = nextId
-            overlay.userLocationId = userLocId
         }
-    )
+    }
 }
 
 
@@ -287,5 +319,51 @@ class HeatOverlayView(context: Context) : View(context) {
         ringPaint.strokeWidth = maxOf(3f, r * 0.15f)
         val ringRadius = r * (1.2f + 0.8f * pulse)
         canvas.drawCircle(x, y, ringRadius, ringPaint)
+    }
+}
+
+@Composable
+fun DotLegend(
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .background(
+                color = fypColours.secondaryBackground,
+                shape = RoundedCornerShape(12.dp)
+            )
+            .padding(12.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text(
+            text = "Map key",
+            style = Typography.titleSmall,
+            color = fypColours.mainText
+        )
+
+        LegendRow(color = composeColor.Blue, label = "You are here")
+        LegendRow(color = composeColor.Green, label = "Current stop")
+        LegendRow(color = composeColor.Yellow, label = "Next stop")
+    }
+}
+
+@Composable
+private fun LegendRow(
+    color: composeColor,
+    label: String
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Box(
+            modifier = Modifier
+                .size(12.dp)
+                .clip(CircleShape)
+                .background(color)
+        )
+        Spacer(Modifier.width(10.dp))
+        Text(
+            text = label,
+            style = Typography.bodyMedium,
+            color = fypColours.secondaryText
+        )
     }
 }
