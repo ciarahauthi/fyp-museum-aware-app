@@ -6,4 +6,8 @@
     <string name="button_scan">Start scan</string>
     <string name="refresh">Refresh</string>
     <string name="scan">Use Bluetooth to scan for nearby objects</string>
+<!--    Routing Screen-->
+    <string name="want_make_route">Would you like to make your own route?</string>
+    <string name="create_route">Create Route</string>
+
 </resources>

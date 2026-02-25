@@ -1,5 +1,6 @@
 package com.stitchumsdev.fyp.core.data.repository
 
+import com.stitchumsdev.fyp.core.model.AllRoutesResponse
 import com.stitchumsdev.fyp.core.model.LocationResponse
 import com.stitchumsdev.fyp.core.model.ObjectResponse
 import com.stitchumsdev.fyp.core.model.UserResponse
@@ -9,4 +10,6 @@ interface UserRepository {
     suspend fun getObject(data: List<String>): List<ObjectResponse>
     suspend fun getExhibits(): List<ObjectResponse>
     suspend fun getLocations(): List<LocationResponse>
+    suspend fun getRoutes(): List<AllRoutesResponse>
+    suspend fun getRoute(current: Int, targets: List<Int>): List<Int>
 }

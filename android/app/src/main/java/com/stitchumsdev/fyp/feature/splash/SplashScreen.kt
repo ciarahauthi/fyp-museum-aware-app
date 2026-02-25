@@ -10,18 +10,27 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(
+    uiState: SplashUiState,
     navigateHome: () -> Unit
 ) {
-
-    LaunchedEffect(Unit) {
-        delay(1500)
-        navigateHome()
+    LaunchedEffect(uiState) {
+        if (uiState is SplashUiState.Done) {
+            navigateHome()
+        }
     }
 
+    when (uiState) {
+        is SplashUiState.Loading -> SplashLoad()
+        is SplashUiState.Error -> {} //ToDo
+        is SplashUiState.Done -> SplashLoad()
+    }
+}
+
+@Composable
+fun SplashLoad() {
     Scaffold { safePadding ->
         Column(
             modifier = Modifier
@@ -30,7 +39,7 @@ fun SplashScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text("Hello World")
+            Text("Loading")
         }
     }
 }

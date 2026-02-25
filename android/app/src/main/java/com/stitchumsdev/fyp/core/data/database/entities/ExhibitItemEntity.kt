@@ -28,7 +28,10 @@ data class ExhibitItemEntity(
         childFriendly = this.childFriendly,
         likes = this.likes,
         dislikes = this.dislikes,
-        location = this.location
+        location = this.location,
+        uuid = this.uuid,
+        major = this.major,
+        minor = this.minor,
     )
 }
 

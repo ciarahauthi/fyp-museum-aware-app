@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import com.stitchumsdev.fyp.core.ui.components.BottomNavigationBar
@@ -19,12 +18,6 @@ fun HomeScreen(
     navHostController: NavHostController,
     onAction: (HomeScreenAction) -> Unit
 ) {
-    // ToDo move to splash screen, also move to init{}
-    LaunchedEffect(Unit) {
-        onAction(HomeScreenAction.GetAllExhibits)
-        onAction(HomeScreenAction.GetAllLocations)
-    }
-
     Scaffold(
         bottomBar = { BottomNavigationBar(navHostController) },
         modifier = Modifier.fillMaxSize()) { innerPadding ->

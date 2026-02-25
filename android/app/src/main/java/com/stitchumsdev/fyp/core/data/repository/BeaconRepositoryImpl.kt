@@ -2,6 +2,7 @@ package com.stitchumsdev.fyp.core.data.repository
 
 import com.stitchumsdev.fyp.core.model.BeaconId
 import com.stitchumsdev.fyp.core.model.IBeaconData
+import com.stitchumsdev.fyp.core.model.LocationModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,6 +13,7 @@ import timber.log.Timber
 // This repository is for handling the caches for beacon packets.
 // It sends to the API. It is used to find nearby objects
 class BeaconRepositoryImpl(
+    private val museumRepository: MuseumRepository
 ) : BeaconRepository {
     private val maxCacheSize: Int = 10000
     // 10s
@@ -22,12 +24,21 @@ class BeaconRepositoryImpl(
     private val _nearbyObjects = MutableStateFlow<List<BeaconId>>(emptyList())
     override val nearbyObjects: StateFlow<List<BeaconId>> = _nearbyObjects.asStateFlow()
 
+    // For deriving current location
+    private val _currentLocationId = MutableStateFlow<Int?>(null)
+    override val currentLocationId: StateFlow<Int?> = _currentLocationId.asStateFlow()
+
+    private val _currentLocation = MutableStateFlow<LocationModel?>(null)
+    override val currentLocation: StateFlow<LocationModel?> = _currentLocation.asStateFlow()
+
     override suspend fun onBeacon(beacon: IBeaconData) {
         mutex.withLock {
             beaconCache.addPacket(beacon)
             nearbyObjectsCache.addPacket(beacon.toBeaconId())
             _nearbyObjects.value = nearbyObjectsCache.getObjects()
         }
+
+        updateCurrentLocation()
     }
 
     override suspend fun uploadClearPackets() {
@@ -88,5 +99,30 @@ class BeaconRepositoryImpl(
             val cutoffTime = currentTime - updateTime
             cache.entries.removeAll { it.value < cutoffTime }
         }
+    }
+
+    // Derives the current location from the nearby objects cache.
+    // Majority vote = current location
+    private suspend fun updateCurrentLocation() {
+        val cache = museumRepository.load()
+        val nearby = nearbyObjects.value
+
+        val locationVotes: Map<Int, Int> =
+            nearby.mapNotNull { beaconId ->
+                val obj = cache.objectsByBeaconId[beaconId]
+                obj?.location
+            }.groupingBy { it }.eachCount()
+
+        val bestLocationId = locationVotes.maxByOrNull { it.value }?.key
+
+        if (bestLocationId != null) {
+            _currentLocationId.value = bestLocationId
+            _currentLocation.value = cache.locationById[bestLocationId]
+        } else {
+            Timber.d("No beacons. Last locationId=${_currentLocationId.value}")
+        }
+
+        _currentLocationId.value = bestLocationId
+        _currentLocation.value = bestLocationId?.let { cache.locationById[it] }
     }
 }

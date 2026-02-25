@@ -7,6 +7,7 @@ sealed interface MapUiState {
     data object Loading : MapUiState
     data object Error: MapUiState
     data class Success(
-        val locations: Map<LocationModel, List<ObjectModel>>
+        val locations: Map<LocationModel, List<ObjectModel>>,
+        val currentLocation: LocationModel? = null
     ) : MapUiState
 }

@@ -1,5 +1,6 @@
 package com.stitchumsdev.fyp.core.data.remote
 
+import com.stitchumsdev.fyp.core.model.AllRoutesResponse
 import com.stitchumsdev.fyp.core.model.LocationResponse
 import com.stitchumsdev.fyp.core.model.ObjectResponse
 import com.stitchumsdev.fyp.core.model.UserResponse
@@ -20,4 +21,13 @@ interface ApiService {
 
     @GET("api/locations/")
     suspend fun getLocations(): List<LocationResponse>
+
+    @GET("api/routes/")
+    suspend fun getRoutes(): List<AllRoutesResponse>
+
+    @GET("/api/route")
+    suspend fun getRoute(
+        @Query("current") current: Int,
+        @Query("targets") targets: List<Int>
+    ): List<Int>
 }

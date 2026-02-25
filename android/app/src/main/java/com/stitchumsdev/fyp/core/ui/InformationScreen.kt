@@ -1,9 +1,10 @@
 package com.stitchumsdev.fyp.core.ui
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -16,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -27,9 +27,11 @@ import com.stitchumsdev.fyp.core.ui.theme.Typography
 import com.stitchumsdev.fyp.core.ui.theme.fypColours
 
 @Composable
-fun ExhibitScreen(
-    navHostController: NavHostController
-    // ToDo replace with api values
+fun InformationScreen(
+    navHostController: NavHostController,
+    title: String,
+    @DrawableRes image: Int,
+    content: @Composable () -> Unit
 ) {
     Scaffold(
         topBar = { TopBar(navHostController) },
@@ -39,12 +41,12 @@ fun ExhibitScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .background(fypColours.mainBackground)
                 .padding(innerPadding)
-                .verticalScroll(state),
         ) {
             // Item image
             Image(
-                painter = painterResource(R.drawable.img_rusty),
+                painter = painterResource(image),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.heightIn(max = dimensionResource(R.dimen.image_x_large))
@@ -52,24 +54,22 @@ fun ExhibitScreen(
             // Item details
             Surface (
                 color = fypColours.mainBackground,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxSize()
             ) {
                 Column(
                     modifier = Modifier
+                        .fillMaxSize()
                         .padding(dimensionResource(R.dimen.padding_16))
+                        .verticalScroll(state),
                 ) {
                     Text(
-                        text = "Rusty",
+                        text = title,
                         style = Typography.headlineLarge,
                         color = fypColours.mainText
                     )
-                    repeat(5) {
-                        Text(
-                            text = stringResource(R.string.long_string_placeholder),
-                            style = Typography.bodyLarge,
-                            color = fypColours.mainText
-                        )
-                    }
+                    // Item / Route content
+                    content()
                 }
             }
         }
@@ -80,6 +80,11 @@ fun ExhibitScreen(
 @Composable
 fun ExhibitScreenPreview() {
     FypTheme {
-        ExhibitScreen(rememberNavController())
+        InformationScreen(
+            rememberNavController(),
+            title = "Hello World",
+            image = R.drawable.img_rusty,
+            content = {}
+        )
     }
 }
