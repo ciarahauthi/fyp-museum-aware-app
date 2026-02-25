@@ -25,7 +25,8 @@ data class ObjectResponse(
     val uuid: String,
     val major: Int,
     val minor: Int,
-    val location: Int
+    val location: Int,
+    @SerialName("image_url") val imageUrl: String? = null
 ) {
     fun toExhibitEntity() = ExhibitItemEntity(
         id = this.id,
@@ -38,7 +39,8 @@ data class ObjectResponse(
         uuid = this.uuid,
         major = this.major,
         minor = this.minor,
-        location = this.location
+        location = this.location,
+        imageUrl = this.imageUrl
     )
 }
 
@@ -63,13 +65,15 @@ data class AllRoutesResponse(
     val name: String,
     val description: String,
     @SerialName("node_ids") val nodeIds: List<Int>,
-    val stops: List<Int>
+    val stops: List<Int>,
+    @SerialName("image_url") val imageUrl: String? = null
 ) {
     fun toRouteItemEntity() = RouteItemEntity(
         id = this.id,
         name = this.name,
         description = this.description,
         nodeIds = this.nodeIds,
-        stops = this.stops
+        stops = this.stops,
+        imageUrl = this.imageUrl
     )
 }

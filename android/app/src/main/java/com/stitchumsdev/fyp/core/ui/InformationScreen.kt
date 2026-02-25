@@ -1,7 +1,6 @@
 package com.stitchumsdev.fyp.core.ui
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,10 +15,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.stitchumsdev.fyp.R
 import com.stitchumsdev.fyp.core.ui.components.TopBar
 import com.stitchumsdev.fyp.core.ui.theme.FypTheme
@@ -30,7 +29,8 @@ import com.stitchumsdev.fyp.core.ui.theme.fypColours
 fun InformationScreen(
     navHostController: NavHostController,
     title: String,
-    @DrawableRes image: Int,
+    imageUrl: String?,
+    @DrawableRes fallbackImage: Int = R.drawable.ic_no_image,
     content: @Composable () -> Unit
 ) {
     Scaffold(
@@ -45,8 +45,10 @@ fun InformationScreen(
                 .padding(innerPadding)
         ) {
             // Item image
-            Image(
-                painter = painterResource(image),
+            val model: Any = imageUrl?.takeIf { it.isNotBlank() } ?: fallbackImage
+
+            AsyncImage(
+                model = model,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.heightIn(max = dimensionResource(R.dimen.image_x_large))
@@ -81,9 +83,10 @@ fun InformationScreen(
 fun ExhibitScreenPreview() {
     FypTheme {
         InformationScreen(
-            rememberNavController(),
+            navHostController = rememberNavController(),
             title = "Hello World",
-            image = R.drawable.img_rusty,
+            imageUrl = null,
+            fallbackImage = R.drawable.img_rusty,
             content = {}
         )
     }

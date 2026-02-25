@@ -16,9 +16,10 @@ class SearchViewModel(
     private val _uiState = MutableStateFlow<SearchUiState>(SearchUiState.Loading)
     val uiState = _uiState.asStateFlow()
 
-    init {
+    fun loadObjects() {
         viewModelScope.launch {
             try {
+                museumRepository.clearCache()
                 val objects = museumRepository.load().objects
                 _uiState.value = SearchUiState.Default(objects = objects)
             } catch (t: Throwable) {

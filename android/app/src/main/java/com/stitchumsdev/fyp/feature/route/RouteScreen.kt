@@ -28,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 import com.stitchumsdev.fyp.R
 import com.stitchumsdev.fyp.core.model.RouteModel
 import com.stitchumsdev.fyp.core.navigation.RouteInfo
@@ -143,12 +144,16 @@ fun RouteItem(
         modifier = modifier
     ){
         Box{
-            Image(
-                painter = painterResource(R.drawable.img_rusty),
+            val model: Any = route.imageUrl?.takeIf { it.isNotBlank() }
+                ?: R.drawable.ic_no_image
+
+            AsyncImage(
+                model = model,
                 contentDescription = null,
                 modifier = Modifier.heightIn(max = 200.dp),
                 contentScale = ContentScale.Crop
             )
+
             Box(
                 modifier = Modifier
                     .padding(dimensionResource(R.dimen.padding_8))

@@ -19,5 +19,7 @@
     <string name="current_loc">Current Location:</string>
     <string name="next_stops">Next Stops:</string>
     <string name="left_stops">Stops left:</string>
-    <string name="items_in_route">"Items in this route"</string>
+    <string name="items_in_route">Items in this route</string>
+    <string name="grant_permissions">Grand Permissions</string>
+    <string name="require_permissions">This app requires Bluetooth and Location permissions to work.</string>
 </resources>

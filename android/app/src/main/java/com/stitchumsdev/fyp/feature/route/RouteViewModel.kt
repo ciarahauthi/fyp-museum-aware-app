@@ -38,17 +38,6 @@ class RouteViewModel (
     }
 
     init{
-        viewModelScope.launch {
-            try {
-                val cache = museumRepository.load()
-                _uiState.value = RouteUiState.Default(routes = cache.routes)
-                Timber.d("!! routes: ${uiState.value}")
-            } catch (t: Throwable) {
-                Timber.e("Error: $t")
-                _uiState.value = RouteUiState.Error
-            }
-        }
-
         // Track current location
         viewModelScope.launch {
             beaconRepository.currentLocation.collect { location ->
@@ -69,6 +58,24 @@ class RouteViewModel (
                         stopIndex = null
                     }
                 }
+            }
+        }
+    }
+
+    fun loadRoutes() {
+        viewModelScope.launch {
+            try {
+                museumRepository.clearCache()
+                val cache = museumRepository.load()
+
+                val current = _uiState.value
+                _uiState.value = when (current) {
+                    is RouteUiState.Routing -> current
+                    else -> RouteUiState.Default(routes = cache.routes)
+                }
+            } catch (t: Throwable) {
+                Timber.e(t, "!! Failed to load routes")
+                _uiState.value = RouteUiState.Error
             }
         }
     }
