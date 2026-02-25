@@ -27,9 +27,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.stitchumsdev.fyp.R
-import com.stitchumsdev.fyp.core.model.LocationModel
 import com.stitchumsdev.fyp.core.model.RouteModel
 import com.stitchumsdev.fyp.core.navigation.RouteInfo
+import com.stitchumsdev.fyp.core.navigation.RouteSelection
 import com.stitchumsdev.fyp.core.ui.components.BottomNavigationBar
 import com.stitchumsdev.fyp.core.ui.components.TopBar
 import com.stitchumsdev.fyp.core.ui.theme.Typography
@@ -60,8 +60,6 @@ fun RouteScreen(
                 is RouteUiState.Default -> RouteDefault(
                     navHostController = navHostController,
                     uiState = uiState,
-                    onCreateRoute = {  }, // ToDo
-                    onAction = onAction
                 )
                 is RouteUiState.Routing -> RouteRouting(
                     uiState,
@@ -75,8 +73,6 @@ fun RouteScreen(
 fun RouteDefault(
     navHostController: NavHostController,
     uiState: RouteUiState.Default,
-    onCreateRoute: () -> Unit,
-    onAction: (RouteAction) -> Unit
 ) {
     val routes = uiState.routes
     // List of predetermined routes
@@ -119,12 +115,10 @@ fun RouteDefault(
                 )
             )
             Button(
-                // ToDo finish ui.
-                onClick = { onAction(RouteAction.StartRouting(LocationModel.mock())) }
+                onClick = { navHostController.navigate(RouteSelection) }
             ) {
                 Text(stringResource(R.string.create_route))
             }
-
         }
     }
 }
@@ -180,16 +174,25 @@ fun RouteRouting(
     uiState: RouteUiState.Routing,
     onAction: (RouteAction) -> Unit
 ) {
-    val stops = uiState.stops
+    val stopNames = uiState.stops.map { it.name }
     val currLoc = uiState.currentLocation
 
-    Text("You are routing")
-    Text("Stops left: $stops")
-    Text("Current: $currLoc")
-    //ToDo remove / update. testing purposes
-    Button(
-        onClick = { onAction(RouteAction.NextStop) }
+    Column(
+        modifier = Modifier.padding(dimensionResource(R.dimen.padding_8))
     ) {
-        Text("Next stop")
+        Text("You are routing")
+
+        HorizontalDivider()
+
+        Text("Current Location: ${currLoc?.name}")
+
+        Text("Next Stops: $stopNames")
+        Text("Stops left: ${stopNames.size}")
+
+        Button(
+            onClick = { onAction(RouteAction.EndRouting) }
+        ) {
+            Text("End Routing")
+        }
     }
 }
