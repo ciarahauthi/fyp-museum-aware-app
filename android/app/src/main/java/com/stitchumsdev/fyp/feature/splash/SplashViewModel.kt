@@ -25,29 +25,26 @@ class SplashViewModel(
 
     init {
         viewModelScope.launch {
-            viewModelScope.launch {
-                try {
-                    val exhibits = userRepository.getExhibits()
-                    val locations = userRepository.getLocations()
-                    val routes = userRepository.getRoutes()
+            try {
+                val exhibits = userRepository.getExhibits()
+                val locations = userRepository.getLocations()
+                val routes = userRepository.getRoutes()
 
-                    withContext(Dispatchers.IO) {
-                        appDatabase.exhibitItemDao().upsertAll(exhibits.map { it.toExhibitEntity() })
-                        appDatabase.locationItemDao().upsertAll(locations.map { it.toLocationItemEntity() })
-                        appDatabase.routeItemDao().upsertAll(routes.map { it.toRouteItemEntity() })
-                    }
-
-                    museumRepository.clearCache()
-                    museumRepository.warmUp()
-
-                    _uiState.value = SplashUiState.Done
-                    Timber.d("!! Load Success")
-                } catch (e: Exception) {
-                    Timber.e(e, "!! Warm-up failed")
-                    _uiState.value = SplashUiState.Error
+                withContext(Dispatchers.IO) {
+                    appDatabase.exhibitItemDao().upsertAll(exhibits.map { it.toExhibitEntity() })
+                    appDatabase.locationItemDao().upsertAll(locations.map { it.toLocationItemEntity() })
+                    appDatabase.routeItemDao().upsertAll(routes.map { it.toRouteItemEntity() })
                 }
-            }
 
+                museumRepository.clearCache()
+                museumRepository.warmUp()
+
+                _uiState.value = SplashUiState.Done
+                Timber.d("!! Load Success")
+            } catch (e: Exception) {
+                Timber.e(e, "!! Warm-up failed")
+                _uiState.value = SplashUiState.Error
+            }
         }
     }
 }
