@@ -1,8 +1,6 @@
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -21,13 +18,13 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.stitchumsdev.fyp.R
 import com.stitchumsdev.fyp.core.model.ObjectModel
+import com.stitchumsdev.fyp.core.ui.components.ExhibitRow
 import com.stitchumsdev.fyp.core.ui.theme.Typography
 import com.stitchumsdev.fyp.core.ui.theme.fypColours
 import com.stitchumsdev.fyp.feature.search.SearchAction
@@ -119,64 +116,23 @@ fun SearchContent(
                         items(filtered, key = { it.id }) { obj ->
                             val isSelected = selectedIds.contains(obj.id)
 
-                            Row(
+                            ExhibitRow(
+                                obj = obj,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .clickable {
                                         if (selectionMode) onToggleSelect(obj) else onObjectClick(obj)
                                     },
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Column(
-                                    modifier = Modifier.weight(1f)
-                                ) { ExhibitRow(obj = obj) }
+                                selectionMode = selectionMode,
+                                isSelected = isSelected,
+                                onToggleSelect = { onToggleSelect(obj) },
+                                )
 
-                                if (selectionMode) {
-                                    Checkbox(
-                                        checked = isSelected,
-                                        onCheckedChange = { onToggleSelect(obj) }
-                                    )
-                                } else {
-                                    Icon(
-                                        painter = painterResource(R.drawable.ic_chevron),
-                                        contentDescription = null,
-                                        modifier = Modifier.size(dimensionResource(R.dimen.icon_medium))
-                                    )
-                                }
-                            }
                             HorizontalDivider()
                         }
                     }
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun ExhibitRow(
-    obj: ObjectModel
-) {
-    val title = obj.title.ifBlank { "Untitled" }
-    val description = obj.description
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_4))
-    ) {
-        // Title
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium,
-            color = fypColours.mainText
-        )
-        // Description
-        Text(
-            text = description,
-            maxLines = 2,
-            style = MaterialTheme.typography.bodyMedium,
-            color = fypColours.secondaryText
-        )
     }
 }

@@ -1,7 +1,7 @@
 package com.stitchumsdev.fyp.feature.scan
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -32,6 +31,8 @@ import com.stitchumsdev.fyp.R
 import com.stitchumsdev.fyp.core.model.ObjectModel
 import com.stitchumsdev.fyp.core.ui.OfflineScreen
 import com.stitchumsdev.fyp.core.ui.components.BottomNavigationBar
+import com.stitchumsdev.fyp.core.ui.components.CommonButton
+import com.stitchumsdev.fyp.core.ui.components.ExhibitRow
 import com.stitchumsdev.fyp.core.ui.theme.Typography
 import com.stitchumsdev.fyp.core.ui.theme.fypColours
 import timber.log.Timber
@@ -40,7 +41,8 @@ import timber.log.Timber
 fun ScanScreen(
     navHostController: NavHostController,
     uiState: ScanUiState,
-    onAction: (ScanScreenAction) -> Unit
+    onAction: (ScanScreenAction) -> Unit,
+    onObjectClick: (ObjectModel) -> Unit,
 ) {
     Scaffold(
         bottomBar = { BottomNavigationBar(navHostController) },
@@ -90,28 +92,16 @@ fun ScanScreen(
                     Timber.d("!! No Content state")
                     NoContent( onAction = { action -> onAction(action) } )
                 }
-                is ScanUiState.Success -> Content(uiState.objects, onAction = { action -> onAction(action) })
+                is ScanUiState.Success -> Content(
+                    list = uiState.objects,
+                    onAction = { action -> onAction(action) },
+                    onObjectClick = onObjectClick
+                )
             }
         }
     }
 }
 
-@Composable
-fun ScanScreenButton(
-    text: String,
-    onAction: (ScanScreenAction) -> Unit
-) {
-    Button(
-        onClick = { onAction(ScanScreenAction.GetNearbyObjects) }
-    ) {
-        Text(
-            text = text,
-            style = Typography.bodyLarge.copy(
-                color = fypColours.mainText
-            )
-        )
-    }
-}
 @Composable
 fun NoContent(
     onAction: (ScanScreenAction) -> Unit
@@ -143,9 +133,9 @@ fun NoContent(
                 textAlign = TextAlign.Center,
                 color = fypColours.mainText
             )
-            ScanScreenButton(
-                stringResource(R.string.button_scan),
-                onAction = onAction
+            CommonButton(
+                text = stringResource(R.string.button_scan),
+                onClick = { onAction(ScanScreenAction.GetNearbyObjects) }
             )
         }
     }
@@ -167,7 +157,8 @@ fun Loading() {
 @Composable
 fun Content(
     list: List<ObjectModel>,
-    onAction: (ScanScreenAction) -> Unit
+    onAction: (ScanScreenAction) -> Unit,
+    onObjectClick: (ObjectModel) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -176,42 +167,10 @@ fun Content(
     ) {
         list.forEach { item ->
             HorizontalDivider()
-            ListItem(item)
-        }
-    }
-}
-
-@Composable
-fun ListItem(
-    item: ObjectModel,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = modifier.fillMaxWidth()
-    ) {
-        // ToDo put image here
-
-        Column {
-            // Title
-            Text(
-                item.title,
-                textAlign = TextAlign.Center,
-                style = Typography.titleMedium
-            )
-            // Category
-            Text(
-                item.category,
-                textAlign = TextAlign.Center,
-                style = Typography.bodyLarge
+            ExhibitRow(
+                obj = item,
+                modifier = Modifier.clickable { onObjectClick(item) }
             )
         }
-
-        Image(
-            painter = painterResource(R.drawable.ic_chevron),
-            contentDescription = null,
-            modifier = Modifier.size(dimensionResource(R.dimen.image_small))
-        )
     }
 }

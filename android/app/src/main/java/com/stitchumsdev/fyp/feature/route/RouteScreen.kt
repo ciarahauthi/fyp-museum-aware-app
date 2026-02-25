@@ -7,12 +7,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -24,6 +25,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.stitchumsdev.fyp.R
@@ -31,7 +33,7 @@ import com.stitchumsdev.fyp.core.model.RouteModel
 import com.stitchumsdev.fyp.core.navigation.RouteInfo
 import com.stitchumsdev.fyp.core.navigation.RouteSelection
 import com.stitchumsdev.fyp.core.ui.components.BottomNavigationBar
-import com.stitchumsdev.fyp.core.ui.components.TopBar
+import com.stitchumsdev.fyp.core.ui.components.CommonButton
 import com.stitchumsdev.fyp.core.ui.theme.Typography
 import com.stitchumsdev.fyp.core.ui.theme.fypColours
 
@@ -42,7 +44,6 @@ fun RouteScreen(
     onAction: (RouteAction) -> Unit
 ) {
     Scaffold(
-        topBar = { TopBar(navHostController) },
         bottomBar = { BottomNavigationBar(navHostController) },
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
@@ -77,7 +78,7 @@ fun RouteDefault(
     val routes = uiState.routes
     // List of predetermined routes
     Column(
-        modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_8)),
+        modifier = Modifier.padding(dimensionResource(R.dimen.padding_8)),
         verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_8))
     ) {
         Text(
@@ -99,25 +100,35 @@ fun RouteDefault(
         // Create routes
         Column(
             modifier = Modifier
-                .background(color = fypColours.secondaryBackground),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_route),
-                contentDescription = null,
-                tint = fypColours.mainText,
-                modifier = Modifier.size(dimensionResource(R.dimen.icon_medium)),
-            )
-            Text(
-                text = stringResource(R.string.want_make_route),
-                style = Typography.titleMedium.copy(
-                    color = fypColours.mainText
+                .fillMaxWidth()
+                .background(
+                    color = fypColours.secondaryBackground,
+                    shape = RoundedCornerShape(dimensionResource(R.dimen.corner_medium))
                 )
-            )
-            Button(
-                onClick = { navHostController.navigate(RouteSelection) }
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(dimensionResource(R.dimen.padding_8)),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(stringResource(R.string.create_route))
+                Icon(
+                    painter = painterResource(R.drawable.ic_route),
+                    contentDescription = null,
+                    tint = fypColours.mainText,
+                    modifier = Modifier.size(dimensionResource(R.dimen.icon_medium)),
+                )
+                Text(
+                    text = stringResource(R.string.want_make_route),
+                    style = Typography.titleMedium.copy(
+                        color = fypColours.mainText,
+                        textAlign = TextAlign.Center
+                    )
+                )
+                CommonButton(
+                    text = stringResource(R.string.create_route),
+                    onClick = { navHostController.navigate(RouteSelection) }
+                )
             }
         }
     }
@@ -180,19 +191,31 @@ fun RouteRouting(
     Column(
         modifier = Modifier.padding(dimensionResource(R.dimen.padding_8))
     ) {
-        Text("You are routing")
+        Text(
+            text = stringResource(R.string.routing),
+            style = Typography.labelLarge,
+            color = fypColours.mainText
+        )
 
         HorizontalDivider()
 
-        Text("Current Location: ${currLoc?.name}")
+        Text(
+            text = stringResource(R.string.current_loc) + " ${currLoc?.name}",
+            style = Typography.bodyLarge,
+            color = fypColours.mainText)
 
-        Text("Next Stops: $stopNames")
-        Text("Stops left: ${stopNames.size}")
+        Text(
+            text = stringResource(R.string.next_stops) + stopNames,
+            style = Typography.bodyLarge,
+            color = fypColours.mainText)
+        Text(
+            text = stringResource(R.string.left_stops) + " ${stopNames.size}",
+            style = Typography.bodyLarge,
+            color = fypColours.mainText)
 
-        Button(
-            onClick = { onAction(RouteAction.EndRouting) }
-        ) {
-            Text("End Routing")
-        }
+        CommonButton(
+            text = stringResource(R.string.end_routing),
+            onClick = { onAction(RouteAction.EndRouting) },
+        )
     }
 }
