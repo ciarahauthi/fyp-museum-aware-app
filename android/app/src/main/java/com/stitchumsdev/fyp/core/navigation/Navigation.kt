@@ -1,11 +1,15 @@
 package com.stitchumsdev.fyp.core.navigation
 
+import RouteSelectionScreen
+import SearchScreen
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.stitchumsdev.fyp.core.ui.ExhibitInformationScreen
 import com.stitchumsdev.fyp.feature.home.HomeScreen
 import com.stitchumsdev.fyp.feature.home.HomeViewModel
 import com.stitchumsdev.fyp.feature.map.MapScreen
@@ -13,13 +17,14 @@ import com.stitchumsdev.fyp.feature.map.MapViewModel
 import com.stitchumsdev.fyp.feature.route.RouteAction
 import com.stitchumsdev.fyp.feature.route.RouteInformationScreen
 import com.stitchumsdev.fyp.feature.route.RouteScreen
+import com.stitchumsdev.fyp.feature.route.RouteUiState
 import com.stitchumsdev.fyp.feature.route.RouteViewModel
 import com.stitchumsdev.fyp.feature.scan.ScanScreen
 import com.stitchumsdev.fyp.feature.scan.ScanViewModel
-import com.stitchumsdev.fyp.feature.search.SearchScreen
+import com.stitchumsdev.fyp.feature.search.SearchUiState
+import com.stitchumsdev.fyp.feature.search.SearchViewModel
 import com.stitchumsdev.fyp.feature.splash.SplashScreen
 import com.stitchumsdev.fyp.feature.splash.SplashViewModel
-import com.stitchumsdev.fyp.feature.test.TestScreenViewModel
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 
@@ -37,19 +42,21 @@ object Scan
 object Route
 @Serializable
 data class RouteInfo(val routeId: Int)
-// ToDo: remove on deployment
 @Serializable
-object Test
+data class ExhibitInfo(val exhibitId: Int)
+@Serializable
+object RouteSelection
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppNavigation(
     navHostController: NavHostController,
-    testViewModel: TestScreenViewModel = koinViewModel(),
     scanViewModel: ScanViewModel = koinViewModel(),
     homeViewModel: HomeViewModel = koinViewModel(),
     mapViewModel: MapViewModel = koinViewModel(),
     routeViewModel: RouteViewModel = koinViewModel(),
-    splashViewModel: SplashViewModel = koinViewModel()
+    splashViewModel: SplashViewModel = koinViewModel(),
+    searchViewModel: SearchViewModel = koinViewModel()
 ) {
     NavHost(
         navController = navHostController,
@@ -85,8 +92,15 @@ fun AppNavigation(
             )
         }
         composable<Search> {
+            val uiState = searchViewModel.uiState.collectAsState()
             SearchScreen(
-                navHostController = navHostController)
+                navHostController = navHostController,
+                uiState = uiState.value,
+                onAction = { action -> searchViewModel.onAction(action) },
+                onObjectClick = { obj ->
+                    navHostController.navigate(ExhibitInfo(exhibitId = obj.id))
+                }
+            )
         }
         composable<Route> {
             val uiState = routeViewModel.uiState.collectAsState()
@@ -109,6 +123,9 @@ fun AppNavigation(
                 RouteInformationScreen(
                     navHostController = navHostController,
                     routeInfo = routeInfo,
+                    onObjectClick = { obj ->
+                        navHostController.navigate(ExhibitInfo(exhibitId = obj.id))
+                    },
                     onStartRoute = { route ->
                         routeViewModel.onAction(RouteAction.StartRouting(route))
                         navHostController.popBackStack()
@@ -117,6 +134,52 @@ fun AppNavigation(
             } else {
                 // ToDo Loading Screen
             }
+        }
+
+        composable<ExhibitInfo> { backStackEntry ->
+            val exhibitId = backStackEntry.arguments?.getInt("exhibitId") ?: return@composable
+
+            val searchState = searchViewModel.uiState.collectAsState().value
+            val exhibit = (searchState as? SearchUiState.Default)
+                ?.objects
+                ?.firstOrNull { it.id == exhibitId }
+
+            if (exhibit != null) {
+                ExhibitInformationScreen(
+                    navHostController = navHostController,
+                    exhibit = exhibit
+                )
+            } else {
+                // TODO loading
+            }
+        }
+
+        composable<RouteSelection> {
+            val searchUiState = searchViewModel.uiState.collectAsState()
+            val routeUiState = routeViewModel.uiState.collectAsState()
+
+            val selectedStops =
+                (routeUiState.value as? RouteUiState.Default)
+                    ?.selectedStops.orEmpty()
+
+            val selectedIds = selectedStops.map { it.id }.toSet()
+
+            RouteSelectionScreen(
+                navHostController = navHostController,
+                uiState = searchUiState.value,
+                onSearchAction = { searchViewModel.onAction(it) },
+                selectedStopsCount = selectedStops.size,
+                canStart = selectedStops.isNotEmpty(),
+                selectedIds = selectedIds,
+                onClearStops = { routeViewModel.onAction(RouteAction.ClearStops) },
+                onStart = {
+                    routeViewModel.onAction(RouteAction.StartRouting(selectedStops))
+                    navHostController.popBackStack()
+                },
+                onToggleSelect = { obj ->
+                    routeViewModel.onAction(RouteAction.ToggleStopById(obj.location))
+                }
+            )
         }
     }
 }
