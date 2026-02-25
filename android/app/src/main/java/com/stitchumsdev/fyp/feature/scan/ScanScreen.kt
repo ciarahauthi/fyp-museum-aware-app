@@ -94,7 +94,6 @@ fun ScanScreen(
                 }
                 is ScanUiState.Success -> Content(
                     list = uiState.objects,
-                    onAction = { action -> onAction(action) },
                     onObjectClick = onObjectClick
                 )
             }
@@ -157,7 +156,6 @@ fun Loading() {
 @Composable
 fun Content(
     list: List<ObjectModel>,
-    onAction: (ScanScreenAction) -> Unit,
     onObjectClick: (ObjectModel) -> Unit
 ) {
     Column(
