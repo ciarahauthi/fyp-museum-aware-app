@@ -30,7 +30,7 @@ fun ExhibitRow(
 
 ) {
     val title = obj.title.ifBlank { "Untitled" }
-    val description = obj.description
+    val description = obj.category
 
     Row(
         modifier = modifier
