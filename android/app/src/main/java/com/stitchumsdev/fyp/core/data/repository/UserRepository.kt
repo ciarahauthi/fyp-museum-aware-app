@@ -12,4 +12,5 @@ interface UserRepository {
     suspend fun getLocations(): List<LocationResponse>
     suspend fun getRoutes(): List<AllRoutesResponse>
     suspend fun getRoute(current: Int, targets: List<Int>): List<Int>
+    suspend fun sendExhibitRating(id: Int, rating: Boolean)
 }

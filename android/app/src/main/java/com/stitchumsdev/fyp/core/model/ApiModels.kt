@@ -77,3 +77,9 @@ data class AllRoutesResponse(
         imageUrl = this.imageUrl
     )
 }
+
+@Serializable
+data class RateRequest(
+    @SerialName("exhibit_id") val exhibitId: Int,
+    val rating: Boolean
+)
