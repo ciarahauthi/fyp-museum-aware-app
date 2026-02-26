@@ -87,3 +87,7 @@ class RouteRead(BaseModel):
     image_url: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)
+
+class RateRequest(BaseModel):
+    exhibit_id: int
+    rating: bool  # True = like, False = dislike
