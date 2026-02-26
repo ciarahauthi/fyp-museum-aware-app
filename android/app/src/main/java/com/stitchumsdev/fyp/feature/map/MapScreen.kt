@@ -23,7 +23,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -36,12 +35,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.stitchumsdev.fyp.R
 import com.stitchumsdev.fyp.core.model.RoomHeatPoint
+import com.stitchumsdev.fyp.core.ui.components.AppModal
 import com.stitchumsdev.fyp.core.ui.components.BottomNavigationBar
 import com.stitchumsdev.fyp.core.ui.theme.Typography
 import com.stitchumsdev.fyp.core.ui.theme.fypColours
@@ -58,7 +59,7 @@ fun MapScreen(
     var selectedPoint by remember { mutableStateOf<RoomHeatPoint?>(null) }
 
     val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = false
+        skipPartiallyExpanded = true
     )
 
     Scaffold(
@@ -86,15 +87,14 @@ fun MapScreen(
 
             // Room detail modal
             if (selectedPoint != null) {
-                ModalBottomSheet(
-                    onDismissRequest = { selectedPoint = null },
-                    sheetState = sheetState,
-                    containerColor = fypColours.secondaryBackground
+                AppModal(
+                    visible = selectedPoint != null,
+                    onDismiss = { selectedPoint = null },
+                    title = selectedPoint?.name ?: ""
                 ) {
-                    MapRoomSheet(
+                    MapModalContent(
                         uiState = uiState,
-                        selectedPoint = selectedPoint,
-                    )
+                        selectedPoint = selectedPoint)
                 }
             }
         }
@@ -390,50 +390,37 @@ private fun LegendRow(
 }
 
 @Composable
-private fun MapRoomSheet(
+private fun MapModalContent(
     uiState: MapUiState,
     selectedPoint: RoomHeatPoint?
 ) {
-    val success = uiState as? MapUiState.Success
-    if (success == null || selectedPoint == null) return
-    val items = success.locations[selectedPoint.toLocationModel()].orEmpty()
+    val success = uiState as? MapUiState.Success ?: return
+    val point = selectedPoint ?: return
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(dimensionResource(R.dimen.padding_16)),
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_8))
-    ) {
+    val items = success.locations[point.toLocationModel()].orEmpty()
+
+    Text(
+        text = stringResource(R.string.objects_here) + " (${items.size})",
+        style = Typography.titleSmall,
+        color = fypColours.mainText
+    )
+
+    if (items.isEmpty()) {
         Text(
-            text = selectedPoint.name,
-            style = Typography.titleMedium,
-            color = fypColours.mainText)
-
-        HorizontalDivider()
-
-        Text(
-            text = "Objects here (${items.size})",
-            style = Typography.titleSmall,
-            color = fypColours.mainText
+            text = stringResource(R.string.no_objects_in_room),
+            style = Typography.bodyMedium,
+            color = fypColours.secondaryText
         )
-
-        if (items.isEmpty()) {
-            Text(
-                text = "No objects listed for this room.",
-                style = Typography.bodyMedium,
-                color = fypColours.secondaryText
-            )
-        } else {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_8))
-            ) {
-                items(items) { obj ->
-                    Text(
-                        text = "• ${obj.title}",
-                        style = Typography.bodyMedium,
-                        color = fypColours.secondaryText
-                    )
-                }
+    } else {
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_8))
+        ) {
+            items(items) { obj ->
+                Text(
+                    text = "• ${obj.title}",
+                    style = Typography.bodyMedium,
+                    color = fypColours.secondaryText
+                )
             }
         }
     }

@@ -22,4 +22,6 @@
     <string name="items_in_route">Items in this route</string>
     <string name="grant_permissions">Grand Permissions</string>
     <string name="require_permissions">This app requires Bluetooth and Location permissions to work.</string>
+    <string name="no_objects_in_room">No objects listed for this room.</string>
+    <string name="objects_here">Objects here</string>
 </resources>
