@@ -1,6 +1,7 @@
 package com.stitchumsdev.fyp.core.ui.theme
 
 import androidx.compose.material3.Typography
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
@@ -9,7 +10,7 @@ import androidx.compose.ui.unit.sp
 val Typography = Typography(
     displayLarge = TextStyle(
         fontFamily = Dongle,
-        fontWeight = FontWeight.Bold,
+        fontWeight = FontWeight.SemiBold,
         fontSize = 56.sp,
         lineHeight = 56.sp,
         letterSpacing = 0.sp,
@@ -31,15 +32,22 @@ val Typography = Typography(
     titleLarge = TextStyle(
         fontFamily = Dongle,
         fontWeight = FontWeight.Bold,
-        fontSize = 32.sp,
-        lineHeight = 28.sp,
+        fontSize = 34.sp,
+        lineHeight = 34.sp,
         letterSpacing = 0.sp
     ),
     titleMedium = TextStyle(
         fontFamily = Dongle,
         fontWeight = FontWeight.Bold,
-        fontSize = 28.sp,
+        fontSize = 30.sp,
         lineHeight = 28.sp,
+        letterSpacing = 0.sp
+    ),
+    titleSmall = TextStyle(
+        fontFamily = Dongle,
+        fontWeight = FontWeight.Bold,
+        fontSize = 26.sp,
+        lineHeight = 26.sp,
         letterSpacing = 0.sp
     ),
     labelLarge = TextStyle(
