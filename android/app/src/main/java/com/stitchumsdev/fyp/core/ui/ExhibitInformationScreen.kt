@@ -17,13 +17,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.stitchumsdev.fyp.R
 import com.stitchumsdev.fyp.core.model.ObjectModel
+import com.stitchumsdev.fyp.core.ui.components.FeedbackBox
 import com.stitchumsdev.fyp.core.ui.theme.Typography
 import com.stitchumsdev.fyp.core.ui.theme.fypColours
 
 @Composable
 fun ExhibitInformationScreen(
     navHostController: NavHostController,
-    exhibit: ObjectModel
+    exhibit: ObjectModel,
+    onRate: (Int, Boolean) -> Unit
 ) {
     InformationScreen(
         navHostController = navHostController,
@@ -71,6 +73,9 @@ fun ExhibitInformationScreen(
         Text(
             text = exhibit.description,
             style = Typography.bodyLarge,
-            color = fypColours.mainText)
+            color = fypColours.mainText
+        )
+
+        if (exhibit.canRate) FeedbackBox(onRate = { rating -> onRate(exhibit.id, rating) })
     }
 }
