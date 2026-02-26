@@ -19,7 +19,15 @@ class MuseumRepositoryImpl(
         cache?.let { return it }
 
         val built = withContext(Dispatchers.IO) {
-            val objects = appDatabase.exhibitItemDao().getAll().map { it.toObjectModel() }
+            val ratedIds = appDatabase.exhibitRatingDao()
+                .getAllRatedExhibitIds()
+                .toSet()
+
+            val objects = appDatabase.exhibitItemDao()
+                .getAll()
+                .map { entity ->
+                    entity.toObjectModel(canRate = entity.id !in ratedIds)
+                }
             val locations = appDatabase.locationItemDao().getAll().map { it.toLocationModel() }
             val routeEntities = appDatabase.routeItemDao().getAll()
 

@@ -3,8 +3,12 @@ package com.stitchumsdev.fyp.core.data.remote
 import com.stitchumsdev.fyp.core.model.AllRoutesResponse
 import com.stitchumsdev.fyp.core.model.LocationResponse
 import com.stitchumsdev.fyp.core.model.ObjectResponse
+import com.stitchumsdev.fyp.core.model.RateRequest
 import com.stitchumsdev.fyp.core.model.UserResponse
+import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface ApiService {
@@ -30,4 +34,9 @@ interface ApiService {
         @Query("current") current: Int,
         @Query("targets") targets: List<Int>
     ): List<Int>
+
+    @POST("/api/rate")
+    suspend fun sendRating(
+        @Body body: RateRequest
+    ): Response<Unit>
 }

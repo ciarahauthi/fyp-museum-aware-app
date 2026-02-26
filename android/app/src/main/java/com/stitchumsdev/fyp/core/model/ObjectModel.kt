@@ -12,5 +12,6 @@ data class ObjectModel(
     val uuid: String,
     val major: Int,
     val minor: Int,
-    val imageURl: String? = null
+    val imageURl: String? = null,
+    val canRate: Boolean = false
 )

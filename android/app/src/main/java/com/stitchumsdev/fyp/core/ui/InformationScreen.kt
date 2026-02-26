@@ -43,6 +43,7 @@ fun InformationScreen(
                 .fillMaxSize()
                 .background(fypColours.mainBackground)
                 .padding(innerPadding)
+                .verticalScroll(state),
         ) {
             // Item image
             val model: Any = imageUrl?.takeIf { it.isNotBlank() } ?: fallbackImage
@@ -63,7 +64,6 @@ fun InformationScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(dimensionResource(R.dimen.padding_16))
-                        .verticalScroll(state),
                 ) {
                     Text(
                         text = title,

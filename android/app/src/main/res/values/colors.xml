@@ -15,4 +15,6 @@
     <color name="text_grey">#FF696969</color>
     <color name="olive">#FF9DAB6D</color>
     <color name="maroon">#FF370617</color>
+    <color name="thumbs_down">#FFC1121F</color>
+    <color name="thumbs_up">#FF38B000</color>
 </resources>

@@ -4,6 +4,7 @@ import com.stitchumsdev.fyp.core.data.remote.ApiService
 import com.stitchumsdev.fyp.core.model.AllRoutesResponse
 import com.stitchumsdev.fyp.core.model.LocationResponse
 import com.stitchumsdev.fyp.core.model.ObjectResponse
+import com.stitchumsdev.fyp.core.model.RateRequest
 import com.stitchumsdev.fyp.core.model.UserResponse
 
 class UserRepositoryImpl(
@@ -18,4 +19,10 @@ class UserRepositoryImpl(
         current = current,
         targets = targets
     )
+    override suspend fun sendExhibitRating(id: Int, rating: Boolean) { api.sendRating(
+        RateRequest(
+            exhibitId = id,
+            rating = rating
+        )
+    ) }
 }
