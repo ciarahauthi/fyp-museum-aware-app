@@ -21,6 +21,7 @@ import com.stitchumsdev.fyp.feature.route.RouteUiState
 import com.stitchumsdev.fyp.feature.route.RouteViewModel
 import com.stitchumsdev.fyp.feature.scan.ScanScreen
 import com.stitchumsdev.fyp.feature.scan.ScanViewModel
+import com.stitchumsdev.fyp.feature.search.SearchAction
 import com.stitchumsdev.fyp.feature.search.SearchUiState
 import com.stitchumsdev.fyp.feature.search.SearchViewModel
 import com.stitchumsdev.fyp.feature.splash.SplashScreen
@@ -157,7 +158,8 @@ fun AppNavigation(
             if (exhibit != null) {
                 ExhibitInformationScreen(
                     navHostController = navHostController,
-                    exhibit = exhibit
+                    exhibit = exhibit,
+                    onRate = { id, rating -> searchViewModel.onAction(SearchAction.OnRate(id, rating)) }
                 )
             } else {
                 // TODO loading
