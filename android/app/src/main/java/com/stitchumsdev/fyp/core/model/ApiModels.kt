@@ -4,6 +4,8 @@ import com.stitchumsdev.fyp.core.data.database.entities.LocationItemEntity
 import com.stitchumsdev.fyp.core.data.database.entities.RouteItemEntity
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 @Serializable
 data class UserResponse(
@@ -26,8 +28,10 @@ data class ObjectResponse(
     val major: Int,
     val minor: Int,
     val location: Int,
-    @SerialName("image_url") val imageUrl: String? = null
+    @SerialName("image_url") val imageUrl: String? = null,
+    @SerialName("created_at") val createdAt: String
 ) {
+    @OptIn(ExperimentalTime::class)
     fun toExhibitEntity() = ExhibitItemEntity(
         id = this.id,
         title = this.title,
@@ -40,7 +44,8 @@ data class ObjectResponse(
         major = this.major,
         minor = this.minor,
         location = this.location,
-        imageUrl = this.imageUrl
+        imageUrl = this.imageUrl,
+        createdAt = Instant.parse(createdAt).toEpochMilliseconds()
     )
 }
 
@@ -82,4 +87,11 @@ data class AllRoutesResponse(
 data class RateRequest(
     @SerialName("exhibit_id") val exhibitId: Int,
     val rating: Boolean
+)
+
+@Serializable
+data class HomeResponse(
+    @SerialName("top_section") val topSection: List<HomeItem> = emptyList(),
+    @SerialName("mid_section") val midSection: HomeItem? = null,
+    @SerialName("bottom_section") val bottomSection: List<HomeItem> = emptyList()
 )

@@ -25,4 +25,5 @@
     <string name="no_objects_in_room">No objects listed for this room.</string>
     <string name="objects_here">Objects here</string>
     <string name="experience">How was your experience?</string>
+    <string name="routing_tip">You can view your location and the location of the objects in the map screen!</string>
 </resources>

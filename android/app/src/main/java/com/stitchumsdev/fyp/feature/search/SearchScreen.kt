@@ -4,7 +4,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import com.stitchumsdev.fyp.core.model.ObjectModel
+import com.stitchumsdev.fyp.core.model.ExhibitModel
 import com.stitchumsdev.fyp.core.ui.components.BottomNavigationBar
 import com.stitchumsdev.fyp.feature.search.SearchAction
 import com.stitchumsdev.fyp.feature.search.SearchUiState
@@ -14,7 +14,7 @@ fun SearchScreen(
     navHostController: NavHostController,
     uiState: SearchUiState,
     onAction: (SearchAction) -> Unit,
-    onObjectClick: (ObjectModel) -> Unit = {}
+    onObjectClick: (ExhibitModel) -> Unit = {}
 ) {
     Scaffold(
         bottomBar = { BottomNavigationBar(navHostController) },

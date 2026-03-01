@@ -73,13 +73,19 @@ fun AppNavigation(
                     routeViewModel.loadRoutes()
                     searchViewModel.loadObjects()
                     mapViewModel.loadMap()
+                    homeViewModel.loadContent()
                 }
             )
         }
         composable<Home> {
+            val uiState = homeViewModel.uiState.collectAsState()
+
             HomeScreen(
                 navHostController = navHostController,
-                onAction = { action -> homeViewModel.onAction(action) }
+                uiState = uiState.value,
+                onExhibitClick = { exhibit ->
+                    navHostController.navigate(ExhibitInfo(exhibitId = exhibit.id))
+                }
             )
         }
         composable<Map> {

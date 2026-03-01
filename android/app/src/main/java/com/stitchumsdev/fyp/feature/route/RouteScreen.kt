@@ -1,6 +1,5 @@
 package com.stitchumsdev.fyp.feature.route
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -33,6 +32,7 @@ import com.stitchumsdev.fyp.R
 import com.stitchumsdev.fyp.core.model.RouteModel
 import com.stitchumsdev.fyp.core.navigation.RouteInfo
 import com.stitchumsdev.fyp.core.navigation.RouteSelection
+import com.stitchumsdev.fyp.core.ui.components.AppInfoBox
 import com.stitchumsdev.fyp.core.ui.components.BottomNavigationBar
 import com.stitchumsdev.fyp.core.ui.components.CommonButton
 import com.stitchumsdev.fyp.core.ui.theme.Typography
@@ -121,7 +121,7 @@ fun RouteDefault(
                 )
                 Text(
                     text = stringResource(R.string.want_make_route),
-                    style = Typography.titleMedium.copy(
+                    style = Typography.titleSmall.copy(
                         color = fypColours.mainText,
                         textAlign = TextAlign.Center
                     )
@@ -194,11 +194,12 @@ fun RouteRouting(
     val currLoc = uiState.currentLocation
 
     Column(
-        modifier = Modifier.padding(dimensionResource(R.dimen.padding_8))
+        modifier = Modifier.padding(dimensionResource(R.dimen.padding_8)),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_8))
     ) {
         Text(
             text = stringResource(R.string.routing),
-            style = Typography.labelLarge,
+            style = Typography.titleLarge,
             color = fypColours.mainText
         )
 
@@ -221,6 +222,10 @@ fun RouteRouting(
         CommonButton(
             text = stringResource(R.string.end_routing),
             onClick = { onAction(RouteAction.EndRouting) },
+        )
+
+        AppInfoBox(
+            title = stringResource(R.string.routing_tip)
         )
     }
 }

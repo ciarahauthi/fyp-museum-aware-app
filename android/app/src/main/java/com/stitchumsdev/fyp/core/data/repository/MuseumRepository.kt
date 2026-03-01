@@ -2,7 +2,7 @@ package com.stitchumsdev.fyp.core.data.repository
 
 import com.stitchumsdev.fyp.core.model.BeaconId
 import com.stitchumsdev.fyp.core.model.LocationModel
-import com.stitchumsdev.fyp.core.model.ObjectModel
+import com.stitchumsdev.fyp.core.model.ExhibitModel
 import com.stitchumsdev.fyp.core.model.RouteModel
 
 interface MuseumRepository {
@@ -13,10 +13,10 @@ interface MuseumRepository {
 
 data class MuseumCache(
     val locations: List<LocationModel>,
-    val objects: List<ObjectModel>,
+    val objects: List<ExhibitModel>,
     val routes: List<RouteModel>,
     val locationById: Map<Int, LocationModel>,
-    val objectsByLocationId: Map<Int, List<ObjectModel>>,
+    val objectsByLocationId: Map<Int, List<ExhibitModel>>,
     val routeById: Map<Int, RouteModel>,
-    val objectsByBeaconId: Map<BeaconId, ObjectModel>
+    val objectsByBeaconId: Map<BeaconId, ExhibitModel>
 )

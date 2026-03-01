@@ -16,19 +16,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import com.stitchumsdev.fyp.R
-import com.stitchumsdev.fyp.core.model.ObjectModel
+import com.stitchumsdev.fyp.core.model.ExhibitModel
 import com.stitchumsdev.fyp.core.ui.theme.fypColours
 
 
 @Composable
 fun ExhibitRow(
-    obj: ObjectModel,
+    obj: ExhibitModel,
     modifier: Modifier = Modifier,
     selectionMode: Boolean = false,
     isSelected: Boolean = false,
-    onToggleSelect: (ObjectModel) -> Unit = {},
+    onToggleSelect: (ExhibitModel) -> Unit = {},
 
-) {
+    ) {
     val title = obj.title.ifBlank { "Untitled" }
     val description = obj.category
 
@@ -44,7 +44,7 @@ fun ExhibitRow(
             // Title
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.titleSmall,
                 color = fypColours.mainText
             )
             // Description

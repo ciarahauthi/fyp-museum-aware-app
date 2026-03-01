@@ -5,7 +5,7 @@ import com.stitchumsdev.fyp.core.base.BaseViewModel
 import com.stitchumsdev.fyp.core.data.repository.BeaconRepository
 import com.stitchumsdev.fyp.core.data.repository.MuseumRepository
 import com.stitchumsdev.fyp.core.model.LocationModel
-import com.stitchumsdev.fyp.core.model.ObjectModel
+import com.stitchumsdev.fyp.core.model.ExhibitModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -37,7 +37,7 @@ class MapViewModel (
             try {
                 val cache = museumRepository.load()
 
-                val locObjMap: Map<LocationModel, List<ObjectModel>> =
+                val locObjMap: Map<LocationModel, List<ExhibitModel>> =
                     cache.locations.associateWith { loc ->
                         cache.objectsByLocationId[loc.id].orEmpty()
                     }

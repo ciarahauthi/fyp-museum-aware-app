@@ -16,7 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.stitchumsdev.fyp.R
-import com.stitchumsdev.fyp.core.model.ObjectModel
+import com.stitchumsdev.fyp.core.model.ExhibitModel
 import com.stitchumsdev.fyp.core.ui.components.FeedbackBox
 import com.stitchumsdev.fyp.core.ui.theme.Typography
 import com.stitchumsdev.fyp.core.ui.theme.fypColours
@@ -24,13 +24,13 @@ import com.stitchumsdev.fyp.core.ui.theme.fypColours
 @Composable
 fun ExhibitInformationScreen(
     navHostController: NavHostController,
-    exhibit: ObjectModel,
+    exhibit: ExhibitModel,
     onRate: (Int, Boolean) -> Unit
 ) {
     InformationScreen(
         navHostController = navHostController,
         title = exhibit.title,
-        imageUrl = exhibit.imageURl,
+        imageUrl = exhibit.imageUrl,
     ) {
         val childFriendly = if (exhibit.childFriendly) R.string.yes else R.string.no
         val likes = exhibit.likes

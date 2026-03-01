@@ -1,6 +1,7 @@
 package com.stitchumsdev.fyp.core.data.repository
 
 import com.stitchumsdev.fyp.core.model.AllRoutesResponse
+import com.stitchumsdev.fyp.core.model.HomeResponse
 import com.stitchumsdev.fyp.core.model.LocationResponse
 import com.stitchumsdev.fyp.core.model.ObjectResponse
 import com.stitchumsdev.fyp.core.model.UserResponse
@@ -13,4 +14,5 @@ interface UserRepository {
     suspend fun getRoutes(): List<AllRoutesResponse>
     suspend fun getRoute(current: Int, targets: List<Int>): List<Int>
     suspend fun sendExhibitRating(id: Int, rating: Boolean)
+    suspend fun getHomeContent(): HomeResponse
 }

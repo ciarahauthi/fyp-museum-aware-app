@@ -28,7 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavHostController
 import com.stitchumsdev.fyp.R
-import com.stitchumsdev.fyp.core.model.ObjectModel
+import com.stitchumsdev.fyp.core.model.ExhibitModel
 import com.stitchumsdev.fyp.core.ui.OfflineScreen
 import com.stitchumsdev.fyp.core.ui.components.BottomNavigationBar
 import com.stitchumsdev.fyp.core.ui.components.CommonButton
@@ -42,7 +42,7 @@ fun ScanScreen(
     navHostController: NavHostController,
     uiState: ScanUiState,
     onAction: (ScanScreenAction) -> Unit,
-    onObjectClick: (ObjectModel) -> Unit,
+    onObjectClick: (ExhibitModel) -> Unit,
 ) {
     Scaffold(
         bottomBar = { BottomNavigationBar(navHostController) },
@@ -155,13 +155,14 @@ fun Loading() {
 
 @Composable
 fun Content(
-    list: List<ObjectModel>,
-    onObjectClick: (ObjectModel) -> Unit
+    list: List<ExhibitModel>,
+    onObjectClick: (ExhibitModel) -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_8))
     ) {
         list.forEach { item ->
             HorizontalDivider()
