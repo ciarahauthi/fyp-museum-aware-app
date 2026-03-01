@@ -1,6 +1,6 @@
 package com.stitchumsdev.fyp.core.model
 
-data class ObjectModel(
+data class ExhibitModel(
     val id: Int,
     val title: String,
     val description: String,
@@ -12,6 +12,7 @@ data class ObjectModel(
     val uuid: String,
     val major: Int,
     val minor: Int,
-    val imageURl: String? = null,
-    val canRate: Boolean = false
+    val imageUrl: String? = null,
+    val canRate: Boolean = false,
+    val createdAt: Long
 )
