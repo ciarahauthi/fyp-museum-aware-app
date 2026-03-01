@@ -37,8 +37,8 @@ fun FeedbackBox(
     modifier: Modifier = Modifier,
     onRate: (Boolean) -> Unit
 ) {
-    var selection by rememberSaveable { mutableStateOf<Boolean?>(null) }
-    var visible by rememberSaveable { mutableStateOf(true) }
+    var selection by remember { mutableStateOf<Boolean?>(null) }
+    var visible by remember { mutableStateOf(true) }
 
     val fade by animateFloatAsState(
         targetValue = if (selection == null) 1f else 0.25f,
@@ -49,9 +49,12 @@ fun FeedbackBox(
     val downAlpha = if (selection == true) fade else 1f
 
     LaunchedEffect(selection) {
-        if (selection != null) {
+        val s = selection
+        if (s != null) {
             delay(1000)
             visible = false
+            delay(1000)
+            onRate(s)
         }
     }
 
@@ -73,7 +76,7 @@ fun FeedbackBox(
             ) {
                 Text(
                     text = stringResource(R.string.experience),
-                    style = Typography.titleMedium,
+                    style = Typography.titleSmall,
                     color = fypColours.mainText
                 )
 
@@ -88,9 +91,10 @@ fun FeedbackBox(
 
                     IconButton(
                         onClick = {
-                            if (!disableClicks) selection = true
-                            onRate(true)
-                                  },
+                            if (!disableClicks) {
+                                selection = true
+                            }
+                        },
                         enabled = !disableClicks,
                         modifier = Modifier
                             .size(dimensionResource(R.dimen.icon_default))
@@ -106,9 +110,10 @@ fun FeedbackBox(
 
                     IconButton(
                         onClick = {
-                            if (!disableClicks) selection = false
-                            onRate(false)
-                                  },
+                            if (!disableClicks) {
+                                selection = false
+                            }
+                        },
                         enabled = !disableClicks,
                         modifier = Modifier
                             .size(dimensionResource(R.dimen.icon_default))
