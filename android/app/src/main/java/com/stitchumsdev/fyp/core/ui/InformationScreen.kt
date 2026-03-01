@@ -2,6 +2,7 @@ package com.stitchumsdev.fyp.core.ui
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
@@ -63,7 +64,8 @@ fun InformationScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(dimensionResource(R.dimen.padding_16))
+                        .padding(dimensionResource(R.dimen.padding_8)),
+                    verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_8))
                 ) {
                     Text(
                         text = title,
