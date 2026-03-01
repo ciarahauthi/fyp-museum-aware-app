@@ -1,6 +1,7 @@
 package com.stitchumsdev.fyp.core.data.remote
 
 import com.stitchumsdev.fyp.core.model.AllRoutesResponse
+import com.stitchumsdev.fyp.core.model.HomeResponse
 import com.stitchumsdev.fyp.core.model.LocationResponse
 import com.stitchumsdev.fyp.core.model.ObjectResponse
 import com.stitchumsdev.fyp.core.model.RateRequest
@@ -39,4 +40,7 @@ interface ApiService {
     suspend fun sendRating(
         @Body body: RateRequest
     ): Response<Unit>
+
+    @GET("/api/home")
+    suspend fun getHomeContent(): HomeResponse
 }
