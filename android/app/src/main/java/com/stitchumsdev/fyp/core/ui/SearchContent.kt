@@ -1,5 +1,6 @@
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,7 +24,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.stitchumsdev.fyp.R
-import com.stitchumsdev.fyp.core.model.ObjectModel
+import com.stitchumsdev.fyp.core.model.ExhibitModel
 import com.stitchumsdev.fyp.core.ui.components.ExhibitRow
 import com.stitchumsdev.fyp.core.ui.theme.Typography
 import com.stitchumsdev.fyp.core.ui.theme.fypColours
@@ -37,8 +38,8 @@ fun SearchContent(
     onAction: (SearchAction) -> Unit,
     selectionMode: Boolean = false,
     selectedIds: Set<Int> = emptySet(),
-    onToggleSelect: (ObjectModel) -> Unit = {},
-    onObjectClick: (ObjectModel) -> Unit = {},
+    onToggleSelect: (ExhibitModel) -> Unit = {},
+    onObjectClick: (ExhibitModel) -> Unit = {},
 ) {
     Column(
         modifier = modifier
@@ -112,7 +113,9 @@ fun SearchContent(
                 if (filtered.isEmpty()) {
                     Text("No exhibits match “$query”.")
                 } else {
-                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize()
+                        ) {
                         items(filtered, key = { it.id }) { obj ->
                             val isSelected = selectedIds.contains(obj.id)
 
@@ -120,6 +123,7 @@ fun SearchContent(
                                 obj = obj,
                                 modifier = Modifier
                                     .fillMaxWidth()
+                                    .padding(vertical = dimensionResource(R.dimen.padding_8))
                                     .clickable {
                                         if (selectionMode) onToggleSelect(obj) else onObjectClick(obj)
                                     },

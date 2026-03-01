@@ -1,6 +1,6 @@
 package com.stitchumsdev.fyp.feature.search
 
-import com.stitchumsdev.fyp.core.model.ObjectModel
+import com.stitchumsdev.fyp.core.model.ExhibitModel
 
 sealed interface SearchUiState {
     data object Loading : SearchUiState
@@ -8,7 +8,7 @@ sealed interface SearchUiState {
 
     data class Default(
         val searchText: String = "",
-        val objects: List<ObjectModel>
+        val objects: List<ExhibitModel>
     ) : SearchUiState
 
 }

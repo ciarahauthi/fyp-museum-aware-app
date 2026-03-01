@@ -16,7 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavHostController
 import com.stitchumsdev.fyp.R
 import com.stitchumsdev.fyp.core.model.LocationModel
-import com.stitchumsdev.fyp.core.model.ObjectModel
+import com.stitchumsdev.fyp.core.model.ExhibitModel
 import com.stitchumsdev.fyp.core.model.RouteModel
 import com.stitchumsdev.fyp.core.ui.InformationScreen
 import com.stitchumsdev.fyp.core.ui.components.CommonButton
@@ -29,7 +29,7 @@ fun RouteInformationScreen(
     navHostController: NavHostController,
     routeInfo: RouteModel,
     onStartRoute: (List<LocationModel>) -> Unit,
-    onObjectClick: (ObjectModel) -> Unit
+    onObjectClick: (ExhibitModel) -> Unit
 ) {
     InformationScreen(
         navHostController = navHostController,
