@@ -5,7 +5,6 @@ import com.stitchumsdev.fyp.core.model.BeaconEventsRequest
 import com.stitchumsdev.fyp.core.model.HomeResponse
 import com.stitchumsdev.fyp.core.model.LocationResponse
 import com.stitchumsdev.fyp.core.model.ObjectResponse
-import com.stitchumsdev.fyp.core.model.UserResponse
 
 interface UserRepository {
     suspend fun getObject(data: List<String>): List<ObjectResponse>

@@ -8,14 +8,6 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
 @Serializable
-data class UserResponse(
-    val id: Int,
-    @SerialName("first_name") val firstName: String,
-    val surname: String,
-    val email: String
-)
-
-@Serializable
 data class ObjectResponse(
     val id: Int,
     val title: String,

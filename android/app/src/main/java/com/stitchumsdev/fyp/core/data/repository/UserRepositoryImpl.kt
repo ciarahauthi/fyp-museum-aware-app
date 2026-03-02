@@ -7,7 +7,6 @@ import com.stitchumsdev.fyp.core.model.HomeResponse
 import com.stitchumsdev.fyp.core.model.LocationResponse
 import com.stitchumsdev.fyp.core.model.ObjectResponse
 import com.stitchumsdev.fyp.core.model.RateRequest
-import com.stitchumsdev.fyp.core.model.UserResponse
 
 class UserRepositoryImpl(
     private val api: ApiService
