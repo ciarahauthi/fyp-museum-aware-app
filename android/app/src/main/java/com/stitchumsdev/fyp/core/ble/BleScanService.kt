@@ -8,6 +8,7 @@ import android.app.Service
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
+import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
 import androidx.core.app.NotificationCompat
 import com.stitchumsdev.fyp.R
@@ -15,6 +16,8 @@ import com.stitchumsdev.fyp.core.data.repository.BeaconRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
@@ -23,16 +26,26 @@ class BleScanService: Service() {
     private val repository: BeaconRepository by inject()
     private val scope = CoroutineScope(Dispatchers.IO)
 
+    private val flushInterval = 15 * 60000L // 15mins
+
+    @RequiresApi(Build.VERSION_CODES.S)
     @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
     override fun onCreate() {
         super.onCreate()
+        startForeground(1, createNotification())
+
+        scope.launch {
+            while (isActive) {
+                delay(flushInterval)
+                repository.uploadClearPackets()
+            }
+        }
 
         scanner = BleScanner(this) { beacon ->
             scope.launch {
                 repository.onBeacon(beacon)
             }
         }
-        startForeground(1, createNotification())
         scanner.start()
     }
 
@@ -41,6 +54,10 @@ class BleScanService: Service() {
         super.onDestroy()
 
         scanner.stop()
+
+        scope.launch { repository.uploadClearPackets() } // Final flush
+        repository.endSession()
+
         scope.cancel()
     }
 

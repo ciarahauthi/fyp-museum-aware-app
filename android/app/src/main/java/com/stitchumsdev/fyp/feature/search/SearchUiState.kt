@@ -5,7 +5,6 @@ import com.stitchumsdev.fyp.core.model.ExhibitModel
 sealed interface SearchUiState {
     data object Loading : SearchUiState
     data object Error: SearchUiState
-
     data class Default(
         val searchText: String = "",
         val objects: List<ExhibitModel>

@@ -8,14 +8,6 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
 @Serializable
-data class UserResponse(
-    val id: Int,
-    @SerialName("first_name") val firstName: String,
-    val surname: String,
-    val email: String
-)
-
-@Serializable
 data class ObjectResponse(
     val id: Int,
     val title: String,
@@ -94,4 +86,20 @@ data class HomeResponse(
     @SerialName("top_section") val topSection: List<HomeItem> = emptyList(),
     @SerialName("mid_section") val midSection: HomeItem? = null,
     @SerialName("bottom_section") val bottomSection: List<HomeItem> = emptyList()
+)
+
+@Serializable
+data class BeaconEvent(
+    @SerialName("beacon_uuid") val beaconUuid: String,
+    @SerialName("beacon_major") val beaconMajor: Int,
+    @SerialName("beacon_minor") val beaconMinor: Int,
+    val rssi: Int,
+    @SerialName("tx_power") val txPower: Int,
+    @SerialName("recorded_at")val recordedAt: Long // Epoch millis
+)
+
+@Serializable
+data class BeaconEventsRequest(
+    @SerialName("session_id") val sessionId: String,
+    val events: List<BeaconEvent>
 )

@@ -13,6 +13,7 @@ interface BeaconRepository {
     val currentLocationId: StateFlow<Int?>
 
     suspend fun onBeacon(beacon: IBeaconData)
-    // Function to send to server & clear cache on send
     suspend fun uploadClearPackets()
+    // Function to send to server & clear cache on send
+    fun endSession()
 }
