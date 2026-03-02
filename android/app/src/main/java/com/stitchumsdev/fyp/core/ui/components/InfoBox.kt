@@ -12,6 +12,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -25,7 +26,8 @@ import com.stitchumsdev.fyp.core.ui.theme.fypColours
 fun AppInfoBox(
     title: String,
     modifier: Modifier = Modifier,
-    description: String? = null
+    description: String? = null,
+    clickable: Boolean = false,
 ) {
     Card(
         shape = RoundedCornerShape(dimensionResource(R.dimen.corner_small)),
@@ -33,35 +35,51 @@ fun AppInfoBox(
             containerColor = fypColours.secondaryBackground,
             contentColor = fypColours.mainText,
         ),
-        modifier = modifier
+        modifier =  modifier
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(dimensionResource(R.dimen.padding_8)),
-            horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_16))
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(
-                painterResource(R.drawable.ic_information),
-                contentDescription = null,
-                tint = fypColours.mainText,
-                modifier = Modifier.size(dimensionResource(R.dimen.icon_medium))
-            )
-
-            Column {
-                Text(
-                    text = title,
-                    style = Typography.titleSmall,
-                    color = fypColours.mainText
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_8))
+            ) {
+                Icon(
+                    painterResource(R.drawable.ic_information),
+                    contentDescription = null,
+                    tint = fypColours.mainText,
+                    modifier = Modifier.size(dimensionResource(R.dimen.icon_medium))
                 )
 
-                description?.let {
+                Column {
                     Text(
                         text = title,
-                        style = Typography.bodyLarge,
+                        style = Typography.titleSmall,
                         color = fypColours.mainText
                     )
+
+                    description?.let {
+                        Text(
+                            text = title,
+                            style = Typography.bodyLarge,
+                            color = fypColours.mainText
+                        )
+                    }
                 }
+            }
+            if (clickable) {
+                Icon(
+                    painterResource(R.drawable.ic_chevron),
+                    contentDescription = null,
+                    tint = fypColours.mainText,
+                    modifier = Modifier.size(dimensionResource(R.dimen.icon_medium))
+                )
             }
         }
     }
@@ -73,7 +91,8 @@ fun AppInfoBoxPreview() {
     FypTheme {
         AppInfoBox(
             "Hello World!",
-            description = "Some description here!"
+            description = "Some description here!",
+            clickable = true
         )
     }
 }
