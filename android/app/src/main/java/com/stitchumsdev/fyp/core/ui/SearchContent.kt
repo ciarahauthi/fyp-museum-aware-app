@@ -1,18 +1,14 @@
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -21,9 +17,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import com.stitchumsdev.fyp.R
 import com.stitchumsdev.fyp.core.model.ExhibitModel
+import com.stitchumsdev.fyp.core.ui.LoadingScreen
 import com.stitchumsdev.fyp.core.ui.components.ExhibitRow
 import com.stitchumsdev.fyp.core.ui.theme.Typography
 import com.stitchumsdev.fyp.core.ui.theme.fypColours
@@ -44,14 +40,10 @@ fun SearchContent(
         modifier = modifier
             .fillMaxSize()
             .background(fypColours.mainBackground)
-            .padding(dimensionResource(R.dimen.padding_16))
+            .padding(dimensionResource(R.dimen.padding_8))
     ) {
         when (uiState) {
-            SearchUiState.Loading -> { //ToDo Update
-                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-                Spacer(Modifier.height(12.dp))
-                Text("Loading exhibits…")
-            }
+            SearchUiState.Loading -> LoadingScreen()
 
             SearchUiState.Error -> Text("Couldn’t load exhibits.") // ToDo error screen
 
@@ -130,8 +122,6 @@ fun SearchContent(
                                 isSelected = isSelected,
                                 onToggleSelect = { onToggleSelect(obj) },
                                 )
-
-                            HorizontalDivider()
                         }
                     }
                 }
