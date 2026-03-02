@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, ConfigDict
+from pydantic import BaseModel, EmailStr, ConfigDict, Field
 from datetime import datetime
 from typing import Optional, List
 
@@ -112,3 +112,15 @@ class HomeResponse(BaseModel):
     top_section: List[HomeCardOut] = []
     mid_section: Optional[HomeCardOut] = None
     bottom_section: List[HomeCardOut] = []
+
+class BeaconEventIn(BaseModel):
+    beacon_uuid: str
+    beacon_major: int
+    beacon_minor: int
+    rssi: int
+    tx_power: int
+    recorded_at: int = Field(..., description="Epoch milliseconds from device")
+
+class BeaconEventsRequest(BaseModel):
+    session_id: str
+    events: List[BeaconEventIn]

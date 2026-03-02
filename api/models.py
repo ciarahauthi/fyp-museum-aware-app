@@ -1,5 +1,5 @@
 from database import Base
-from sqlalchemy import Column, Integer, String, Boolean, TIMESTAMP, text, ForeignKey, Numeric, JSON, Enum, Text
+from sqlalchemy import Column, Integer, String, Boolean, TIMESTAMP, text, ForeignKey, Numeric, JSON, Enum, Text, Index
 from sqlalchemy.orm import relationship
 import enum
 
@@ -78,8 +78,8 @@ class Beacon(Base):
     name = Column(String(100), nullable=False)
     description = Column(Text, nullable=False)
     uuid = Column(String(100), nullable=False)
-    major = Column(Integer, nullable=False, server_default="0")
-    minor = Column(Integer, nullable=False, server_default="0")
+    major = Column(Integer, nullable=False)
+    minor = Column(Integer, nullable=False)
 
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=TS_DEFAULT)
     updated_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=TS_DEFAULT, onupdate=TS_ONUPDATE)
@@ -145,3 +145,24 @@ class Home(Base):
 
     creator = relationship("User", foreign_keys=[creator_employee_id], lazy="joined")
     updated_by = relationship("User", foreign_keys=[updated_employee_id], lazy="joined")
+
+class BeaconEvents(Base):
+    __tablename__ = "beacon_events"
+
+    id = Column(Integer, primary_key=True, index=True)
+    session_id =  Column(String(40), nullable=False) # Java UUID generation
+
+    beacon_id = Column(Integer, ForeignKey("beacon.id", ondelete="SET NULL"), nullable=True, index=True)
+    beacon_uuid = Column(String(100), nullable=False)
+    beacon_major = Column(Integer, nullable=False)
+    beacon_minor = Column(Integer, nullable=False)
+    rssi = Column(Integer, nullable=False)
+    tx_power = Column(Integer, nullable=False)
+
+    recorded_at = Column(TIMESTAMP(timezone=True), nullable=False)
+    received_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=TS_DEFAULT)
+
+    __table_args__ = (
+        Index("ix_beacon_events_beacon_recorded", "beacon_id", "recorded_at"),
+        Index("ix_beacon_events_session_recorded", "session_id", "recorded_at"),
+    )
