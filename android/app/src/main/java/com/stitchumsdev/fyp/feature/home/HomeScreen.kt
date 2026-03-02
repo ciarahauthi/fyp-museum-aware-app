@@ -40,6 +40,7 @@ import coil.compose.AsyncImage
 import com.stitchumsdev.fyp.R
 import com.stitchumsdev.fyp.core.model.ExhibitModel
 import com.stitchumsdev.fyp.core.model.HomeItem
+import com.stitchumsdev.fyp.core.ui.LoadingScreen
 import com.stitchumsdev.fyp.core.ui.components.AppModal
 import com.stitchumsdev.fyp.core.ui.components.BottomNavigationBar
 import com.stitchumsdev.fyp.core.ui.components.CommonButton
@@ -72,7 +73,7 @@ fun HomeScreen(
         ) {
             when (uiState) {
                 HomeUiState.Error -> {}
-                HomeUiState.Loading -> {}
+                HomeUiState.Loading -> LoadingScreen()
                 is HomeUiState.Success -> {
                     HomeSuccess(
                         uiState = uiState,
@@ -127,35 +128,11 @@ fun HomeSuccess(
 
     Text(
         text = "Welcome to the Western Gateway Building",
-        style = Typography.titleMedium.copy(
+        style = Typography.titleSmall.copy(
             color = fypColours.mainText
         )
     )
     HorizontalDivider()
-
-    // TopSection
-    if (topItems.isNotEmpty()) {
-        Column {
-            Text(
-                text = "News",
-                style = Typography.titleMedium.copy(
-                    color = fypColours.mainText
-                )
-            )
-            HomeCardHorizontalScroll(homeItems = topItems, onCardClick = onCardClick)
-        }
-        HorizontalDivider()
-    }
-
-    // Midsection
-    midItem?.let {
-        HomeCard(
-            homeItem = it,
-            onCardClick = onCardClick
-        )
-        HorizontalDivider()
-    }
-
 
     // Exhibits Section
     Column(
@@ -191,6 +168,40 @@ fun HomeSuccess(
 
     HorizontalDivider()
 
+    // TopSection
+    if (topItems.size == 1) {
+        Text(
+            text = "News",
+            style = Typography.titleMedium.copy(
+                color = fypColours.mainText
+            )
+        )
+        HomeCard(
+            topItems.first(),
+            onCardClick = onCardClick
+        )
+        HorizontalDivider()
+    } else if (topItems.isNotEmpty()) {
+        Column {
+            Text(
+                text = "News",
+                style = Typography.titleMedium.copy(
+                    color = fypColours.mainText
+                )
+            )
+            HomeCardHorizontalScroll(homeItems = topItems, onCardClick = onCardClick)
+        }
+    }
+
+    // Midsection
+    midItem?.let {
+        HomeCard(
+            homeItem = it,
+            onCardClick = onCardClick
+        )
+        HorizontalDivider()
+    }
+
     // Bottom Section
     if (bottomItems.isNotEmpty()) {
         Column {
@@ -215,7 +226,6 @@ fun HomeCardHorizontalScroll(
     onExhibitClick: (ExhibitModel) -> Unit = {}
 ) {
     val scrollState = rememberScrollState()
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -226,7 +236,9 @@ fun HomeCardHorizontalScroll(
         homeItems?.forEach {
             HomeCard(
                 homeItem = it,
-                modifier = Modifier.width(220.dp).height(170.dp),
+                modifier = Modifier
+                    .width(220.dp)
+                    .height(170.dp),
                 onCardClick = onCardClick
             )
         }
@@ -234,7 +246,9 @@ fun HomeCardHorizontalScroll(
         exhibitItems?.forEach {
             ExhibitHomeCard(
                 exhibit = it,
-                modifier = Modifier.width(220.dp).height(190.dp),
+                modifier = Modifier
+                    .width(220.dp)
+                    .height(190.dp),
                 onExhibitClick = onExhibitClick
             )
         }
@@ -286,7 +300,7 @@ fun HomeCard(
             if (!hasImage) {
                 Text(
                     text = homeItem.description,
-                    style = Typography.bodyLarge,
+                    style = Typography.bodyMedium,
                     color = fypColours.secondaryText,
                     maxLines = 4,
                     overflow = TextOverflow.Ellipsis
@@ -340,7 +354,7 @@ fun ExhibitHomeCard(
             // Description
             Text(
                 text = exhibit.description,
-                style = Typography.bodyLarge,
+                style = Typography.bodyMedium,
                 color = fypColours.secondaryText,
                 maxLines = 4,
                 overflow = TextOverflow.Ellipsis

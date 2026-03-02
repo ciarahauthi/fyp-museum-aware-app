@@ -5,16 +5,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -29,6 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavHostController
 import com.stitchumsdev.fyp.R
 import com.stitchumsdev.fyp.core.model.ExhibitModel
+import com.stitchumsdev.fyp.core.ui.LoadingScreen
 import com.stitchumsdev.fyp.core.ui.OfflineScreen
 import com.stitchumsdev.fyp.core.ui.components.BottomNavigationBar
 import com.stitchumsdev.fyp.core.ui.components.CommonButton
@@ -84,10 +81,8 @@ fun ScanScreen(
                     Timber.d("!! Error state")
                     OfflineScreen { }
                 }
-                ScanUiState.Loading -> {
-                    Timber.d("!! Loading state")
-                    Loading()
-                }
+                ScanUiState.Loading -> LoadingScreen()
+
                 ScanUiState.NoContent -> {
                     Timber.d("!! No Content state")
                     NoContent( onAction = { action -> onAction(action) } )
@@ -141,19 +136,6 @@ fun NoContent(
 }
 
 @Composable
-fun Loading() {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        CircularProgressIndicator()
-        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_16)))
-        Text("Loading ... ", style = Typography.bodyLarge)
-    }
-}
-
-@Composable
 fun Content(
     list: List<ExhibitModel>,
     onObjectClick: (ExhibitModel) -> Unit
@@ -165,7 +147,6 @@ fun Content(
         verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_8))
     ) {
         list.forEach { item ->
-            HorizontalDivider()
             ExhibitRow(
                 obj = item,
                 modifier = Modifier.clickable { onObjectClick(item) }

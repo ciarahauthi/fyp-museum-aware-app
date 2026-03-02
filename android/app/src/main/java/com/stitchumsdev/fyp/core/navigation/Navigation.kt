@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.stitchumsdev.fyp.core.ui.ExhibitInformationScreen
+import com.stitchumsdev.fyp.core.ui.LoadingScreen
 import com.stitchumsdev.fyp.feature.home.HomeScreen
 import com.stitchumsdev.fyp.feature.home.HomeViewModel
 import com.stitchumsdev.fyp.feature.map.MapScreen
@@ -125,7 +126,9 @@ fun AppNavigation(
                 navHostController = navHostController,
                 uiState = uiState.value,
                 onAction = { action ->
-                    routeViewModel.onAction(action) })
+                    routeViewModel.onAction(action) },
+                onInfoBoxClick = { navHostController.navigate(Map) }
+                )
         }
         composable<RouteInfo> { backStackEntry ->
             val routeId = backStackEntry.arguments?.getInt("routeId") ?: return@composable
@@ -149,7 +152,7 @@ fun AppNavigation(
                     }
                 )
             } else {
-                // ToDo Loading Screen
+                LoadingScreen()
             }
         }
 
@@ -168,7 +171,7 @@ fun AppNavigation(
                     onRate = { id, rating -> searchViewModel.onAction(SearchAction.OnRate(id, rating)) }
                 )
             } else {
-                // TODO loading
+                LoadingScreen()
             }
         }
 

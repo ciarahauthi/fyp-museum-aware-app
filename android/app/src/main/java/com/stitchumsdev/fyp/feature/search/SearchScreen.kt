@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import com.stitchumsdev.fyp.core.model.ExhibitModel
+import com.stitchumsdev.fyp.core.ui.LoadingScreen
 import com.stitchumsdev.fyp.core.ui.components.BottomNavigationBar
 import com.stitchumsdev.fyp.feature.search.SearchAction
 import com.stitchumsdev.fyp.feature.search.SearchUiState
@@ -20,12 +21,18 @@ fun SearchScreen(
         bottomBar = { BottomNavigationBar(navHostController) },
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
-        SearchContent(
-            uiState = uiState,
-            onAction = onAction,
-            selectionMode = false,
-            onObjectClick = onObjectClick,
-            modifier = Modifier.padding(innerPadding)
-        )
+        when (uiState) {
+            SearchUiState.Error -> {} // TODO()
+            SearchUiState.Loading -> LoadingScreen()
+            is SearchUiState.Default -> {
+                SearchContent(
+                    uiState = uiState,
+                    onAction = onAction,
+                    selectionMode = false,
+                    onObjectClick = onObjectClick,
+                    modifier = Modifier.padding(innerPadding)
+                )
+            }
+        }
     }
 }

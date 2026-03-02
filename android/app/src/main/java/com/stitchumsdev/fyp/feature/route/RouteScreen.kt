@@ -32,6 +32,7 @@ import com.stitchumsdev.fyp.R
 import com.stitchumsdev.fyp.core.model.RouteModel
 import com.stitchumsdev.fyp.core.navigation.RouteInfo
 import com.stitchumsdev.fyp.core.navigation.RouteSelection
+import com.stitchumsdev.fyp.core.ui.LoadingScreen
 import com.stitchumsdev.fyp.core.ui.components.AppInfoBox
 import com.stitchumsdev.fyp.core.ui.components.BottomNavigationBar
 import com.stitchumsdev.fyp.core.ui.components.CommonButton
@@ -42,7 +43,8 @@ import com.stitchumsdev.fyp.core.ui.theme.fypColours
 fun RouteScreen(
     navHostController: NavHostController,
     uiState: RouteUiState,
-    onAction: (RouteAction) -> Unit
+    onAction: (RouteAction) -> Unit,
+    onInfoBoxClick: () -> Unit
 ) {
     Scaffold(
         bottomBar = { BottomNavigationBar(navHostController) },
@@ -58,14 +60,16 @@ fun RouteScreen(
         ) {
             when (uiState) {
                 RouteUiState.Error -> {}
-                RouteUiState.Loading -> {}
+                RouteUiState.Loading -> LoadingScreen()
                 is RouteUiState.Default -> RouteDefault(
                     navHostController = navHostController,
                     uiState = uiState,
                 )
                 is RouteUiState.Routing -> RouteRouting(
-                    uiState,
-                    onAction = onAction)
+                    uiState = uiState,
+                    onAction = onAction,
+                    onInfoBoxClick = onInfoBoxClick
+                )
             }
         }
     }
@@ -188,7 +192,8 @@ fun RouteItem(
 @Composable
 fun RouteRouting(
     uiState: RouteUiState.Routing,
-    onAction: (RouteAction) -> Unit
+    onAction: (RouteAction) -> Unit,
+    onInfoBoxClick: () -> Unit
 ) {
     val stopNames = uiState.stops.map { it.name }
     val currLoc = uiState.currentLocation
@@ -225,7 +230,9 @@ fun RouteRouting(
         )
 
         AppInfoBox(
-            title = stringResource(R.string.routing_tip)
+            title = stringResource(R.string.routing_tip),
+            clickable = true,
+            modifier = Modifier.clickable{ onInfoBoxClick() }
         )
     }
 }

@@ -41,6 +41,7 @@ import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.stitchumsdev.fyp.R
 import com.stitchumsdev.fyp.core.model.RoomHeatPoint
+import com.stitchumsdev.fyp.core.ui.LoadingScreen
 import com.stitchumsdev.fyp.core.ui.components.AppModal
 import com.stitchumsdev.fyp.core.ui.components.BottomNavigationBar
 import com.stitchumsdev.fyp.core.ui.theme.Typography
@@ -66,11 +67,12 @@ fun MapScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
+                .background(fypColours.mainBackground)
         ) {
 
             when (uiState) {
                 MapUiState.Error -> {}
-                MapUiState.Loading -> {}
+                MapUiState.Loading -> LoadingScreen()
                 is MapUiState.Success -> MapSuccess(
                     uiState = uiState,
                     routeUiState = routeUiState,
