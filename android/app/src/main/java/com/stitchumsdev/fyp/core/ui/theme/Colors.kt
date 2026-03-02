@@ -35,7 +35,7 @@ fun getLightColors() = FypColours (
 @Composable
 fun getDarkColors() = FypColours (
     mainText = colorResource(R.color.parchment),
-    secondaryText = colorResource(R.color.text_grey),
+    secondaryText = colorResource(R.color.text_light_grey),
     mainBackground = colorResource(R.color.dark),
     secondaryBackground = colorResource(R.color.charcoal),
     tertiaryBackground = colorResource(R.color.maroon),
