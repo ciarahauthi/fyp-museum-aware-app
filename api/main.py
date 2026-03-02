@@ -8,6 +8,7 @@ from typing import Annotated
 import graph
 from contextlib import asynccontextmanager
 from fastapi.staticfiles import StaticFiles
+from datetime import timezone
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -117,6 +118,11 @@ def get_exhibits(request: Request, db: Session = Depends(get_db)):
     for e in exhibits:
         if e.image_url and not e.image_url.startswith("http"):
             e.image_url = base + e.image_url
+
+        # JSON includes +00:00
+        if e.created_at and e.created_at.tzinfo is None:
+            e.created_at = e.created_at.replace(tzinfo=timezone.utc)
+
     return exhibits
 
 @app.get("/api/exhibits/lookup", response_model= ExhibitRead)
@@ -221,3 +227,45 @@ def set_rating(payload: RateRequest, db: Session = Depends(get_db)):
 
     db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+# Home screen
+@app.get("/api/home", response_model=HomeResponse)
+def get_home(request: Request, db: Session = Depends(get_db)):
+    homes = (
+        db.query(Home)
+        .filter(Home.active == True)
+        .order_by(Home.section.asc(), Home.sort_order.asc(), Home.id.asc())
+        .all()
+    )
+
+    base = str(request.base_url).rstrip("/")
+
+    top_section = []
+    bottom_section = []
+    mid_section = None
+
+    for h in homes:
+        image_url = h.image_url
+        if image_url and not image_url.startswith("http"):
+            image_url = base + image_url
+
+        card = {
+            "id": h.id,
+            "title": h.title,
+            "image_url": image_url,
+            "description": h.description
+        }
+
+        if h.section.value == "top":
+            top_section.append(card)
+        elif h.section.value == "mid":
+            if mid_section is None:
+                mid_section = card
+        elif h.section.value == "bottom":
+            bottom_section.append(card)
+
+    return {
+        "top_section": top_section,
+        "mid_section": mid_section,
+        "bottom_section": bottom_section
+    }
