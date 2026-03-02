@@ -19,8 +19,10 @@ class CategoryCreate(BaseModel):
 
 class CategoryRead(CategoryCreate):
     id: int
-    employee_id: int
+    creator_employee_id: int
+    updated_employee_id: int
     created_at: datetime
+    updated_at: datetime
     model_config = ConfigDict(from_attributes=True)
 
 # Beacons
@@ -33,8 +35,10 @@ class BeaconCreate(BaseModel):
 
 class BeaconRead(BeaconCreate):
     id: int
-    employee_id: int
+    creator_employee_id: int
+    updated_employee_id: int
     created_at: datetime
+    updated_at: datetime
     model_config = ConfigDict(from_attributes=True)
 
 # Exhibits
@@ -52,8 +56,10 @@ class ExhibitRead(BaseModel):
     child_friendly: bool
     beacon_id: Optional[int] = None
     category_id: Optional[int] = None
-    employee_id: int
+    creator_employee_id: int
+    updated_employee_id: int
     created_at: datetime
+    updated_at: datetime
     model_config = ConfigDict(from_attributes=True)
 
 class ExhibitReadPublic(BaseModel):
@@ -69,6 +75,7 @@ class ExhibitReadPublic(BaseModel):
     minor: int
     location: int
     image_url: Optional[str] = None
+    created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -85,9 +92,23 @@ class RouteRead(BaseModel):
     node_ids: list[int]
     stops: list[int]
     image_url: Optional[str] = None
-
+    creator_employee_id: int
+    updated_employee_id: int
     model_config = ConfigDict(from_attributes=True)
 
 class RateRequest(BaseModel):
     exhibit_id: int
     rating: bool  # True = like, False = dislike
+
+# Home
+class HomeCardOut(BaseModel):
+    id: int
+    title: str
+    image_url: Optional[str] = None
+    description: str
+
+
+class HomeResponse(BaseModel):
+    top_section: List[HomeCardOut] = []
+    mid_section: Optional[HomeCardOut] = None
+    bottom_section: List[HomeCardOut] = []
