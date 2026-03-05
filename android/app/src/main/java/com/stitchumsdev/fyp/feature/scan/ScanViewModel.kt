@@ -1,5 +1,7 @@
 package com.stitchumsdev.fyp.feature.scan
 
+import android.app.Application
+import android.bluetooth.BluetoothManager
 import androidx.lifecycle.viewModelScope
 import com.stitchumsdev.fyp.core.base.BaseViewModel
 import com.stitchumsdev.fyp.core.data.repository.BeaconRepository
@@ -10,6 +12,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class ScanViewModel(
+    private val application: Application,
     private val beaconRepository: BeaconRepository,
     private val museumRepository: MuseumRepository
 ) : BaseViewModel<ScanScreenAction>() {
@@ -23,14 +26,23 @@ class ScanViewModel(
         }
     }
 
+    private fun isBluetoothEnabled(): Boolean {
+        val btManager = application.getSystemService(BluetoothManager::class.java)
+        return btManager?.adapter?.isEnabled == true
+    }
+
     // Avoid multiple searches
     private fun getObjects() {
         if (searching) return
         searching = true
 
-        viewModelScope.launch {
-            _uiState.value = ScanUiState.Loading
+        if (!isBluetoothEnabled()) {
+            _uiState.value = ScanUiState.BluetoothDisabled
+            searching = false
+            return
+        }
 
+        viewModelScope.launch {
             try {
                 val beacons = beaconRepository.nearbyObjects.value
                 val cache = museumRepository.load()
