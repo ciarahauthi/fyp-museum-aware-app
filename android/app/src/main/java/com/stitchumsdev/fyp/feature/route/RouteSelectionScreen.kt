@@ -30,7 +30,7 @@ fun RouteSelectionScreen(
         topBar = {
             TopBar(
                 navHostController = navHostController ,
-                title = { Text("Create a route") },
+                title = { Text(text = stringResource(R.string.create_a_route)) },
                 actions = {
                     CommonTextButton(
                         text = stringResource(R.string.clear),
