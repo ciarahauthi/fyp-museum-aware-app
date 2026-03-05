@@ -97,7 +97,8 @@ fun AppNavigation(
             MapScreen(
                 uiState = uiState.value,
                 routeUiState = routeUiState.value,
-                navHostController)
+                navHostController = navHostController,
+                onRetry = { mapViewModel.loadMap() })
         }
         composable<Scan> {
             val uiState = scanViewModel.uiState.collectAsState()
@@ -119,7 +120,8 @@ fun AppNavigation(
                 onAction = { action -> searchViewModel.onAction(action) },
                 onObjectClick = { obj ->
                     navHostController.navigate(ExhibitInfo(exhibitId = obj.id))
-                }
+                },
+                onRetry = { searchViewModel.loadObjects() }
             )
         }
         composable<Route> {
@@ -129,7 +131,8 @@ fun AppNavigation(
                 uiState = uiState.value,
                 onAction = { action ->
                     routeViewModel.onAction(action) },
-                onInfoBoxClick = { navHostController.navigate(Map) }
+                onInfoBoxClick = { navHostController.navigate(Map) },
+                onRetry = { routeViewModel.onAction(RouteAction.RetryStart) }
                 )
         }
         composable<RouteInfo> { backStackEntry ->
