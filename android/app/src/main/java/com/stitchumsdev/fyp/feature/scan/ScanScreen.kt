@@ -1,5 +1,7 @@
 package com.stitchumsdev.fyp.feature.scan
 
+import android.content.Intent
+import android.provider.Settings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -25,8 +28,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavHostController
 import com.stitchumsdev.fyp.R
 import com.stitchumsdev.fyp.core.model.ExhibitModel
+import com.stitchumsdev.fyp.core.ui.GenericErrorScreen
 import com.stitchumsdev.fyp.core.ui.LoadingScreen
-import com.stitchumsdev.fyp.core.ui.OfflineScreen
 import com.stitchumsdev.fyp.core.ui.components.BottomNavigationBar
 import com.stitchumsdev.fyp.core.ui.components.CommonButton
 import com.stitchumsdev.fyp.core.ui.components.ExhibitRow
@@ -77,16 +80,15 @@ fun ScanScreen(
             }
 
             when (uiState) {
-                ScanUiState.Error -> {
-                    Timber.d("!! Error state")
-                    OfflineScreen { }
-                }
+                ScanUiState.Error -> GenericErrorScreen(onRetry = { onAction(ScanScreenAction.GetNearbyObjects) })
                 ScanUiState.Loading -> LoadingScreen()
-
                 ScanUiState.NoContent -> {
                     Timber.d("!! No Content state")
                     NoContent( onAction = { action -> onAction(action) } )
                 }
+                ScanUiState.BluetoothDisabled -> BluetoothDisabledContent(
+                    onRetry = { onAction(ScanScreenAction.GetNearbyObjects) }
+                )
                 is ScanUiState.Success -> Content(
                     list = uiState.objects,
                     onObjectClick = onObjectClick
@@ -132,6 +134,44 @@ fun NoContent(
                 onClick = { onAction(ScanScreenAction.GetNearbyObjects) }
             )
         }
+    }
+}
+
+@Composable
+fun BluetoothDisabledContent(
+    onRetry: () -> Unit
+) {
+    val context = LocalContext.current
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(dimensionResource(R.dimen.padding_32)),
+        verticalArrangement = Arrangement.spacedBy(
+            dimensionResource(R.dimen.spacing_16),
+            Alignment.CenterVertically
+        ),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.ic_no_scan),
+            contentDescription = null,
+            tint = fypColours.mainText,
+            modifier = Modifier.size(dimensionResource(R.dimen.image_large))
+        )
+        Text(
+            text = stringResource(R.string.bluetooth_disabled),
+            style = Typography.titleMedium,
+            textAlign = TextAlign.Center,
+            color = fypColours.mainText
+        )
+        CommonButton(
+            text = stringResource(R.string.enable_bluetooth),
+            onClick = { context.startActivity(Intent(Settings.ACTION_BLUETOOTH_SETTINGS)) }
+        )
+        CommonButton(
+            text = stringResource(R.string.try_again),
+            onClick = onRetry
+        )
     }
 }
 
