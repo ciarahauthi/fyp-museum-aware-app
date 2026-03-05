@@ -15,5 +15,5 @@ val viewModelModule = module {
     viewModel { MapViewModel(get(), get()) }
     viewModel { RouteViewModel(get(), get(), get()) }
     viewModel { SearchViewModel(get(), get(), get()) }
-    viewModel { SplashViewModel(get(), get(), get()) }
+    viewModel { SplashViewModel(get(), get()) }
 }

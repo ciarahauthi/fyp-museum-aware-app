@@ -1,6 +1,9 @@
 package com.stitchumsdev.fyp.core.data.repository
 
 import com.stitchumsdev.fyp.core.data.database.AppDatabase
+import com.stitchumsdev.fyp.core.data.database.entities.ExhibitItemEntity
+import com.stitchumsdev.fyp.core.data.database.entities.LocationItemEntity
+import com.stitchumsdev.fyp.core.data.database.entities.RouteItemEntity
 import com.stitchumsdev.fyp.core.model.BeaconId
 import com.stitchumsdev.fyp.core.model.RouteModel
 import kotlinx.coroutines.Dispatchers
@@ -68,4 +71,14 @@ class MuseumRepositoryImpl(
     override suspend fun warmUp() { load() }
 
     override fun clearCache() { cache = null }
+
+    override suspend fun save(
+        exhibits: List<ExhibitItemEntity>,
+        locations: List<LocationItemEntity>,
+        routes: List<RouteItemEntity>
+    ) = withContext(Dispatchers.IO) {
+        appDatabase.exhibitItemDao().upsertAll(exhibits)
+        appDatabase.locationItemDao().upsertAll(locations)
+        appDatabase.routeItemDao().upsertAll(routes)
+    }
 }
