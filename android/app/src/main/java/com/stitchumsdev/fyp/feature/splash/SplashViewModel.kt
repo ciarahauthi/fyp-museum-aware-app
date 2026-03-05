@@ -20,6 +20,10 @@ class SplashViewModel(
     }
 
     init {
+        load()
+    }
+
+    private fun load() {
         viewModelScope.launch {
             try {
                 val exhibits = userRepository.getExhibits()
@@ -42,5 +46,10 @@ class SplashViewModel(
                 _uiState.value = SplashUiState.Error
             }
         }
+    }
+
+    fun retry() {
+        _uiState.value = SplashUiState.Loading
+        load()
     }
 }

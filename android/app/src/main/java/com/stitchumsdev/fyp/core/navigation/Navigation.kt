@@ -75,7 +75,8 @@ fun AppNavigation(
                     searchViewModel.loadObjects()
                     mapViewModel.loadMap()
                     homeViewModel.loadContent()
-                }
+                },
+                onRetry = { splashViewModel.retry() }
             )
         }
         composable<Home> {
@@ -86,7 +87,8 @@ fun AppNavigation(
                 uiState = uiState.value,
                 onExhibitClick = { exhibit ->
                     navHostController.navigate(ExhibitInfo(exhibitId = exhibit.id))
-                }
+                },
+                onRetry = { homeViewModel.loadContent() }
             )
         }
         composable<Map> {
