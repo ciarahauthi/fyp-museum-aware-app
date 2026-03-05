@@ -1,5 +1,8 @@
 package com.stitchumsdev.fyp.core.data.repository
 
+import com.stitchumsdev.fyp.core.data.database.entities.ExhibitItemEntity
+import com.stitchumsdev.fyp.core.data.database.entities.LocationItemEntity
+import com.stitchumsdev.fyp.core.data.database.entities.RouteItemEntity
 import com.stitchumsdev.fyp.core.model.BeaconId
 import com.stitchumsdev.fyp.core.model.LocationModel
 import com.stitchumsdev.fyp.core.model.ExhibitModel
@@ -9,6 +12,11 @@ interface MuseumRepository {
     suspend fun load(): MuseumCache
     suspend fun warmUp()
     fun clearCache()
+    suspend fun save(
+        exhibits: List<ExhibitItemEntity>,
+        locations: List<LocationItemEntity>,
+        routes: List<RouteItemEntity>
+    )
 }
 
 data class MuseumCache(

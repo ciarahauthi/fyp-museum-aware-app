@@ -33,6 +33,7 @@ import com.stitchumsdev.fyp.core.model.RouteModel
 import com.stitchumsdev.fyp.core.navigation.RouteInfo
 import com.stitchumsdev.fyp.core.navigation.RouteSelection
 import com.stitchumsdev.fyp.core.ui.LoadingScreen
+import com.stitchumsdev.fyp.core.ui.OfflineErrorScreen
 import com.stitchumsdev.fyp.core.ui.components.AppInfoBox
 import com.stitchumsdev.fyp.core.ui.components.BottomNavigationBar
 import com.stitchumsdev.fyp.core.ui.components.CommonButton
@@ -44,34 +45,73 @@ fun RouteScreen(
     navHostController: NavHostController,
     uiState: RouteUiState,
     onAction: (RouteAction) -> Unit,
-    onInfoBoxClick: () -> Unit
+    onInfoBoxClick: () -> Unit,
+    onRetry: () -> Unit
 ) {
     Scaffold(
         bottomBar = { BottomNavigationBar(navHostController) },
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
-                .background(fypColours.mainBackground),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            when (uiState) {
-                RouteUiState.Error -> {}
-                RouteUiState.Loading -> LoadingScreen()
-                is RouteUiState.Default -> RouteDefault(
-                    navHostController = navHostController,
-                    uiState = uiState,
-                )
-                is RouteUiState.Routing -> RouteRouting(
-                    uiState = uiState,
-                    onAction = onAction,
-                    onInfoBoxClick = onInfoBoxClick
-                )
-            }
+        when (uiState) {
+            RouteUiState.Error -> OfflineErrorScreen(onRetry = onRetry)
+            RouteUiState.NoLocation -> NoLocationContent(onRetry = onRetry)
+            RouteUiState.Loading -> LoadingScreen()
+            is RouteUiState.Default -> RouteDefault(
+                navHostController = navHostController,
+                uiState = uiState,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .background(fypColours.mainBackground)
+            )
+            is RouteUiState.Routing -> RouteRouting(
+                uiState = uiState,
+                onAction = onAction,
+                onInfoBoxClick = onInfoBoxClick,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .background(fypColours.mainBackground)
+            )
         }
+    }
+}
+
+@Composable
+fun NoLocationContent(onRetry: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(fypColours.mainBackground)
+            .padding(dimensionResource(R.dimen.padding_32)),
+        verticalArrangement = Arrangement.spacedBy(
+            dimensionResource(R.dimen.spacing_16),
+            Alignment.CenterVertically
+        ),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.ic_no_scan),
+            contentDescription = null,
+            tint = fypColours.mainText,
+            modifier = Modifier.size(dimensionResource(R.dimen.image_large))
+        )
+        Text(
+            text = stringResource(R.string.no_location),
+            style = Typography.titleMedium,
+            textAlign = TextAlign.Center,
+            color = fypColours.mainText
+        )
+        Text(
+            text = stringResource(R.string.no_location_desc),
+            style = Typography.bodyMedium,
+            textAlign = TextAlign.Center,
+            color = fypColours.secondaryText
+        )
+        CommonButton(
+            text = stringResource(R.string.try_again),
+            onClick = onRetry
+        )
     }
 }
 
@@ -79,11 +119,14 @@ fun RouteScreen(
 fun RouteDefault(
     navHostController: NavHostController,
     uiState: RouteUiState.Default,
+    modifier: Modifier = Modifier
 ) {
     val routes = uiState.routes
     // List of predetermined routes
     Column(
-        modifier = Modifier.padding(dimensionResource(R.dimen.padding_8)),
+        modifier = modifier
+            .verticalScroll(rememberScrollState())
+            .padding(dimensionResource(R.dimen.padding_8)),
         verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_8))
     ) {
         Text(
@@ -193,13 +236,16 @@ fun RouteItem(
 fun RouteRouting(
     uiState: RouteUiState.Routing,
     onAction: (RouteAction) -> Unit,
-    onInfoBoxClick: () -> Unit
+    onInfoBoxClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val stopNames = uiState.stops.map { it.name }
     val currLoc = uiState.currentLocation
 
     Column(
-        modifier = Modifier.padding(dimensionResource(R.dimen.padding_8)),
+        modifier = modifier
+            .verticalScroll(rememberScrollState())
+            .padding(dimensionResource(R.dimen.padding_8)),
         verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_8))
     ) {
         Text(
@@ -223,6 +269,11 @@ fun RouteRouting(
             text = stringResource(R.string.left_stops) + " ${stopNames.size}",
             style = Typography.bodyLarge,
             color = fypColours.mainText)
+
+        CommonButton(
+            text = stringResource(R.string.next_stop),
+            onClick = { onAction(RouteAction.NextStop) },
+        )
 
         CommonButton(
             text = stringResource(R.string.end_routing),

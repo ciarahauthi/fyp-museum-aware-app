@@ -13,6 +13,4 @@ val databaseModule = module {
             "appDb"
         ).build()
     }
-
-    single { get<AppDatabase>().exhibitItemDao() }
 }

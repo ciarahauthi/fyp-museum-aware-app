@@ -12,6 +12,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
 import java.util.UUID
+import java.util.concurrent.atomic.AtomicBoolean
 
 // This repository is for handling the caches for beacon packets.
 // It sends to the API. It is used to find nearby objects
@@ -37,7 +38,7 @@ class BeaconRepositoryImpl(
 
     private val sessionManager = SessionManager()
 
-    @Volatile private var isFlushing = false
+    private val isFlushing = AtomicBoolean(false)
 
     override suspend fun onBeacon(beacon: IBeaconData) {
         val sessionId = sessionManager.sessionId()
@@ -155,10 +156,7 @@ class BeaconRepositoryImpl(
 
         val bestLocationId = locationVotes.maxByOrNull { it.value }?.key
 
-        if (bestLocationId != null) {
-            _currentLocationId.value = bestLocationId
-            _currentLocation.value = cache.locationById[bestLocationId]
-        } else {
+        if (bestLocationId == null) {
             Timber.d("!! No beacons. Last locationId=${_currentLocationId.value}")
         }
 
@@ -167,8 +165,7 @@ class BeaconRepositoryImpl(
     }
 
     private suspend fun flushCacheToServer() {
-        if (isFlushing) return
-        isFlushing = true
+        if (!isFlushing.compareAndSet(false, true)) return
 
         var data: List<BeaconInformation> = emptyList()
 
@@ -191,7 +188,7 @@ class BeaconRepositoryImpl(
             if (data.isNotEmpty()) mutex.withLock { beaconCache.requeue(data) }
 
         } finally {
-            isFlushing = false
+            isFlushing.set(false)
         }
     }
 }

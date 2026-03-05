@@ -6,6 +6,7 @@ import com.stitchumsdev.fyp.core.model.LocationModel
 // Not named RouteScreenAction since the VM and Actions are shared between map and routing screens.
 sealed class RouteAction : Action() {
     data class StartRouting(val route: List<LocationModel>) : RouteAction()
+    data object RetryStart : RouteAction()
     data object EndRouting : RouteAction()
     // Next stop in the route
     data object NextStop : RouteAction()

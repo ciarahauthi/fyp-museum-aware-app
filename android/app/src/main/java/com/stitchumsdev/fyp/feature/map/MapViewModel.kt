@@ -33,6 +33,7 @@ class MapViewModel (
     }
 
     fun loadMap() {
+        _uiState.value = MapUiState.Loading
         viewModelScope.launch {
             try {
                 val cache = museumRepository.load()
