@@ -5,7 +5,8 @@ import com.stitchumsdev.fyp.core.model.RouteModel
 
 sealed interface RouteUiState {
     data object Loading : RouteUiState
-    data object Error: RouteUiState // ToDo finish
+    data object Error: RouteUiState
+    data object NoLocation : RouteUiState
     // Not routing state
     data class Default(
         val routes: List<RouteModel> = emptyList(),
