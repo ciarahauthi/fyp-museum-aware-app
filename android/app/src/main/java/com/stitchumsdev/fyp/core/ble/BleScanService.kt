@@ -19,6 +19,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
 
 class BleScanService: Service() {
@@ -26,7 +27,7 @@ class BleScanService: Service() {
     private val repository: BeaconRepository by inject()
     private val scope = CoroutineScope(Dispatchers.IO)
 
-    private val flushInterval = 15 * 60000L // 15mins
+    private val flushInterval = 15 * 60 * 1_000L // 15 mins
 
     @RequiresApi(Build.VERSION_CODES.S)
     @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
@@ -55,7 +56,7 @@ class BleScanService: Service() {
 
         scanner.stop()
 
-        scope.launch { repository.uploadClearPackets() } // Final flush
+        runBlocking { repository.uploadClearPackets() } // Final flush
         repository.endSession()
 
         scope.cancel()
