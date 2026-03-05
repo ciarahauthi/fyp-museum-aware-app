@@ -23,12 +23,14 @@ class RouteViewModel (
     private val _selectedRoute = MutableStateFlow<RouteModel?>(null)
     val selectedRoute = _selectedRoute.asStateFlow()
 
-    private var stopIndex: Int? = null // To stop nextStop() form triggering multiple times while detecting current location == next stop
+    private var stopIndex: Int? = null // To stop nextStop() from triggering multiple times while detecting current location == next stop
+    private var pendingRoute: List<LocationModel>? = null // Stored so retry can re-attempt the same request
 
     override fun onAction(action: RouteAction) {
         when (action) {
             RouteAction.EndRouting -> endRouting()
             RouteAction.NextStop -> nextStop()
+            RouteAction.RetryStart -> pendingRoute?.let { startRoute(it) }
             is RouteAction.ToggleStop -> toggleStop(action.stop)
             RouteAction.ClearStops -> clearStops()
             is RouteAction.StartRouting -> startRoute(action.route)
@@ -82,8 +84,11 @@ class RouteViewModel (
     private fun startRoute(route: List<LocationModel>) {
         if (route.isEmpty()) {
             _uiState.value = RouteUiState.Error
+            Timber.d("!! Error: No route")
             return
         }
+
+        pendingRoute = route
 
         viewModelScope.launch {
             try {
@@ -91,7 +96,7 @@ class RouteViewModel (
 
                 val currentLocation = beaconRepository.currentLocation.value
                     ?: run {
-                        _uiState.value = RouteUiState.Error
+                        _uiState.value = RouteUiState.NoLocation
                         return@launch
                     }
 
@@ -112,6 +117,7 @@ class RouteViewModel (
                     currentLocation = currentLocation
                 )
                 _uiState.value = routingState
+                pendingRoute = null
 
                 // Trigger if starting position == start of route
                 if (routingState.currentTarget?.id == currentLocation.id) {
@@ -119,7 +125,7 @@ class RouteViewModel (
                     nextStop()
                 }
             } catch (e: Exception) {
-                Timber.e(e, "Failed to start route")
+                Timber.e(e, "!! Failed to start route")
                 _uiState.value = RouteUiState.Error
             }
         }
