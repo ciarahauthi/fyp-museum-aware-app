@@ -3,8 +3,10 @@ package com.stitchumsdev.fyp
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -15,6 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.stitchumsdev.fyp.core.ble.BleScanService
+import com.stitchumsdev.fyp.core.ui.theme.FypTheme
 import com.stitchumsdev.fyp.feature.splash.PermissionScreen
 import timber.log.Timber
 
@@ -38,38 +41,62 @@ class MainActivity : ComponentActivity() {
         hasPermissions = hasAllPermissions()
 
         setContent {
-            if (hasPermissions) {
-                AppContent()
-            } else {
-                PermissionScreen(
-                    onRequest = { requestNeededPermissions() }
-                )
+            FypTheme {
+                if (hasPermissions) {
+                    AppContent()
+                } else {
+                    PermissionScreen(
+                        onRequest = { requestNeededPermissions() }
+                    )
+                }
             }
         }
 
-        // If permissions, start service now
+        // If permissions, start service now otherwise request permissions
         if (hasPermissions) startBleService()
-        else requestNeededPermissions()
+        else ActivityCompat.requestPermissions(this, missingPermissions().toTypedArray(), 100)
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
-    private fun hasAllPermissions(): Boolean {
-        return permissions.all {
-            ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.S)
-    private fun requestNeededPermissions() {
-        val missing = permissions.filter {
-            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
-        }
-
-        if (missing.isNotEmpty()) {
-            ActivityCompat.requestPermissions(this, missing.toTypedArray(), 100)
-        } else {
+    override fun onResume() {
+        super.onResume()
+        // Case in which the user granted permissions in the settings app and returned to app
+        if (!hasPermissions && hasAllPermissions()) {
             hasPermissions = true
             startBleService()
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    private fun hasAllPermissions() = missingPermissions().isEmpty()
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    private fun missingPermissions() = permissions.filter {
+        ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
+    }
+
+    // Called by the "Grant Permissions" button
+    @RequiresApi(Build.VERSION_CODES.S)
+    private fun requestNeededPermissions() {
+        val missing = missingPermissions()
+
+        if (missing.isEmpty()) {
+            hasPermissions = true
+            startBleService()
+            return
+        }
+
+        // shouldShowRequestPermissionRationale is false after "Don't ask again". Open settings instead
+        val permanentlyDenied = missing.any {
+            !ActivityCompat.shouldShowRequestPermissionRationale(this, it)
+        }
+
+        if (permanentlyDenied) {
+            startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.fromParts("package", packageName, null)
+            })
+        } else {
+            ActivityCompat.requestPermissions(this, missing.toTypedArray(), 100)
         }
     }
 
