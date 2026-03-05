@@ -65,7 +65,6 @@ class RouteViewModel (
     fun loadRoutes() {
         viewModelScope.launch {
             try {
-                museumRepository.clearCache()
                 val cache = museumRepository.load()
 
                 val current = _uiState.value
