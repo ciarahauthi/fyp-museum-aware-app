@@ -64,19 +64,19 @@ fun HomeScreen(
         modifier = Modifier
             .fillMaxSize()
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(fypColours.mainBackground)
-                .padding(innerPadding)
-                .padding(horizontal = dimensionResource(R.dimen.padding_8))
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_16))
-        ) {
-            when (uiState) {
-                HomeUiState.Error -> OfflineErrorScreen( onRetry = onRetry )
-                HomeUiState.Loading -> LoadingScreen()
-                is HomeUiState.Success -> {
+        when (uiState) {
+            HomeUiState.Error -> OfflineErrorScreen(onRetry = onRetry)
+            HomeUiState.Loading -> LoadingScreen()
+            is HomeUiState.Success -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(fypColours.mainBackground)
+                        .padding(innerPadding)
+                        .padding(horizontal = dimensionResource(R.dimen.padding_8))
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_16))
+                ) {
                     HomeSuccess(
                         uiState = uiState,
                         onCardClick = { card ->

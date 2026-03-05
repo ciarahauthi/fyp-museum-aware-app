@@ -19,6 +19,7 @@ class HomeViewModel(
     override fun onAction(action: HomeScreenAction) {}
 
     fun loadContent() {
+        _uiState.value = HomeUiState.Loading
         viewModelScope.launch {
             try {
                 val homeData = userRepository.getHomeContent()

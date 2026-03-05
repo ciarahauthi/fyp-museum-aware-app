@@ -5,7 +5,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import com.stitchumsdev.fyp.core.model.ExhibitModel
+import com.stitchumsdev.fyp.core.ui.GenericErrorScreen
 import com.stitchumsdev.fyp.core.ui.LoadingScreen
+import com.stitchumsdev.fyp.core.ui.OfflineErrorScreen
 import com.stitchumsdev.fyp.core.ui.components.BottomNavigationBar
 import com.stitchumsdev.fyp.feature.search.SearchAction
 import com.stitchumsdev.fyp.feature.search.SearchUiState
@@ -15,14 +17,15 @@ fun SearchScreen(
     navHostController: NavHostController,
     uiState: SearchUiState,
     onAction: (SearchAction) -> Unit,
-    onObjectClick: (ExhibitModel) -> Unit = {}
+    onObjectClick: (ExhibitModel) -> Unit = {},
+    onRetry: () -> Unit = {}
 ) {
     Scaffold(
         bottomBar = { BottomNavigationBar(navHostController) },
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
         when (uiState) {
-            SearchUiState.Error -> {} // TODO()
+            SearchUiState.Error -> GenericErrorScreen(onRetry = onRetry)
             SearchUiState.Loading -> LoadingScreen()
             is SearchUiState.Default -> {
                 SearchContent(
