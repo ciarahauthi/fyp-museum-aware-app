@@ -41,6 +41,7 @@ import com.stitchumsdev.fyp.R
 import com.stitchumsdev.fyp.core.model.ExhibitModel
 import com.stitchumsdev.fyp.core.model.HomeItem
 import com.stitchumsdev.fyp.core.ui.LoadingScreen
+import com.stitchumsdev.fyp.core.ui.OfflineErrorScreen
 import com.stitchumsdev.fyp.core.ui.components.AppModal
 import com.stitchumsdev.fyp.core.ui.components.BottomNavigationBar
 import com.stitchumsdev.fyp.core.ui.components.CommonButton
@@ -52,7 +53,8 @@ import com.stitchumsdev.fyp.core.ui.theme.fypColours
 fun HomeScreen(
     navHostController: NavHostController,
     uiState: HomeUiState,
-    onExhibitClick: (ExhibitModel) -> Unit
+    onExhibitClick: (ExhibitModel) -> Unit,
+    onRetry: () -> Unit
 ) {
     var modalVisible by remember { mutableStateOf(false) }
     var selectedCard by remember { mutableStateOf<HomeItem?>(null) }
@@ -72,7 +74,7 @@ fun HomeScreen(
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_16))
         ) {
             when (uiState) {
-                HomeUiState.Error -> {}
+                HomeUiState.Error -> OfflineErrorScreen( onRetry = onRetry )
                 HomeUiState.Loading -> LoadingScreen()
                 is HomeUiState.Success -> {
                     HomeSuccess(
@@ -372,7 +374,8 @@ fun HomeScreenPreview() {
         HomeScreen(
             rememberNavController(),
             uiState = HomeUiState.Success(),
-            onExhibitClick = {}
+            onExhibitClick = {},
+            onRetry = {}
         )
     }
 }
