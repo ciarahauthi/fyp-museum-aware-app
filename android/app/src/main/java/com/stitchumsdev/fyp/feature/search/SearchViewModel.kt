@@ -22,6 +22,7 @@ class SearchViewModel(
     val uiState = _uiState.asStateFlow()
 
     fun loadObjects() {
+        _uiState.value = SearchUiState.Loading
         viewModelScope.launch {
             try {
                 museumRepository.clearCache()
