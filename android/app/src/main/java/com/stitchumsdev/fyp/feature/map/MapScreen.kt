@@ -41,6 +41,7 @@ import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.stitchumsdev.fyp.R
 import com.stitchumsdev.fyp.core.model.RoomHeatPoint
+import com.stitchumsdev.fyp.core.ui.GenericErrorScreen
 import com.stitchumsdev.fyp.core.ui.LoadingScreen
 import com.stitchumsdev.fyp.core.ui.components.AppModal
 import com.stitchumsdev.fyp.core.ui.components.BottomNavigationBar
@@ -54,7 +55,8 @@ import androidx.compose.ui.graphics.Color as composeColor
 fun MapScreen(
     uiState: MapUiState,
     routeUiState: RouteUiState,
-    navHostController: NavHostController
+    navHostController: NavHostController,
+    onRetry: () -> Unit
 ) {
     var selectedPoint by remember { mutableStateOf<RoomHeatPoint?>(null) }
 
@@ -71,7 +73,7 @@ fun MapScreen(
         ) {
 
             when (uiState) {
-                MapUiState.Error -> {}
+                MapUiState.Error -> GenericErrorScreen(onRetry = onRetry)
                 MapUiState.Loading -> LoadingScreen()
                 is MapUiState.Success -> MapSuccess(
                     uiState = uiState,
