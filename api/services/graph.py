@@ -2,9 +2,25 @@ import networkx as nx
 from math import inf
 from sqlalchemy.orm import Session
 
+from api.db.models import Node, Edge
+import api.services.graph as graph
+
+# GRAPH
+def getGraphFromDb(db: Session):
+    node_rows = db.query(Node.id).all()
+    edge_rows = db.query(Edge.node_id, Edge.connected_node_id, Edge.weight).all()
+
+    node_ids = [r[0] for r in node_rows]
+    edge_list = [(e[0], e[1], e[2]) for e in edge_rows]
+
+    return graph.buildGraph(nodes=node_ids, edges=edge_list)
+
+
 def buildGraph(nodes, edges):
-    # Where nodes is a list ints (ids from the db)
-    # Where edges is a list of triples (node, connected node, weight)
+    '''
+    Where nodes is a list ints (ids from the db)
+    Where edges is a list of triples (node, connected node, weight)
+    '''
 
     graph = nx.Graph()
 
@@ -18,9 +34,11 @@ def buildGraph(nodes, edges):
 
 
 def getRoute(graph, current, nodes):
-    # Where graph is the current graph
-    # Where nodes is a list of nodes to visit
-    # Where closest is the closest node to the user
+    '''
+    Where graph is the current graph
+    Where nodes is a list of nodes to visit
+    Where closest is the closest node to the user
+    '''
 
     remainingNodes = set(nodes)
     remainingNodes.discard(current)
