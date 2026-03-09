@@ -1,4 +1,4 @@
-from database import Base
+from db.database import Base
 from sqlalchemy import Column, Integer, String, Boolean, TIMESTAMP, text, ForeignKey, Numeric, JSON, Enum, Text, Index
 from sqlalchemy.orm import relationship
 import enum
@@ -13,6 +13,7 @@ class User(Base):
     first_name = Column(String(100), nullable=False)
     surname = Column(String(100), nullable=False)
     email = Column(String(100), unique=True, index=True, nullable=False)
+    password_hash = Column(String(255), nullable=True)
 
 class Exhibit(Base):
     __tablename__ = "exhibit"
