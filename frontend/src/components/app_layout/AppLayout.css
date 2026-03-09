@@ -4,9 +4,8 @@
 }
 
 .app-layout-content {
-  margin-left: 72px;
+  margin-left: var(--sidebar-width); /* Match sidebar width */
   width: calc(100% - 72px);
   min-height: 100vh;
-  padding: 2rem;
   box-sizing: border-box;
 }
