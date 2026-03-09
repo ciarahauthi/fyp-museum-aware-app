@@ -18,13 +18,13 @@ interface ApiService {
         @Query("data") data: List<String>
     ): List<ObjectResponse>
 
-    @GET("api/exhibits/")
+    @GET("api/exhibits")
     suspend fun getExhibits(): List<ObjectResponse>
 
-    @GET("api/locations/")
+    @GET("api/routes/locations")
     suspend fun getLocations(): List<LocationResponse>
 
-    @GET("api/routes/")
+    @GET("api/routes")
     suspend fun getRoutes(): List<AllRoutesResponse>
 
     @GET("/api/route")
@@ -33,7 +33,7 @@ interface ApiService {
         @Query("targets") targets: List<Int>
     ): List<Int>
 
-    @POST("/api/rate")
+    @POST("/api/exhibits/rate")
     suspend fun sendRating(
         @Body body: RateRequest
     ): Response<Unit>
