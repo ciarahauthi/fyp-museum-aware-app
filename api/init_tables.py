@@ -1,5 +1,6 @@
 from database import engine, Base, SessionLocal
 from models import *
+from auth import hash_password
 
 def init():
     Base.metadata.drop_all(bind=engine)
@@ -7,7 +8,12 @@ def init():
     print("Tables created")
 
     with SessionLocal() as db:
-        user = User(first_name="Ciara", surname="Duffy", email="ciara@gmail.com")
+        user = User(
+            first_name="Ciara", 
+            surname="Duffy", 
+            email="ciaraduffy24@gmail.com",
+            password_hash=hash_password("Password.123")
+            )
         db.add(user)
         db.commit()
 
