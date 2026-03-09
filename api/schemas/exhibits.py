@@ -1,0 +1,49 @@
+from pydantic import BaseModel, ConfigDict
+from datetime import datetime
+from typing import Optional
+
+'''
+Contains all the exhibit schemas
+'''
+
+# Exhibits
+class ExhibitCreate(BaseModel):
+    title: str
+    description: str
+    child_friendly: bool
+    beacon_id: int
+    category_id: int
+
+class ExhibitRead(BaseModel):
+    id: int
+    title: str
+    description: str
+    child_friendly: bool
+    beacon_id: Optional[int] = None
+    category_id: Optional[int] = None
+    creator_employee_id: int
+    updated_employee_id: int
+    created_at: datetime
+    updated_at: datetime
+    model_config = ConfigDict(from_attributes=True)
+
+class ExhibitReadPublic(BaseModel):
+    id: int
+    title: str
+    description: str
+    category: str
+    child_friendly: bool
+    likes: int
+    dislikes: int
+    uuid: str
+    major: int
+    minor: int
+    location: int
+    image_url: Optional[str] = None
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+class RateRequest(BaseModel):
+    exhibit_id: int
+    rating: bool  # True = like, False = dislike
