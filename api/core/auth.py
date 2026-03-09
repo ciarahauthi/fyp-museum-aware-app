@@ -5,9 +5,9 @@ from jwt.exceptions import InvalidTokenError
 from fastapi import HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
-from db.database import get_db
-from db.models import User
-from settings import get_settings
+from api.db.database import get_db
+from api.db.models import User
+from api.core.settings import get_settings
 
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 1 day
