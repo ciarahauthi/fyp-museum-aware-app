@@ -1,6 +1,6 @@
 from api.db.database import engine, Base, SessionLocal
 from api.db.models import *
-from auth import hash_password
+from api.core.auth import hash_password
 
 def init():
     Base.metadata.drop_all(bind=engine)
