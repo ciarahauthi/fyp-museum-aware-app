@@ -1,17 +1,28 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import './App.css'
-import TestDb from "./pages/testdb";
-import Login from "./pages/Login";
+import "./App.css";
+
+import Login from "./pages/login/Login";
+import Home from "./pages/home/Home";
+import ManageContent from "./pages/manage_content/ManageContent";
+import ManageHomeScreen from "./pages/manage_homescreen/ManageHomeScreen";
+import Settings from "./pages/settings/Settings";
+import AppLayout from "./components/app_layout/AppLayout";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/getUsers" element={<TestDb />} />
         <Route path="/login" element={<Login />} />
+
+        <Route element={<AppLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/manage-content" element={<ManageContent />} />
+          <Route path="/manage-home-screen" element={<ManageHomeScreen />} />
+          <Route path="/settings" element={<Settings />} />
+        </Route>
       </Routes>
     </BrowserRouter>
-  )
+  );
 }
 
-export default App
+export default App;
