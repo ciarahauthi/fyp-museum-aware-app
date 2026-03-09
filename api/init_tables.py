@@ -1,5 +1,5 @@
-from database import engine, Base, SessionLocal
-from models import *
+from api.db.database import engine, Base, SessionLocal
+from api.db.models import *
 from auth import hash_password
 
 def init():
