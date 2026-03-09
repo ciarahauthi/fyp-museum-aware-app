@@ -1,9 +1,11 @@
 from fastapi import FastAPI, Depends, HTTPException, Query, Request, Response, status
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from sqlalchemy import tuple_
-from database import get_db, SessionLocal
-from models import *
-from schemas import *
+from db.database import get_db, SessionLocal
+from db.models import *
+from db.schemas import *
+from auth import hash_password, verify_password, create_access_token, get_current_user
 from typing import Annotated
 import graph
 from contextlib import asynccontextmanager
@@ -61,6 +63,42 @@ def getGraph(request: Request):
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
+
+
+# Auth
+@app.post("/api/auth/register", response_model=UserRead, status_code=status.HTTP_201_CREATED)
+def register(data: UserRegister, db: Session = Depends(get_db)):
+    if db.query(User).filter(User.email == data.email).first():
+        raise HTTPException(status_code=400, detail="Email already in use")
+
+    user = User(
+        first_name=data.first_name,
+        surname=data.surname,
+        email=data.email,
+        password_hash=hash_password(data.password),
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    return user
+
+
+@app.post("/api/auth/login", response_model=Token)
+def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == form_data.username).first()
+    if not user or not user.password_hash or not verify_password(form_data.password, user.password_hash):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    token = create_access_token({"sub": user.email})
+    return {"access_token": token, "token_type": "bearer"}
+
+
+@app.get("/api/auth/me", response_model=UserRead)
+def get_me(current_user: User = Depends(get_current_user)):
+    return current_user
 
 # User queries
 @app.post("/api/users/", response_model=UserRead)
