@@ -7,7 +7,6 @@ import com.stitchumsdev.fyp.core.model.LocationResponse
 import com.stitchumsdev.fyp.core.model.ObjectResponse
 
 interface UserRepository {
-    suspend fun getObject(data: List<String>): List<ObjectResponse>
     suspend fun getExhibits(): List<ObjectResponse>
     suspend fun getLocations(): List<LocationResponse>
     suspend fun getRoutes(): List<AllRoutesResponse>

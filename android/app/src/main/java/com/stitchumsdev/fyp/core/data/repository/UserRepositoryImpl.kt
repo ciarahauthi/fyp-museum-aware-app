@@ -11,7 +11,6 @@ import com.stitchumsdev.fyp.core.model.RateRequest
 class UserRepositoryImpl(
     private val api: ApiService
 ) : UserRepository {
-    override suspend fun getObject(data: List<String>): List<ObjectResponse> = api.getObjects(data)
     override suspend fun getExhibits(): List<ObjectResponse> = api.getExhibits()
     override suspend fun getLocations(): List<LocationResponse> = api.getLocations()
     override suspend fun getRoutes(): List<AllRoutesResponse> = api.getRoutes()

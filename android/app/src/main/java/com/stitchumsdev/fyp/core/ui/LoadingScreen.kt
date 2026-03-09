@@ -32,6 +32,9 @@ fun LoadingScreen(
             color = fypColours.tertiaryBackground
         )
 
-        Text(stringResource(R.string.loading), style = Typography.bodyLarge)
+        Text(
+            text = stringResource(R.string.loading),
+            style = Typography.bodyLarge,
+            color = fypColours.mainText,)
     }
 }

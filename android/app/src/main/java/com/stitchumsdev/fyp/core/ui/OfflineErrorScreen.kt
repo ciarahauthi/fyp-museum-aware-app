@@ -45,10 +45,12 @@ fun OfflineErrorScreen(
         Text(
             text = stringResource(R.string.oops),
             style = Typography.titleSmall,
+            color = fypColours.mainText,
             textAlign = TextAlign.Center)
         Text(
             text = stringResource(R.string.internet_try_again),
             style = Typography.bodyMedium,
+            color = fypColours.mainText,
             textAlign = TextAlign.Center
         )
         CommonButton(
