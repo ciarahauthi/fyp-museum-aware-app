@@ -1,10 +1,21 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 from api.core.lifespan import lifespan
 from api.routers import auth, users, beacons, exhibits, categories, route, routes, home, beacon_events
+from api.core.settings import get_settings
 
+settings = get_settings()
 app = FastAPI(lifespan=lifespan)
 app.mount("/api/static", StaticFiles(directory="api/static"), name="static")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[settings.frontendUrl],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # API ROUTES
 @app.get("/")

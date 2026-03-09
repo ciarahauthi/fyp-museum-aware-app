@@ -4,7 +4,8 @@ from functools import lru_cache
 class Settings(BaseSettings):
     dbUrl: str 
     secretKey: str
-
+    frontendUrl: str
+    
     model_config = SettingsConfigDict(env_file=".env")
 
 @lru_cache
