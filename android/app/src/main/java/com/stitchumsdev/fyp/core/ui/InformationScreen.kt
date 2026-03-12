@@ -4,7 +4,9 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -13,13 +15,16 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import coil.compose.AsyncImage
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.CircularProgressIndicator
+import coil.compose.SubcomposeAsyncImage
 import com.stitchumsdev.fyp.R
 import com.stitchumsdev.fyp.core.ui.components.TopBar
 import com.stitchumsdev.fyp.core.ui.theme.FypTheme
@@ -32,6 +37,7 @@ fun InformationScreen(
     title: String,
     imageUrl: String?,
     @DrawableRes fallbackImage: Int = R.drawable.ic_no_image,
+    titleTrailing: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
     Scaffold(
@@ -49,17 +55,26 @@ fun InformationScreen(
             // Item image
             val model: Any = imageUrl?.takeIf { it.isNotBlank() } ?: fallbackImage
 
-            AsyncImage(
+            SubcomposeAsyncImage(
                 model = model,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.heightIn(max = dimensionResource(R.dimen.image_x_large))
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = dimensionResource(R.dimen.image_x_large)),
+                loading = {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(max = dimensionResource(R.dimen.image_x_large)),
+                        contentAlignment = Alignment.Center
+                    ) { CircularProgressIndicator() }
+                }
             )
             // Item details
-            Surface (
+            Surface(
                 color = fypColours.mainBackground,
-                modifier = Modifier
-                    .fillMaxSize()
+                modifier = Modifier.fillMaxSize()
             ) {
                 Column(
                     modifier = Modifier
@@ -67,11 +82,19 @@ fun InformationScreen(
                         .padding(dimensionResource(R.dimen.padding_8)),
                     verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_8))
                 ) {
-                    Text(
-                        text = title,
-                        style = Typography.headlineLarge,
-                        color = fypColours.mainText
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = title,
+                            style = Typography.headlineLarge,
+                            color = fypColours.mainText,
+                            modifier = Modifier.weight(1f)
+                        )
+                        titleTrailing?.invoke()
+                    }
                     // Item / Route content
                     content()
                 }

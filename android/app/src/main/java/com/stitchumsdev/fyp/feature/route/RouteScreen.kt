@@ -27,7 +27,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import coil.compose.AsyncImage
+import androidx.compose.material3.CircularProgressIndicator
+import coil.compose.SubcomposeAsyncImage
 import com.stitchumsdev.fyp.R
 import com.stitchumsdev.fyp.core.model.RouteModel
 import com.stitchumsdev.fyp.core.navigation.RouteInfo
@@ -191,15 +192,35 @@ fun RouteItem(
         modifier = modifier
     ){
         Box{
-            val model: Any = route.imageUrl?.takeIf { it.isNotBlank() }
-                ?: R.drawable.ic_no_image
-
-            AsyncImage(
-                model = model,
-                contentDescription = null,
-                modifier = Modifier.heightIn(max = 200.dp),
-                contentScale = ContentScale.Crop
-            )
+            val imageUrl = route.imageUrl?.takeIf { it.isNotBlank() }
+            val imageModifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 80.dp, max = 200.dp)
+            if (imageUrl != null) {
+                SubcomposeAsyncImage(
+                    model = imageUrl,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = imageModifier,
+                    loading = {
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            CircularProgressIndicator()
+                        }
+                    }
+                )
+            } else {
+                Box(
+                    modifier = imageModifier.background(fypColours.secondaryBackground),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_no_image),
+                        contentDescription = null,
+                        modifier = Modifier.size(48.dp),
+                        tint = fypColours.secondaryText
+                    )
+                }
+            }
 
             Box(
                 modifier = Modifier
