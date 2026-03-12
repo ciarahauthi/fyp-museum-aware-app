@@ -21,7 +21,7 @@ interface ApiService {
     @GET("api/exhibits")
     suspend fun getExhibits(): List<ObjectResponse>
 
-    @GET("api/routes/locations/")
+    @GET("api/routes/locations")
     suspend fun getLocations(): List<LocationResponse>
 
     @GET("api/routes")
