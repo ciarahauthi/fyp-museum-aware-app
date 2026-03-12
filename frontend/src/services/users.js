@@ -9,4 +9,9 @@ export const usersService = {
     method: "POST",
     body: JSON.stringify(userData),
   }),
+
+  update: (id, data) => apiFetch(`/api/users/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  }),
 };
