@@ -1,0 +1,245 @@
+.edit-page {
+  display: flex;
+  flex-direction: column;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem;
+  gap: 1.5rem;
+}
+
+.edit-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.edit-back-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--color-hover-text, #555);
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.4rem;
+}
+
+.edit-back-btn:hover {
+  background: var(--color-hover-bg, #f0f0f0);
+}
+
+.edit-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  margin: 0;
+}
+
+.edit-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.edit-section-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #888;
+  margin: 0 0 0.75rem 0;
+}
+
+/* Read-only section */
+.edit-readonly-section {
+  background: #f9f9f9;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.6rem;
+  padding: 1rem 1.25rem;
+}
+
+.edit-readonly-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.edit-readonly-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.edit-readonly-label {
+  font-size: 0.75rem;
+  color: #888;
+  font-weight: 500;
+}
+
+.edit-readonly-value {
+  font-size: 0.9rem;
+  color: #444;
+  font-family: monospace;
+}
+
+/* Editable form */
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.edit-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.edit-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.edit-input {
+  padding: 0.55rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.4rem;
+  font-size: 0.95rem;
+  color: #1a1a2e;
+  background: #fff;
+  transition: border-color 0.15s;
+}
+
+.edit-input:focus {
+  outline: none;
+  border-color: #6366f1;
+}
+
+.edit-textarea {
+  resize: vertical;
+  min-height: 90px;
+  font-family: inherit;
+}
+
+.edit-select {
+  cursor: pointer;
+  appearance: auto;
+}
+
+.edit-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.edit-checkbox {
+  width: 1.1rem;
+  height: 1.1rem;
+  cursor: pointer;
+  accent-color: #6366f1;
+}
+
+.edit-toggle-label {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.edit-save-btn {
+  align-self: flex-start;
+  padding: 0.65rem 1.5rem;
+  background: #6366f1;
+  color: #fff;
+  border: none;
+  border-radius: 0.4rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.edit-save-btn:hover {
+  background: #4f46e5;
+}
+
+.edit-error {
+  color: #dc2626;
+  font-size: 0.9rem;
+}
+
+/* Confirm modal */
+.edit-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.edit-modal {
+  background: #fff;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  max-width: 380px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+}
+
+.edit-modal h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.edit-modal p {
+  font-size: 0.9rem;
+  color: #555;
+  margin: 0;
+}
+
+.edit-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.edit-modal-cancel {
+  padding: 0.55rem 1.1rem;
+  background: #f3f4f6;
+  border: none;
+  border-radius: 0.4rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  color: #444;
+}
+
+.edit-modal-cancel:hover {
+  background: #e5e7eb;
+}
+
+.edit-modal-confirm {
+  padding: 0.55rem 1.1rem;
+  background: #6366f1;
+  color: #fff;
+  border: none;
+  border-radius: 0.4rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.edit-modal-confirm:hover {
+  background: #4f46e5;
+}
+
+.edit-modal-confirm:disabled,
+.edit-modal-cancel:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
