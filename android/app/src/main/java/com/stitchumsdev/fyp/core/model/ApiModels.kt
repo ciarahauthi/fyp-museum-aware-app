@@ -8,7 +8,7 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
 @Serializable
-data class ObjectResponse(
+data class ExhibitResponse(
     val id: Int,
     val title: String,
     val description: String,
