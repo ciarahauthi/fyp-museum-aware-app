@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { MdMoreHoriz } from "react-icons/md";
 import "./ManageContent.css";
 import { categories, tableConfigs, services } from "./ManageContentData";
+import { getUser } from "../../services/auth";
 
 const CategoryPill = ({ label, active, onClick }) => (
   <button
@@ -32,8 +34,9 @@ const EmptyState = ({ tableName }) => (
 );
 
 // Reusable table component
-// ToDo action buttons
-const GenericTable = ({ data, loading, error, config }) => {
+const GenericTable = ({ data, loading, error, config, onEdit }) => {
+  const [openMenuId, setOpenMenuId] = useState(null);
+
   if (!config) {
     return (
       <section className="manage-content-error">
@@ -48,7 +51,6 @@ const GenericTable = ({ data, loading, error, config }) => {
 
   return (
     <section className="manage-table">
-
       {data.map((item) => (
         <section key={item.id} className="manage-table-row">
           {config.columns.map((col) => (
@@ -57,27 +59,41 @@ const GenericTable = ({ data, loading, error, config }) => {
             </section>
           ))}
           <section className="manage-table-actions">
-            <button className="manage-table-action-btn">
+            <button
+              className="manage-table-action-btn"
+              onClick={() => setOpenMenuId(openMenuId === item.id ? null : item.id)}
+            >
               <MdMoreHoriz size={20} />
             </button>
+            {openMenuId === item.id && (
+              <section className="manage-table-dropdown">
+                <button
+                  className="manage-table-dropdown-item"
+                  onClick={() => { setOpenMenuId(null); onEdit(item); }}
+                >
+                  Edit entry
+                </button>
+              </section>
+            )}
           </section>
         </section>
       ))}
-
     </section>
   );
 };
 
 export default function ManageContent() {
+  const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState(null);
   const [tableData, setTableData] = useState({});
   const [loading, setLoading] = useState({});
   const [errors, setErrors] = useState({});
 
-  const currentUser = {
-    name: "Ciara",
-    role: "Admin",
-  }; // ToDo make dynamic
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    getUser().then((u) => setCurrentUser(u)).catch(() => {});
+  }, []);
 
   const fetchTableData = async (tableName) => {
     const key = tableName.toLowerCase();
@@ -115,14 +131,16 @@ export default function ManageContent() {
     <section className="manage-content">
       <header className="manage-content-header">
         <h1>Manage Content</h1>
-        <section className="manage-content-user">
-          <section className="manage-content-user-info">
-            <p className="manage-content-user-name">{currentUser.name}</p>
+        {currentUser && (
+          <section className="manage-content-user">
+            <section className="manage-content-user-info">
+              <p className="manage-content-user-name">{currentUser.first_name} {currentUser.surname}</p>
+            </section>
+            <section className="manage-content-avatar">
+              {currentUser.first_name.charAt(0)}
+            </section>
           </section>
-          <section className="manage-content-avatar">
-            {currentUser.name.charAt(0)}
-          </section>
-        </section>
+        )}
       </header>
 
       <section className="manage-content-body">
@@ -131,10 +149,16 @@ export default function ManageContent() {
             <CategoryPill
               key={cat}
               label={cat}
-              active={activeCategory === cat}
+              active={false}
               onClick={() => handleCategoryClick(cat)}
             />
           ))}
+
+          {activeCategory && (
+            <button className="add-content-btn">
+              Add {activeCategory}
+            </button>
+          )}
         </section>
 
         {activeCategory ? (
@@ -143,6 +167,7 @@ export default function ManageContent() {
             loading={loading[activeKey]}
             error={errors[activeKey]}
             config={activeConfig}
+            onEdit={(item) => navigate("/edit", { state: { item, tableType: activeKey } })}
           />
         ) : (
           <section className="manage-content-empty">

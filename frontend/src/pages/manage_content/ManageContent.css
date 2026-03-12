@@ -98,6 +98,17 @@
   box-shadow: 0 2px 8px rgba(124, 58, 237, 0.3);
 }
 
+.add-content-btn {
+  margin-left: auto;
+  padding: 0.5rem 1rem;
+  background-color: #7c3aed;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-weight: 500;
+}
+
 /* Empty / loading / error states */
 .manage-content-empty {
   display: flex;
@@ -196,6 +207,37 @@
 .manage-table-actions {
   display: flex;
   align-items: center;
+  position: relative;
+}
+
+.manage-table-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.4rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  z-index: 100;
+  min-width: 130px;
+  overflow: hidden;
+}
+
+.manage-table-dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 0.6rem 1rem;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 0.9rem;
+  color: #444;
+  cursor: pointer;
+}
+
+.manage-table-dropdown-item:hover {
+  background-color: var(--color-hover-bg);
+  color: var(--color-hover-text);
 }
 
 .manage-table-action-btn {

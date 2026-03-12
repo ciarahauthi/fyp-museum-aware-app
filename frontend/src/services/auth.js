@@ -23,3 +23,12 @@ export async function loginUser(email, password) {
     const data = await res.json();
     return data.access_token;
 }
+
+export async function getUser() {
+    const token = localStorage.getItem("token");
+    const res = await fetch("/api/auth/me", {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) throw new Error("Failed to fetch user");
+    return res.json();
+}
