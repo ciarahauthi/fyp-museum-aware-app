@@ -31,7 +31,11 @@ class Exhibit(Base):
     beacon_id = Column(Integer, ForeignKey("beacon.id", ondelete="SET NULL"), nullable=True)
     category_id = Column(Integer, ForeignKey("category.id"), nullable=False)
 
-    child_friendly = Column(Boolean, nullable=False)
+    child_friendly = Column(Boolean, nullable=False, server_default="0")
+    is_loud = Column(Boolean, nullable=False, server_default="0")
+    is_crowded = Column(Boolean, nullable=False, server_default="0")
+    is_dark = Column(Boolean, nullable=False, server_default="0")
+
     likes = Column(Integer, nullable=False, server_default="0")
     dislikes = Column(Integer, nullable=False, server_default="0")
     image_url = Column(String(500), nullable=True)
