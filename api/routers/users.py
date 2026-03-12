@@ -4,7 +4,8 @@ from sqlalchemy.orm import Session
 
 from api.db.database import get_db
 from api.db.models import User
-from api.schemas.users import UserRead, UserCreate
+from api.schemas.users import UserRead, UserCreate, UserUpdate
+from api.core.auth import get_current_user
 
 router = APIRouter()
 
@@ -37,7 +38,17 @@ def get_users(db: Session = Depends(get_db)):
 @router.get("/{user_id}", response_model= UserRead)
 def get_user(user_id: int, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.id == user_id).first()
-
     if user is None:
         raise HTTPException(status_code=404, detail="User could not be found.")
+    return user
+
+@router.put("/{user_id}", response_model=UserRead)
+def update_user(user_id: int, data: UserUpdate, db: Session = Depends(get_db), _: User = Depends(get_current_user)):
+    user = db.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User could not be found.")
+    for key, value in data.model_dump(exclude_unset=True).items():
+        setattr(user, key, value)
+    db.commit()
+    db.refresh(user)
     return user

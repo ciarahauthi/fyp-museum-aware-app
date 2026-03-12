@@ -6,8 +6,9 @@ from datetime import timezone
 
 from api.db.database import get_db
 from api.db.models import Exhibit, Beacon, Category
-from api.schemas.exhibits import ExhibitRead, ExhibitReadPublic
+from api.schemas.exhibits import ExhibitRead, ExhibitReadPublic, ExhibitUpdate
 from api.schemas.exhibits import RateRequest
+from api.core.auth import get_current_user
 
 router = APIRouter()
 
@@ -35,9 +36,20 @@ def get_exhibits_admin(db: Session = Depends(get_db)):
 @router.get("/{exhibit_id}", response_model= ExhibitRead)
 def get_exhibit(exhibit_id: int, db: Session = Depends(get_db)):
     exhibit = db.query(Exhibit).filter(Exhibit.id == exhibit_id).first()
-
     if exhibit is None:
         raise HTTPException(status_code=404, detail="Exhibit could not be found.")
+    return exhibit
+
+@router.put("/{exhibit_id}", response_model=ExhibitRead)
+def update_exhibit(exhibit_id: int, data: ExhibitUpdate, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
+    exhibit = db.query(Exhibit).filter(Exhibit.id == exhibit_id).first()
+    if exhibit is None:
+        raise HTTPException(status_code=404, detail="Exhibit could not be found.")
+    for key, value in data.model_dump(exclude_unset=True).items():
+        setattr(exhibit, key, value)
+    exhibit.updated_employee_id = current_user.id
+    db.commit()
+    db.refresh(exhibit)
     return exhibit
 
 # Rating feature

@@ -1,5 +1,6 @@
 from pydantic import BaseModel, ConfigDict
 from datetime import datetime
+from typing import Optional
 
 '''
 Contains all the category schemas
@@ -17,3 +18,7 @@ class CategoryRead(CategoryCreate):
     created_at: datetime
     updated_at: datetime
     model_config = ConfigDict(from_attributes=True)
+
+class CategoryUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None

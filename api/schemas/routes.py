@@ -21,3 +21,8 @@ class RouteRead(BaseModel):
     creator_employee_id: int
     updated_employee_id: int
     model_config = ConfigDict(from_attributes=True)
+
+class RouteUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    image_url: Optional[str] = None
