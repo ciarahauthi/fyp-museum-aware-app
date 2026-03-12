@@ -39,7 +39,6 @@ fun RouteInformationScreen(
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_8)),
-            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Description of route
             Text(
@@ -70,6 +69,7 @@ fun RouteInformationScreen(
             CommonButton(
                 text = stringResource(R.string.start_route),
                 onClick = { onStartRoute(routeInfo.nodes) },
+                modifier = Modifier.align(Alignment.CenterHorizontally)
             )
         }
     }

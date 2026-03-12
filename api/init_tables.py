@@ -190,24 +190,27 @@ def init():
 
         # Dummy Exhibits
         exhibit = Exhibit(
-            title="David",
-            description=(
-                "David is a masterpiece of Italian Renaissance sculpture in marble created from 1501 to 1504 by Michelangelo.\n\n"
-                "With a height of 5.17 metres (17 ft 0 in), the David was not only the first colossal marble statue made in the High Renaissance, "
-                "but also the first since classical antiquity, setting a precedent for the 16th century and beyond. David was originally commissioned "
-                "as one of a series of statues of twelve prophets to be positioned along the roofline of the east end of Florence Cathedral, but was "
-                "instead placed in the public square in front of the Palazzo della Signoria, the seat of civic government in Florence, where it was "
-                "unveiled on 8 September 1504.\n\n"
-                "In 1873, the statue was moved to the Galleria dell'Accademia, Florence. In 1910 a replica was installed at the original site on the public square."
-            ),
-            beacon_id=beacon.id,
-            category_id=sculptureCategory.id,
-            creator_employee_id=user.id,
-            updated_employee_id=user.id,
-            child_friendly=True,
-            likes=100,
-            dislikes=0,
-            image_url="/api/static/exhibits/david.jpg"
+        title="David",
+        description=(
+            "David is a masterpiece of Italian Renaissance sculpture in marble created from 1501 to 1504 by Michelangelo.\n\n"
+            "With a height of 5.17 metres (17 ft 0 in), the David was not only the first colossal marble statue made in the High Renaissance, "
+            "but also the first since classical antiquity, setting a precedent for the 16th century and beyond. David was originally commissioned "
+            "as one of a series of statues of twelve prophets to be positioned along the roofline of the east end of Florence Cathedral, but was "
+            "instead placed in the public square in front of the Palazzo della Signoria, the seat of civic government in Florence, where it was "
+            "unveiled on 8 September 1504.\n\n"
+            "In 1873, the statue was moved to the Galleria dell'Accademia, Florence. In 1910 a replica was installed at the original site on the public square."
+        ),
+        beacon_id=beacon.id,
+        category_id=sculptureCategory.id,
+        creator_employee_id=user.id,
+        updated_employee_id=user.id,
+        child_friendly=True,
+        is_loud=False,
+        is_crowded=True, 
+        is_dark=False,
+        likes=100,
+        dislikes=0,
+        image_url="/api/static/exhibits/david.jpg"
         )
         db.add(exhibit)
         db.commit()
@@ -224,6 +227,9 @@ def init():
             creator_employee_id=user.id,
             updated_employee_id=user.id,
             child_friendly=True,
+            is_loud=False,
+            is_crowded=False,
+            is_dark=True,
             likes=50,
             dislikes=2,
             image_url="/api/static/exhibits/monet_water_lilies.jpg"
@@ -245,6 +251,9 @@ def init():
             creator_employee_id=user.id,
             updated_employee_id=user.id,
             child_friendly=True,
+            is_loud=False,
+            is_crowded=False,
+            is_dark=False,
             likes=50,
             dislikes=10,
             image_url="/api/static/exhibits/venus_de_milo.jpg"
@@ -265,13 +274,15 @@ def init():
             creator_employee_id=user.id,
             updated_employee_id=user.id,
             child_friendly=True,
+            is_loud=False,
+            is_crowded=True,
+            is_dark=True,
             likes=0,
             dislikes=0,
             image_url="/api/static/exhibits/mona_lisa.jpg"
-            )
+        )
         db.add(exhibit3)
         db.commit()
-
         # Dummy Home content (for Open Day demo)
         db.add_all([
             Home(

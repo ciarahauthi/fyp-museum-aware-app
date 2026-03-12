@@ -4,10 +4,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -27,8 +29,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.material3.Icon
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -36,7 +41,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import androidx.compose.material3.CircularProgressIndicator
 import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
 import com.stitchumsdev.fyp.R
 import com.stitchumsdev.fyp.core.model.ExhibitModel
 import com.stitchumsdev.fyp.core.model.HomeItem
@@ -332,16 +339,36 @@ fun ExhibitHomeCard(
                 .padding(dimensionResource(R.dimen.padding_8)),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_4))
         ) {
-            val model: Any = exhibit.imageUrl?.takeIf { it.isNotBlank() } ?: R.drawable.ic_no_image
-            AsyncImage(
-                model = model,
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(70.dp)
-                    .clip(RoundedCornerShape(dimensionResource(R.dimen.corner_medium)))
-            )
+            val imageUrl = exhibit.imageUrl?.takeIf { it.isNotBlank() }
+            val imageModifier = Modifier
+                .fillMaxWidth()
+                .height(70.dp)
+                .clip(RoundedCornerShape(dimensionResource(R.dimen.corner_medium)))
+            if (imageUrl != null) {
+                SubcomposeAsyncImage(
+                    model = imageUrl,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = imageModifier,
+                    loading = {
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                        }
+                    }
+                )
+            } else {
+                Box(
+                    modifier = imageModifier.background(fypColours.secondaryBackground),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_no_image),
+                        contentDescription = null,
+                        modifier = Modifier.size(32.dp),
+                        tint = fypColours.secondaryText
+                    )
+                }
+            }
 
             // Title
             Text(

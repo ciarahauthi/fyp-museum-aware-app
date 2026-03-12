@@ -14,7 +14,11 @@
     <string name="start_route">Start route</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="child_friendly">Child Friendly:</string>
+    <string name="child_friendly">Child Friendly</string>
+    <string name="is_loud">Loud</string>
+    <string name="is_crowded">Crowded</string>
+    <string name="is_dark">Dark</string>
+    <string name="accessibility_info">Accessibility Info</string>
     <string name="end_routing">End Routing</string>
     <string name="routing">You are routing!</string>
     <string name="current_loc">Current Location:</string>

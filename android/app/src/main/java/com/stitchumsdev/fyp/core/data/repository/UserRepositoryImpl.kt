@@ -5,13 +5,13 @@ import com.stitchumsdev.fyp.core.model.AllRoutesResponse
 import com.stitchumsdev.fyp.core.model.BeaconEventsRequest
 import com.stitchumsdev.fyp.core.model.HomeResponse
 import com.stitchumsdev.fyp.core.model.LocationResponse
-import com.stitchumsdev.fyp.core.model.ObjectResponse
+import com.stitchumsdev.fyp.core.model.ExhibitResponse
 import com.stitchumsdev.fyp.core.model.RateRequest
 
 class UserRepositoryImpl(
     private val api: ApiService
 ) : UserRepository {
-    override suspend fun getExhibits(): List<ObjectResponse> = api.getExhibits()
+    override suspend fun getExhibits(): List<ExhibitResponse> = api.getExhibits()
     override suspend fun getLocations(): List<LocationResponse> = api.getLocations()
     override suspend fun getRoutes(): List<AllRoutesResponse> = api.getRoutes()
     override suspend fun getRoute(current: Int, targets: List<Int>): List<Int> = api.getRoute(

@@ -33,6 +33,9 @@ class ExhibitReadPublic(BaseModel):
     description: str
     category: str
     child_friendly: bool
+    is_loud: bool
+    is_crowded: bool
+    is_dark: bool
     likes: int
     dislikes: int
     uuid: str
