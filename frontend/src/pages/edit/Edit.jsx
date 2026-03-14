@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { editFields, readOnlyFields, updateServices, optionLoaders } from "../manage_content/ManageContentData";
+import { editFields, addFields, readOnlyFields, updateServices, createServices, optionLoaders, TABLE_SINGULAR } from "../manage_content/ManageContentData";
+import ConfirmPopup from "../../components/confirm_popup/ConfirmPopup";
 import "./Edit.css";
 
 const LABEL_MAP = {
@@ -22,8 +23,9 @@ export default function Edit() {
   const navigate = useNavigate();
 
   const { item, tableType } = state || {};
-  const fields = editFields[tableType] || [];
-  const roFields = readOnlyFields[tableType] || [];
+  const isAddMode = !item;
+  const fields = isAddMode ? (addFields[tableType] || []) : (editFields[tableType] || []);
+  const roFields = isAddMode ? [] : (readOnlyFields[tableType] || []);
 
   const initialForm = Object.fromEntries(fields.map((f) => [f.key, item?.[f.key] ?? ""]));
   const [form, setForm] = useState(initialForm);
@@ -32,10 +34,10 @@ export default function Edit() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
 
-  // Fetch options for any select fields
+  // Fetch options for select / image-select fields
   useEffect(() => {
-    const selectFields = fields.filter((f) => f.type === "select");
-    const uniqueKeys = [...new Set(selectFields.map((f) => f.optionsKey))];
+    const optionFields = fields.filter((f) => f.type === "select" || f.type === "image-select");
+    const uniqueKeys = [...new Set(optionFields.map((f) => f.optionsKey))];
 
     uniqueKeys.forEach(async (key) => {
       if (!optionLoaders[key]) return;
@@ -48,9 +50,11 @@ export default function Edit() {
     });
   }, []);
 
-  if (!item || !tableType) {
-    return <p className="edit-error">No item to edit.</p>;
+  if (!tableType) {
+    return <p className="edit-error">No table selected.</p>;
   }
+
+  const singularLabel = TABLE_SINGULAR[tableType] || tableType;
 
   const handleChange = (key, value) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -60,7 +64,11 @@ export default function Edit() {
     setSaving(true);
     setError(null);
     try {
-      await updateServices[tableType](item.id, form);
+      if (isAddMode) {
+        await createServices[tableType](form);
+      } else {
+        await updateServices[tableType](item.id, form);
+      }
       navigate("/manage-content");
     } catch (err) {
       setError(err.message);
@@ -73,7 +81,7 @@ export default function Edit() {
     <section className="edit-page">
       <header className="edit-header">
         <button className="edit-back-btn" onClick={() => navigate("/manage-content")}>← Back</button>
-        <h1 className="edit-title">Edit {tableType.slice(0, -1)}</h1>
+        <h1 className="edit-title">{isAddMode ? "Add" : "Edit"} {singularLabel}</h1>
       </header>
 
       <section className="edit-body">
@@ -92,9 +100,9 @@ export default function Edit() {
           </section>
         )}
 
-        {/* Edit form */}
+        {/* Entry Form for both create and update */}
         <section className="edit-form">
-          <h2 className="edit-section-label">Edit fields</h2>
+          <h2 className="edit-section-label">{isAddMode ? "New entry" : "Edit fields"}</h2>
           {fields.map((field) => (
             <section key={field.key} className="edit-field">
               <label className="edit-label" htmlFor={field.key}>{field.label}</label>
@@ -134,6 +142,27 @@ export default function Edit() {
                     </option>
                   ))}
                 </select>
+              ) : field.type === "image-select" ? (
+                <select
+                  id={field.key}
+                  className="edit-input edit-select"
+                  value={form[field.key]}
+                  onChange={(e) => handleChange(field.key, e.target.value)}
+                >
+                  <option value="">— None —</option>
+                  {(options[field.optionsKey] || []).map((img) => (
+                    <option key={img.url} value={img.url}>{img.filename}</option>
+                  ))}
+                </select>
+              ) : field.type === "password" ? (
+                <input
+                  id={field.key}
+                  type="password"
+                  className="edit-input"
+                  value={form[field.key]}
+                  onChange={(e) => handleChange(field.key, e.target.value)}
+                  autoComplete="new-password"
+                />
               ) : (
                 <input
                   id={field.key}
@@ -152,26 +181,18 @@ export default function Edit() {
         {error && <p className="edit-error">{error}</p>}
 
         <button className="edit-save-btn" onClick={() => setShowConfirm(true)}>
-          Save changes
+          {isAddMode ? `Add ${singularLabel}` : "Save changes"}
         </button>
       </section>
 
-      {/* Confirm popup */}
       {showConfirm && (
-        <section className="edit-modal-overlay">
-          <section className="edit-modal">
-            <h2>Confirm changes</h2>
-            <p>Are you sure you want to save these changes?</p>
-            <section className="edit-modal-actions">
-              <button className="edit-modal-cancel" onClick={() => setShowConfirm(false)} disabled={saving}>
-                Cancel
-              </button>
-              <button className="edit-modal-confirm" onClick={handleSubmit} disabled={saving}>
-                {saving ? "Saving…" : "Confirm"}
-              </button>
-            </section>
-          </section>
-        </section>
+        <ConfirmPopup
+          message={isAddMode ? `Are you sure you want to add this ${singularLabel}?` : "Are you sure you want to save these changes?"}
+          confirmLabel={isAddMode ? `Add ${singularLabel}` : "Save changes"}
+          saving={saving}
+          onConfirm={handleSubmit}
+          onCancel={() => setShowConfirm(false)}
+        />
       )}
     </section>
   );
