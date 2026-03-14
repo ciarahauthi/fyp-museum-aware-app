@@ -3,10 +3,23 @@ from sqlalchemy.orm import Session
 
 from api.db.database import get_db
 from api.db.models import Category, User
-from api.schemas.categories import CategoryRead, CategoryUpdate
+from api.schemas.categories import CategoryRead, CategoryCreate, CategoryUpdate
 from api.core.auth import get_current_user
 
 router = APIRouter()
+
+@router.post("", response_model=CategoryRead)
+def create_category(data: CategoryCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    category = Category(
+        name=data.name,
+        description=data.description,
+        creator_employee_id=current_user.id,
+        updated_employee_id=current_user.id,
+    )
+    db.add(category)
+    db.commit()
+    db.refresh(category)
+    return category
 
 @router.get("", response_model= list[CategoryRead])
 def get_categories(db: Session = Depends(get_db)):
