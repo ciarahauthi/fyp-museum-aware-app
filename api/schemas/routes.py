@@ -11,6 +11,11 @@ class NodeRead(BaseModel):
     x: float
     y: float
 
+class RouteCreate(BaseModel):
+    name: str
+    description: str
+    image_url: Optional[str] = None
+
 class RouteRead(BaseModel):
     id: int
     name: str

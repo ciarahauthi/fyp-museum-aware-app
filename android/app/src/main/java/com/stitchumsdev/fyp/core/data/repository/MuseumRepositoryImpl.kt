@@ -44,8 +44,9 @@ class MuseumRepositoryImpl(
                     id = route.id,
                     name = route.name,
                     description = route.description,
-                    nodes = route.nodeIds.mapNotNull { locationById[it] }, // location ids -> LocationModel
-                    stops = route.stops.mapNotNull { objectById[it] } // object ids -> ObjectModel
+                    nodes = route.nodeIds.mapNotNull { locationById[it] },
+                    stops = route.stops.mapNotNull { objectById[it] },
+                    imageUrl = route.imageUrl
                 )
             }
             val routeById = routes.associateBy { it.id }

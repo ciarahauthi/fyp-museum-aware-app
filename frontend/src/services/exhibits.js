@@ -5,6 +5,11 @@ export const exhibitsService = {
 
   getById: (id) => apiFetch(`/api/exhibits/${id}`),
 
+  create: (data) => apiFetch("/api/exhibits", {
+    method: "POST",
+    body: JSON.stringify(data),
+  }),
+
   update: (id, data) => apiFetch(`/api/exhibits/${id}`, {
     method: "PUT",
     body: JSON.stringify(data),

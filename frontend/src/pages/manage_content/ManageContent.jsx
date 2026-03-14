@@ -155,10 +155,28 @@ export default function ManageContent() {
           ))}
 
           {activeCategory && (
-            <button className="add-content-btn">
+            <button
+              className="add-content-btn"
+              onClick={() => navigate("/edit", { state: { tableType: activeKey } })}
+            >
               Add {activeCategory}
             </button>
           )}
+
+          <section className="manage-content-image-btns">
+            <button
+              className="manage-image-upload-btn"
+              onClick={() => navigate("/upload", { state: { folder: "exhibits" } })}
+            >
+              + Exhibit image
+            </button>
+            <button
+              className="manage-image-upload-btn"
+              onClick={() => navigate("/upload", { state: { folder: "routes" } })}
+            >
+              + Route image
+            </button>
+          </section>
         </section>
 
         {activeCategory ? (

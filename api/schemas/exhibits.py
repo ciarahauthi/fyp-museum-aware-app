@@ -10,9 +10,13 @@ Contains all the exhibit schemas
 class ExhibitCreate(BaseModel):
     title: str
     description: str
-    child_friendly: bool
-    beacon_id: int
+    child_friendly: bool = False
+    is_loud: bool = False
+    is_crowded: bool = False
+    is_dark: bool = False
+    beacon_id: Optional[int] = None
     category_id: int
+    image_url: Optional[str] = None
 
 class ExhibitRead(BaseModel):
     id: int

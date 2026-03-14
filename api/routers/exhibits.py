@@ -6,11 +6,31 @@ from datetime import timezone
 
 from api.db.database import get_db
 from api.db.models import Exhibit, Beacon, Category
-from api.schemas.exhibits import ExhibitRead, ExhibitReadPublic, ExhibitUpdate
+from api.schemas.exhibits import ExhibitRead, ExhibitReadPublic, ExhibitCreate, ExhibitUpdate
 from api.schemas.exhibits import RateRequest
 from api.core.auth import get_current_user
 
 router = APIRouter()
+
+@router.post("", response_model=ExhibitRead)
+def create_exhibit(data: ExhibitCreate, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    exhibit = Exhibit(
+        title=data.title,
+        description=data.description,
+        child_friendly=data.child_friendly,
+        is_loud=data.is_loud,
+        is_crowded=data.is_crowded,
+        is_dark=data.is_dark,
+        beacon_id=data.beacon_id,
+        category_id=data.category_id,
+        image_url=data.image_url,
+        creator_employee_id=current_user.id,
+        updated_employee_id=current_user.id,
+    )
+    db.add(exhibit)
+    db.commit()
+    db.refresh(exhibit)
+    return exhibit
 
 # Exhibit Queries
 # One for mobile app
