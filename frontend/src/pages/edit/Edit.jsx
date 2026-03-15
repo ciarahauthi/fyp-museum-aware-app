@@ -27,7 +27,7 @@ export default function Edit() {
   const fields = isAddMode ? (addFields[tableType] || []) : (editFields[tableType] || []);
   const roFields = isAddMode ? [] : (readOnlyFields[tableType] || []);
 
-  const initialForm = Object.fromEntries(fields.map((f) => [f.key, item?.[f.key] ?? ""]));
+  const initialForm = Object.fromEntries(fields.map((f) => [f.key, item?.[f.key] ?? (f.type === "boolean" ? false : "")]));
   const [form, setForm] = useState(initialForm);
   const [options, setOptions] = useState({});
   const [showConfirm, setShowConfirm] = useState(false);
@@ -116,16 +116,26 @@ export default function Edit() {
                   rows={4}
                 />
               ) : field.type === "boolean" ? (
-                <section className="edit-toggle-row">
-                  <input
-                    id={field.key}
-                    type="checkbox"
-                    className="edit-checkbox"
-                    checked={!!form[field.key]}
-                    onChange={(e) => handleChange(field.key, e.target.checked)}
-                  />
-                  <label htmlFor={field.key} className="edit-toggle-label">
-                    {form[field.key] ? "Yes" : "No"}
+                <section className="edit-radio-group">
+                  <label className="edit-radio-label">
+                    <input
+                      type="radio"
+                      name={field.key}
+                      value="true"
+                      checked={form[field.key] === true}
+                      onChange={() => handleChange(field.key, true)}
+                    />
+                    Yes
+                  </label>
+                  <label className="edit-radio-label">
+                    <input
+                      type="radio"
+                      name={field.key}
+                      value="false"
+                      checked={form[field.key] === false}
+                      onChange={() => handleChange(field.key, false)}
+                    />
+                    No
                   </label>
                 </section>
               ) : field.type === "select" ? (
