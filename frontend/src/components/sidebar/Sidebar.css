@@ -1,82 +1,84 @@
 .sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: var(--sidebar-width);
-  background-color: white;
-  border-right: 2px solid #c0c0c0;
-  z-index: 2000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: var(--sidebar-width);
+    background-color: white;
+    border-right: 2px solid #c0c0c0;
+    z-index: 2000;
 }
 
 .sidebar > ul {
-  list-style: none;
-  height: 100%;
-  width: 100%;
-  margin: 0;
-  padding: 2rem 0;
-  display: flex;
-  flex-direction: column;
+    list-style: none;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 2rem 0;
+    display: flex;
+    flex-direction: column;
 }
 
 .sidebar-option {
-  width: 100%;
-  height: 5.5rem;
-  margin: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  list-style: none;
-  color: #3C3E40;
+    width: 100%;
+    height: 5.5rem;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    list-style: none;
+    color: #3c3e40;
 }
 
 .sidebar-option:nth-last-child(1) {
-  margin-top: auto;
-  padding-bottom: 2rem;
+    margin-top: auto;
+    padding-bottom: 2rem;
 }
 
 .sidebar-option:hover {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 .icon {
-  display: grid;
-  place-items: center;
-  transition: 0.1s ease-in-out;
-  padding: 15px;
-  border-radius: 5px;
-  font-size: 1.6rem;
+    display: grid;
+    place-items: center;
+    transition: 0.1s ease-in-out;
+    padding: 15px;
+    border-radius: 5px;
+    font-size: 1.6rem;
 }
 
 .sidebar-option:hover .icon,
 .sidebar-option.active .icon {
-  background-color: var(--color-hover-bg);
+    background-color: var(--color-hover-bg);
 }
 
 .sidebar a,
 .sidebar a:hover {
-  text-decoration: none;
-  color: inherit;
+    text-decoration: none;
+    color: inherit;
 }
 
 .title {
-  position: absolute;
-  left: calc(100% + 12px);
-  top: 50%;
-  transform: translateY(-50%);
-  background-color: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 5px 10px;
-  border-radius: 5px;
-  white-space: nowrap;
-  font-size: 14px;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+    position: absolute;
+    left: calc(100% + 12px);
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    white-space: nowrap;
+    font-size: 14px;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+        opacity 0.3s ease-in-out,
+        visibility 0.3s ease-in-out;
 }
 
 .sidebar-option:hover .title {
-  opacity: 1;
-  visibility: visible;
+    opacity: 1;
+    visibility: visible;
 }

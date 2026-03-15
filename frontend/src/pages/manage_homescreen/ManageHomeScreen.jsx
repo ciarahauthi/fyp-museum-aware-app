@@ -1,3 +1,3 @@
 export default function ManageHomeScreen() {
-  return <h1>ManageHomeScreen</h1>;
+    return <h1>ManageHomeScreen</h1>;
 }

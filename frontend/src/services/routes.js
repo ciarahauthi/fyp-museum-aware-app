@@ -1,17 +1,19 @@
 import { apiFetch } from "./api";
 
 export const routesService = {
-  getAll: () => apiFetch("/api/routes/admin"),
+    getAll: () => apiFetch("/api/routes/admin"),
 
-  getLocations: () => apiFetch("/api/routes/locations"),
+    getLocations: () => apiFetch("/api/routes/locations"),
 
-  create: (data) => apiFetch("/api/routes", {
-    method: "POST",
-    body: JSON.stringify(data),
-  }),
+    create: (data) =>
+        apiFetch("/api/routes", {
+            method: "POST",
+            body: JSON.stringify(data),
+        }),
 
-  update: (id, data) => apiFetch(`/api/routes/${id}`, {
-    method: "PUT",
-    body: JSON.stringify(data),
-  }),
+    update: (id, data) =>
+        apiFetch(`/api/routes/${id}`, {
+            method: "PUT",
+            body: JSON.stringify(data),
+        }),
 };

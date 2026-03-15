@@ -11,22 +11,25 @@ import UploadImage from "./pages/upload/UploadImage";
 import AppLayout from "./components/app_layout/AppLayout";
 
 function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<Login />} />
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route path="/login" element={<Login />} />
 
-        <Route element={<AppLayout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/manage-content" element={<ManageContent />} />
-          <Route path="/manage-home-screen" element={<ManageHomeScreen />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/edit" element={<Edit />} />
-          <Route path="/upload" element={<UploadImage />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
-  );
+                <Route element={<AppLayout />}>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/manage-content" element={<ManageContent />} />
+                    <Route
+                        path="/manage-home-screen"
+                        element={<ManageHomeScreen />}
+                    />
+                    <Route path="/settings" element={<Settings />} />
+                    <Route path="/edit" element={<Edit />} />
+                    <Route path="/upload" element={<UploadImage />} />
+                </Route>
+            </Routes>
+        </BrowserRouter>
+    );
 }
 
 export default App;
