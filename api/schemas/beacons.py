@@ -13,6 +13,7 @@ class BeaconCreate(BaseModel):
     major: int
     minor: int
     description: str
+    location_id: int
 
 class BeaconRead(BeaconCreate):
     id: int
