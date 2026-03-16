@@ -1,0 +1,48 @@
+.manage-homescreen {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.horizontal-scroll-section {
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.horizontal-scroll-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.horizontal-scroll-list {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  overflow-x: auto;
+  list-style: none;
+  padding: 0.5rem 0;
+  margin: 0;
+}
+
+.horizontal-scroll-card {
+  min-width: 160px;
+  background-color: #f0f0f0;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  flex-shrink: 0;
+}
+
+.horizontal-scroll-card p {
+  margin: 0;
+  padding-bottom: 1rem;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.manage-homescreen > button {
+  margin-left: auto;
+  margin-top: 1rem;
+}
