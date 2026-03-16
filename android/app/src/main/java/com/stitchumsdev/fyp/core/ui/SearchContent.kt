@@ -11,14 +11,17 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import com.stitchumsdev.fyp.R
 import com.stitchumsdev.fyp.core.model.ExhibitModel
+import com.stitchumsdev.fyp.core.ui.GenericErrorScreen
 import com.stitchumsdev.fyp.core.ui.LoadingScreen
 import com.stitchumsdev.fyp.core.ui.components.ExhibitRow
 import com.stitchumsdev.fyp.core.ui.theme.Typography
@@ -45,7 +48,7 @@ fun SearchContent(
         when (uiState) {
             SearchUiState.Loading -> LoadingScreen()
 
-            SearchUiState.Error -> Text("Couldn’t load exhibits.") // ToDo error screen
+            SearchUiState.Error -> GenericErrorScreen { onAction(SearchAction.Retry) }
 
             is SearchUiState.Default -> {
                 val query = uiState.searchText.trim()
@@ -66,7 +69,7 @@ fun SearchContent(
                     onValueChange = { onAction(SearchAction.OnTextChanged(it)) },
                     modifier = Modifier.fillMaxWidth(),
                     placeholder = { Text(
-                        text = "Search exhibits…",
+                        text = "Search...",
                         style = Typography.bodyMedium,
                         color = fypColours.secondaryText) },
                     leadingIcon = {
@@ -90,7 +93,11 @@ fun SearchContent(
                             }
                         }
                     },
-                    singleLine = true
+                    singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = fypColours.mainText,
+                        unfocusedTextColor = fypColours.mainText,
+                    )
                 )
 
                 Text(
@@ -102,7 +109,12 @@ fun SearchContent(
 
                 // List of exhibits
                 if (filtered.isEmpty()) {
-                    Text("No exhibits match “$query”.")
+                    Text(
+                        text = "No exhibits match '$query'.",
+                        style = Typography.titleMedium,
+                        color = fypColours.mainText,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth())
                 } else {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize()
