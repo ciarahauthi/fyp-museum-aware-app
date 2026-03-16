@@ -30,7 +30,7 @@ export default function Edit() {
     const { state } = useLocation();
     const navigate = useNavigate();
 
-    const { item, tableType } = state || {};
+    const { item, tableType, returnPath = "/manage-content", defaultValues = {} } = state || {};
     const isAddMode = !item;
     const fields = isAddMode
         ? addFields[tableType] || []
@@ -40,7 +40,7 @@ export default function Edit() {
     const initialForm = Object.fromEntries(
         fields.map((f) => [
             f.key,
-            item?.[f.key] ?? (f.type === "boolean" ? false : ""),
+            item?.[f.key] ?? defaultValues[f.key] ?? (f.type === "boolean" ? false : ""),
         ]),
     );
     const [form, setForm] = useState(initialForm);
@@ -86,7 +86,7 @@ export default function Edit() {
             } else {
                 await updateServices[tableType](item.id, form);
             }
-            navigate("/manage-content");
+            navigate(returnPath);
         } catch (err) {
             setError(err.message);
             setSaving(false);
@@ -99,7 +99,7 @@ export default function Edit() {
             <header className="edit-header">
                 <button
                     className="edit-back-btn"
-                    onClick={() => navigate("/manage-content")}
+                    onClick={() => navigate(returnPath)}
                 >
                     ← Back
                 </button>
