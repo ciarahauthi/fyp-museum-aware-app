@@ -1,0 +1,46 @@
+/* Header */
+.manage-content-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.manage-content-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin: 0;
+}
+
+.manage-content-user {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.manage-content-user-info {
+    text-align: right;
+}
+
+.manage-content-user-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin: 0;
+}
+
+.manage-content-avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background-color: #e9d8fd;
+    color: #6b21a8;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

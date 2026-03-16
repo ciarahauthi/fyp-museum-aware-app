@@ -1,11 +1,11 @@
 .app-layout {
-  display: flex;
-  min-height: 100vh;
+    display: flex;
+    min-height: 100vh;
 }
 
 .app-layout-content {
-  margin-left: var(--sidebar-width); /* Match sidebar width */
-  width: calc(100% - 72px);
-  min-height: 100vh;
-  box-sizing: border-box;
+    margin-left: var(--sidebar-width); /* Match sidebar width */
+    width: calc(100% - 72px);
+    min-height: 100vh;
+    box-sizing: border-box;
 }

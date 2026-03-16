@@ -24,14 +24,10 @@ export default function Login() {
 
     return (
         <section className="login-container">
-            <h2 className="login-title">
-                Login
-            </h2>
+            <h2 className="login-title">Login</h2>
             <form className="login-form" onSubmit={handleSubmit}>
                 <section className="login-field">
-                    <label htmlFor="email">
-                        Email
-                    </label>
+                    <label htmlFor="email">Email</label>
                     <input
                         id="email"
                         type="email"
@@ -41,9 +37,7 @@ export default function Login() {
                     />
                 </section>
                 <section className="login-field">
-                    <label htmlFor="password">
-                        Password
-                    </label>
+                    <label htmlFor="password">Password</label>
                     <input
                         id="password"
                         type="password"
@@ -58,7 +52,6 @@ export default function Login() {
                 <button type="submit" className="login-button">
                     Login
                 </button>
-
             </form>
         </section>
     );

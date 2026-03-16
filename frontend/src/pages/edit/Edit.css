@@ -1,171 +1,170 @@
 .edit-page {
-  display: flex;
-  flex-direction: column;
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 2rem;
-  gap: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 2rem;
+    gap: 1.5rem;
 }
 
 .edit-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
 .edit-back-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 0.9rem;
-  color: var(--color-hover-text, #555);
-  padding: 0.4rem 0.6rem;
-  border-radius: 0.4rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--color-hover-text, #555);
+    padding: 0.4rem 0.6rem;
+    border-radius: 0.4rem;
 }
 
 .edit-back-btn:hover {
-  background: var(--color-hover-bg, #f0f0f0);
+    background: var(--color-hover-bg, #f0f0f0);
 }
 
 .edit-title {
-  font-size: 1.4rem;
-  font-weight: 600;
-  text-transform: capitalize;
-  margin: 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    margin: 0;
 }
 
 .edit-body {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
 }
 
 .edit-section-label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #888;
-  margin: 0 0 0.75rem 0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #888;
+    margin: 0 0 0.75rem 0;
 }
 
 /* Read-only section */
 .edit-readonly-section {
-  background: #f9f9f9;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.6rem;
-  padding: 1rem 1.25rem;
+    background: #f9f9f9;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.6rem;
+    padding: 1rem 1.25rem;
 }
 
 .edit-readonly-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 0.75rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.75rem;
 }
 
 .edit-readonly-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
 }
 
 .edit-readonly-label {
-  font-size: 0.75rem;
-  color: #888;
-  font-weight: 500;
+    font-size: 0.75rem;
+    color: #888;
+    font-weight: 500;
 }
 
 .edit-readonly-value {
-  font-size: 0.9rem;
-  color: #444;
-  font-family: monospace;
+    font-size: 0.9rem;
+    color: #444;
+    font-family: monospace;
 }
 
 /* Editable form */
 .edit-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
 }
 
 .edit-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
 }
 
 .edit-label {
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: #333;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #333;
 }
 
 .edit-input {
-  padding: 0.55rem 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.4rem;
-  font-size: 0.95rem;
-  color: #1a1a2e;
-  background: #fff;
-  transition: border-color 0.15s;
+    padding: 0.55rem 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.4rem;
+    font-size: 0.95rem;
+    color: #1a1a2e;
+    background: #fff;
+    transition: border-color 0.15s;
 }
 
 .edit-input:focus {
-  outline: none;
-  border-color: #6366f1;
+    outline: none;
+    border-color: #6366f1;
 }
 
 .edit-textarea {
-  resize: vertical;
-  min-height: 90px;
-  font-family: inherit;
+    resize: vertical;
+    min-height: 90px;
+    font-family: inherit;
 }
 
 .edit-select {
-  cursor: pointer;
-  appearance: auto;
+    cursor: pointer;
+    appearance: auto;
 }
 
 .edit-radio-group {
-  display: flex;
-  gap: 1.5rem;
+    display: flex;
+    gap: 1.5rem;
 }
 
 .edit-radio-label {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.95rem;
-  color: #333;
-  cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.95rem;
+    color: #333;
+    cursor: pointer;
 }
 
 .edit-radio-label input[type="radio"] {
-  accent-color: #6366f1;
-  width: 1rem;
-  height: 1rem;
-  cursor: pointer;
+    accent-color: #6366f1;
+    width: 1rem;
+    height: 1rem;
+    cursor: pointer;
 }
 
 .edit-save-btn {
-  align-self: flex-start;
-  padding: 0.65rem 1.5rem;
-  background: #6366f1;
-  color: #fff;
-  border: none;
-  border-radius: 0.4rem;
-  font-size: 0.95rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.15s;
+    align-self: flex-start;
+    padding: 0.65rem 1.5rem;
+    background: #6366f1;
+    color: #fff;
+    border: none;
+    border-radius: 0.4rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
 }
 
 .edit-save-btn:hover {
-  background: #4f46e5;
+    background: #4f46e5;
 }
 
 .edit-error {
-  color: #dc2626;
-  font-size: 0.9rem;
+    color: #dc2626;
+    font-size: 0.9rem;
 }
-

@@ -136,7 +136,6 @@ class Home(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     section = Column(Enum(HomeSection), nullable=False)
-    sort_order = Column(Integer, nullable=False, server_default="0")
     active = Column(Boolean, nullable=False, server_default="1")
     title = Column(String(150), nullable=False)
     description = Column(Text, nullable=False)
