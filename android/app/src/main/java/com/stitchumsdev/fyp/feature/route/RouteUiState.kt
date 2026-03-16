@@ -1,5 +1,6 @@
 package com.stitchumsdev.fyp.feature.route
 
+import com.stitchumsdev.fyp.core.model.ExhibitModel
 import com.stitchumsdev.fyp.core.model.LocationModel
 import com.stitchumsdev.fyp.core.model.RouteModel
 
@@ -10,7 +11,7 @@ sealed interface RouteUiState {
     // Not routing state
     data class Default(
         val routes: List<RouteModel> = emptyList(),
-        val selectedStops: List<LocationModel> = emptyList()
+        val selectedExhibits: List<ExhibitModel> = emptyList()
     ) : RouteUiState
     // Routing state
     data class Routing(
