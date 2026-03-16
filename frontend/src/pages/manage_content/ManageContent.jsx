@@ -168,7 +168,7 @@ export default function ManageContent() {
 
                     <section className="manage-content-image-btns">
                         <button
-                            className="manage-image-upload-btn"
+                            className="btn"
                             onClick={() =>
                                 navigate("/upload", {
                                     state: { folder: "exhibits" },
@@ -178,7 +178,7 @@ export default function ManageContent() {
                             + Exhibit image
                         </button>
                         <button
-                            className="manage-image-upload-btn"
+                            className="btn"
                             onClick={() =>
                                 navigate("/upload", {
                                     state: { folder: "routes" },
