@@ -21,20 +21,6 @@ class SearchViewModel(
     private val _uiState = MutableStateFlow<SearchUiState>(SearchUiState.Loading)
     val uiState = _uiState.asStateFlow()
 
-    fun loadObjects() {
-        _uiState.value = SearchUiState.Loading
-        viewModelScope.launch {
-            try {
-                museumRepository.clearCache()
-                val objects = museumRepository.load().objects
-                _uiState.value = SearchUiState.Default(objects = objects)
-            } catch (t: Throwable) {
-                Timber.e(t, "!! Failed to load objects")
-                _uiState.value = SearchUiState.Error
-            }
-        }
-    }
-
     override fun onAction(action: SearchAction) {
         when (action) {
             is SearchAction.OnTextChanged -> {
@@ -47,11 +33,25 @@ class SearchViewModel(
                     if (state is SearchUiState.Default) state.copy(searchText = "") else state
                 }
             }
-
             is SearchAction.OnRate -> onRate(
                 id= action.id,
                 rating = action.rating
             )
+            SearchAction.Retry -> loadObjects()
+        }
+    }
+
+    fun loadObjects() {
+        _uiState.value = SearchUiState.Loading
+        viewModelScope.launch {
+            try {
+                museumRepository.clearCache()
+                val objects = museumRepository.load().objects
+                _uiState.value = SearchUiState.Default(objects = objects)
+            } catch (t: Throwable) {
+                Timber.e(t, "!! Failed to load objects")
+                _uiState.value = SearchUiState.Error
+            }
         }
     }
 
