@@ -6,7 +6,7 @@ import "./UploadImage.css";
 export default function UploadImage() {
     const { state } = useLocation();
     const navigate = useNavigate();
-    const { folder } = state || {};
+    const { folder, returnPath = "/manage-content" } = state || {};
 
     const fileInputRef = useRef(null);
     const [selectedFile, setSelectedFile] = useState(null);
@@ -49,7 +49,7 @@ export default function UploadImage() {
             <header className="upload-header">
                 <button
                     className="upload-back-btn"
-                    onClick={() => navigate("/manage-content")}
+                    onClick={() => navigate(returnPath)}
                 >
                     ← Back
                 </button>

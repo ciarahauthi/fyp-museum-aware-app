@@ -8,7 +8,7 @@ from api.core.auth import get_current_user
 router = APIRouter()
 
 STATIC_DIR = Path("api/static")
-ALLOWED_FOLDERS = {"exhibits", "routes"}
+ALLOWED_FOLDERS = {"exhibits", "routes", "home"}
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png"}
 
 
