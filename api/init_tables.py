@@ -287,7 +287,6 @@ def init():
         db.add_all([
             Home(
                 section="top",
-                sort_order=0,
                 active=True,
                 title="Computer Science Open Day 2026",
                 description="Welcome to our Computer Science Open Day! We hope you have a great time seeing all the projects every student has made.",
@@ -296,7 +295,6 @@ def init():
             ),
             Home(
                 section="mid",
-                sort_order=0,
                 active=True,
                 title="How This App Works",
                 description=(
@@ -310,7 +308,6 @@ def init():
             ),
             Home(
                 section="bottom",
-                sort_order=0,
                 active=True,
                 title="About This Project",
                 description=(
@@ -327,7 +324,6 @@ def init():
             ),
             Home(
                 section="bottom",
-                sort_order=1,
                 active=True,
                 title="About Me",
                 description=(
