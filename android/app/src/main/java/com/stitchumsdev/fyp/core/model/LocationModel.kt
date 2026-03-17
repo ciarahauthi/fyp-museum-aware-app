@@ -32,8 +32,7 @@ data class RoomHeatPoint(
     val name: String,
     val x: Float,
     val y: Float,
-    val weight: Float = 1f,
-    val radiusPx: Float = 35f
+    val radiusPx: Float = 50f
 ) {
     fun toLocationModel() = LocationModel(
         id = this.id,

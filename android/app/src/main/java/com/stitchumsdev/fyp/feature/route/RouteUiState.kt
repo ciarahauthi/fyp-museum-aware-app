@@ -20,7 +20,6 @@ sealed interface RouteUiState {
         val currentLocation: LocationModel? = null // Where I am from scanning
     ) : RouteUiState {
         // Derive from stops list
-        val currentTarget: LocationModel? get() = stops.getOrNull(currentIndex)
-        val nextTarget: LocationModel? get() = stops.getOrNull(currentIndex + 1)
+        val nextTarget: LocationModel? get() = stops.getOrNull(currentIndex)
     }
 }

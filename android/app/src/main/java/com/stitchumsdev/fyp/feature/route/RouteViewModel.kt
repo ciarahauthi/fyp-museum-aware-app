@@ -51,7 +51,7 @@ class RouteViewModel (
                     val updated = state.copy(currentLocation = location)
                     _uiState.value = updated
 
-                    val target = updated.currentTarget
+                    val target = updated.nextTarget
                     if (location != null && target != null && location.id == target.id) {
                         if (stopIndex != updated.currentIndex) {
                             stopIndex = updated.currentIndex
@@ -121,7 +121,7 @@ class RouteViewModel (
                 pendingRoute = null
 
                 // Trigger if starting position == start of route
-                if (routingState.currentTarget?.id == currentLocation.id) {
+                if (routingState.nextTarget?.id == currentLocation.id) {
                     stopIndex = 0
                     nextStop()
                 }
