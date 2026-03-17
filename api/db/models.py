@@ -31,6 +31,8 @@ class Exhibit(Base):
     beacon_id = Column(Integer, ForeignKey("beacon.id", ondelete="SET NULL"), nullable=True)
     category_id = Column(Integer, ForeignKey("category.id"), nullable=False)
 
+    active = Column(Boolean, nullable=False, server_default="1")
+
     child_friendly = Column(Boolean, nullable=False, server_default="0")
     is_loud = Column(Boolean, nullable=False, server_default="0")
     is_crowded = Column(Boolean, nullable=False, server_default="0")
@@ -118,6 +120,8 @@ class Route(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(100), unique=True, nullable=False)
     description = Column(Text, nullable=False)
+
+    active = Column(Boolean, nullable=False, server_default="1")
 
     node_ids = Column(JSON, nullable=False)
     stops = Column(JSON, nullable=False)
