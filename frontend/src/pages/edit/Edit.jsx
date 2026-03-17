@@ -40,7 +40,7 @@ export default function Edit() {
     const initialForm = Object.fromEntries(
         fields.map((f) => [
             f.key,
-            item?.[f.key] ?? defaultValues[f.key] ?? (f.type === "boolean" ? false : ""),
+            item?.[f.key] ?? defaultValues[f.key] ?? (f.type === "boolean" ? false : f.type === "referencearrayinput" ? [] : ""),
         ]),
     );
     const [form, setForm] = useState(initialForm);
@@ -52,7 +52,7 @@ export default function Edit() {
     // Fetch options for select / image-select fields
     useEffect(() => {
         const optionFields = fields.filter(
-            (f) => f.type === "select" || f.type === "image-select",
+            (f) => f.type === "select" || f.type === "image-select" || f.type === "referencearrayinput",
         );
         const uniqueKeys = [...new Set(optionFields.map((f) => f.optionsKey))];
 
@@ -225,6 +225,31 @@ export default function Edit() {
                                         ),
                                     )}
                                 </select>
+                            ) : field.type === "referencearrayinput" ? (
+                                <section className="edit-checkbox-list">
+                                    {(options[field.optionsKey] || []).map((opt) => {
+                                        const id = opt[field.valueKey];
+                                        const checked = (form[field.key] || []).includes(id);
+                                        return (
+                                            <label key={id} className="edit-checkbox-label">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={checked}
+                                                    onChange={() => {
+                                                        const current = form[field.key] || [];
+                                                        handleChange(
+                                                            field.key,
+                                                            checked
+                                                                ? current.filter((v) => v !== id)
+                                                                : [...current, id],
+                                                        );
+                                                    }}
+                                                />
+                                                {opt[field.labelKey]} (ID: {id})
+                                            </label>
+                                        );
+                                    })}
+                                </section>
                             ) : field.type === "password" ? (
                                 <input
                                     id={field.key}
