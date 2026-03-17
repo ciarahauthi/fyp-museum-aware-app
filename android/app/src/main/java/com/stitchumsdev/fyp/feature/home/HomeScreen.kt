@@ -1,6 +1,7 @@
 package com.stitchumsdev.fyp.feature.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -41,6 +42,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
@@ -56,6 +58,7 @@ import com.stitchumsdev.fyp.core.ui.components.CommonButton
 import com.stitchumsdev.fyp.core.ui.theme.FypTheme
 import com.stitchumsdev.fyp.core.ui.theme.Typography
 import com.stitchumsdev.fyp.core.ui.theme.fypColours
+import timber.log.Timber
 
 @Composable
 fun HomeScreen(
@@ -98,20 +101,50 @@ fun HomeScreen(
         }
 
         selectedCard?.let {
+            Timber.d(("!! IMG ${it.imageUrl}"))
             AppModal(
                 visible = modalVisible,
                 onDismiss = { modalVisible = false },
                 title = it.title
             ) {
-                if (it.imageUrl != null) {
-                    AsyncImage(
-                        model = it.imageUrl,
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.heightIn(max = dimensionResource(R.dimen.image_large))
-                    )
+                Column (
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 500.dp)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    val imageUrl = it.imageUrl?.takeIf { it.isNotBlank() }
+                    val imageModifier = Modifier
+                        .fillMaxWidth()
+                        .height(dimensionResource(R.dimen.image_x_large))
+                        .clip(RoundedCornerShape(dimensionResource(R.dimen.corner_medium)))
+                    if (imageUrl != null) {
+                        SubcomposeAsyncImage(
+                            model = imageUrl,
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = imageModifier,
+                            loading = {
+                                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                    CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                                }
+                            }
+                        )
+                    } else {
+                        Box(
+                            modifier = imageModifier.background(fypColours.secondaryBackground),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_no_image),
+                                contentDescription = null,
+                                modifier = Modifier.size(32.dp),
+                                tint = fypColours.secondaryText
+                            )
+                        }
+                    }
+                    Text(it.description)
                 }
-                Text(it.description)
             }
         }
     }
@@ -310,10 +343,15 @@ fun HomeCard(
                 AsyncImage(
                     model = homeItem.imageUrl,
                     contentDescription = null,
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(140.dp)
+                        .weight(1f)
                         .clip(RoundedCornerShape(dimensionResource(R.dimen.corner_medium)))
+                        .border(
+                            width = 1.dp,
+                            color = fypColours.secondaryText,
+                            shape = RoundedCornerShape(dimensionResource(R.dimen.corner_medium)))
                 )
             }
 

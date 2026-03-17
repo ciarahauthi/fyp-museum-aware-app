@@ -45,7 +45,7 @@ fun AppModal(
         Column(
             modifier = modifier
                 .fillMaxWidth()
-                .padding(dimensionResource(R.dimen.padding_16)),
+                .padding(horizontal = dimensionResource(R.dimen.padding_16)),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_8))
         ) {
             Row(
