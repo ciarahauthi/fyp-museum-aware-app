@@ -18,32 +18,20 @@ def init():
         db.commit()
 
         # Dummy Graph
-        nodes = ["A", "B", "C", "D", "E", "F", "G"]
+        nodes = ["G20", "G24", "Hallway", "Canteen"]
         edges = [
-            ("A", "B", 3),
-            ("A", "C", 6),
+            ("G20", "Hallway", 10),
 
-            ("B", "C", 2),
-            ("B", "D", 4),
+            ("G24", "Hallway", 9),
 
-            ("C", "F", 7),
-
-            ("D", "E", 1),
-            ("D", "F", 2),
-
-            ("E", "G", 6),
-
-            ("F", "G", 5),
+            ("Hallway", "Canteen", 6)
         ]
 
         coords = {
-            "A": (0.12, 0.37),
-            "B": (0.20, 0.28),
-            "C": (0.20, 0.46),
-            "D": (0.40, 0.38),
-            "E": (0.62, 0.27),
-            "F": (0.56, 0.60),
-            "G": (0.70, 0.37),
+            "G20": (0.17, 0.55),
+            "G24": (0.37, 0.55),
+            "Hallway": (0.25, 0.63),
+            "Canteen": (0.50, 0.67),
         }
 
         nodeObj = {}
@@ -69,93 +57,56 @@ def init():
                 )
             )
         db.commit()
-
-        # Dummy Routes
-        db.add_all([
-            Route(
-                name="Route 1",
-                description="G -> E -> D -> B -> C -> B -> A",
-                node_ids =[7, 5, 4, 2, 3, 2, 1],
-                stops = [1, 2, 3, 4],
-                creator_employee_id=user.id,
-                updated_employee_id=user.id
-            ),
-            Route(
-                name="Route 2",
-                description="A -> B -> D -> F -> G",
-                node_ids=[1, 2, 4, 6, 7],
-                stops = [1, 2],
-                creator_employee_id=user.id,
-                updated_employee_id=user.id
-            ),
-            Route(
-                name="Route 3",
-                description="C -> B -> D -> E -> G",
-                node_ids=[3, 2, 4, 5, 7],
-                stops = [3, 4],
-                creator_employee_id=user.id,
-                updated_employee_id=user.id
-            ),
-            Route(
-                name="Route 4",
-                description="A -> C -> F -> G",
-                node_ids=[1, 3, 6, 7],
-                stops = [1, 3, 4],
-                creator_employee_id=user.id,
-                updated_employee_id=user.id
-            ),
-        ])
-        db.commit()
     
         # Dummy Beacons
         beacon = Beacon(
             name="Test beacon",
-            description="Test beacon - the green one",
+            description="Test beacon - the green one. It is in G20",
             uuid="B9407F30-F5F8-466E-AFF9-25556B57FE6D",
             major=1,
             minor=4,
             creator_employee_id=user.id,
             updated_employee_id=user.id,
-            location_id=nodeObj["A"]
+            location_id=nodeObj["G20"]
         )
         db.add(beacon)
         db.commit()
 
         beacon2 = Beacon(
             name="Test beacon 2",
-            description="Test beacon 2 - the white one",
+            description="Test beacon 2 - the white one. It is in G24.",
             uuid="B9407F30-F5F8-466E-AFF9-25556B57FE6D",
             major=1,
             minor=3,
             creator_employee_id=user.id,
             updated_employee_id=user.id,
-            location_id=nodeObj["B"]
+            location_id=nodeObj["G24"]
         )
         db.add(beacon2)
         db.commit()
 
         beacon3 = Beacon(
             name="Test beacon 3",
-            description="Test beacon 3 - the navy one",
+            description="Test beacon 3 - the navy one. It is in the hallway.",
             uuid="B9407F30-F5F8-466E-AFF9-25556B57FE6D",
             major=1,
             minor=2,
             creator_employee_id=user.id,
             updated_employee_id=user.id,
-            location_id=nodeObj["C"]
+            location_id=nodeObj["Hallway"]
         )
         db.add(beacon3)
         db.commit()
 
         beacon4 = Beacon(
             name="Test beacon 4",
-            description="Test beacon 4 - the light blue one",
+            description="Test beacon 4 - the light blue one. It is in the canteen.",
             uuid="B9407F30-F5F8-466E-AFF9-25556B57FE6D",
             major=1,
             minor=1,
             creator_employee_id=user.id,
             updated_employee_id=user.id,
-            location_id=nodeObj["D"]
+            location_id=nodeObj["Canteen"]
         )
         db.add(beacon4)
         db.commit()
@@ -204,9 +155,10 @@ def init():
         category_id=sculptureCategory.id,
         creator_employee_id=user.id,
         updated_employee_id=user.id,
+        active=True,
         child_friendly=True,
         is_loud=False,
-        is_crowded=True, 
+        is_crowded=True,
         is_dark=False,
         likes=100,
         dislikes=0,
@@ -226,6 +178,7 @@ def init():
             category_id=paintCategory.id,
             creator_employee_id=user.id,
             updated_employee_id=user.id,
+            active=True,
             child_friendly=True,
             is_loud=False,
             is_crowded=False,
@@ -250,6 +203,7 @@ def init():
             category_id=sculptureCategory.id,
             creator_employee_id=user.id,
             updated_employee_id=user.id,
+            active=True,
             child_friendly=True,
             is_loud=False,
             is_crowded=False,
@@ -273,6 +227,7 @@ def init():
             category_id=paintCategory.id,
             creator_employee_id=user.id,
             updated_employee_id=user.id,
+            active=True,
             child_friendly=True,
             is_loud=False,
             is_crowded=True,
