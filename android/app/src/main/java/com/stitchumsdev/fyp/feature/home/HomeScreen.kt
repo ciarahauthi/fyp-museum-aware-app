@@ -9,17 +9,19 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,16 +34,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.material3.Icon
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import androidx.compose.material3.CircularProgressIndicator
 import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
 import com.stitchumsdev.fyp.R
@@ -123,7 +124,7 @@ fun HomeSuccess(
     onExhibitClick: (ExhibitModel) -> Unit
 ) {
     val topItems = uiState.topSection
-    val midItem = uiState.midSection
+    val midItems = uiState.midSection
     val bottomItems = uiState.bottomSection
     var categorySelected by rememberSaveable { mutableStateOf(HomeFeedCategory.Popular) }
     val visibleExhibits by remember(categorySelected, uiState.popular, uiState.new) {
@@ -136,7 +137,7 @@ fun HomeSuccess(
     }
 
     Text(
-        text = "Welcome to the Western Gateway Building",
+        text = stringResource(R.string.home_heading),
         style = Typography.titleSmall.copy(
             color = fypColours.mainText
         )
@@ -144,19 +145,22 @@ fun HomeSuccess(
     HorizontalDivider()
 
     // Exhibits Section
+    // ToDo make curated
     Column(
         modifier = Modifier
             .fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_8))
     ) {
         Text(
-            text = "Exhibits you may be interested in",
+            text = stringResource(R.string.interested_exhibits),
             style = Typography.titleMedium.copy(
                 color = fypColours.mainText
             )
         )
 
-        Row(horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_8)) ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_8))
+        ) {
             CommonButton(
                 text = "Popular",
                 selected = categorySelected == HomeFeedCategory.Popular,
@@ -171,59 +175,76 @@ fun HomeSuccess(
         }
         HomeCardHorizontalScroll(
             exhibitItems = visibleExhibits,
-            onExhibitClick= onExhibitClick
+            onExhibitClick = onExhibitClick
         )
     }
 
     HorizontalDivider()
 
+    // ToDo a categories / collections section
+
     // TopSection
-    if (topItems.size == 1) {
-        Text(
-            text = "News",
-            style = Typography.titleMedium.copy(
-                color = fypColours.mainText
-            )
-        )
-        HomeCard(
-            topItems.first(),
-            onCardClick = onCardClick
-        )
-        HorizontalDivider()
-    } else if (topItems.isNotEmpty()) {
-        Column {
+    if (topItems.isNotEmpty()) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_8))
+        ) {
             Text(
-                text = "News",
+                text = stringResource(R.string.news),
                 style = Typography.titleMedium.copy(
                     color = fypColours.mainText
                 )
             )
-            HomeCardHorizontalScroll(homeItems = topItems, onCardClick = onCardClick)
+
+            if (topItems.size == 1) {
+                HomeCard(
+                    homeItem = topItems.first(),
+                    modifier = Modifier.fillMaxWidth(),
+                    onCardClick = onCardClick
+                )
+            } else {
+                HomeCardHorizontalScroll(homeItems = topItems, onCardClick = onCardClick)
+            }
+            HorizontalDivider()
         }
     }
 
     // Midsection
-    midItem?.let {
-        HomeCard(
-            homeItem = it,
-            onCardClick = onCardClick
-        )
+    if (midItems.isNotEmpty()) {
+        if (midItems.size == 1) {
+            HomeCard(
+                homeItem = midItems.first(),
+                modifier = Modifier.fillMaxWidth(),
+                onCardClick = onCardClick
+            )
+        } else {
+            HomeCardHorizontalScroll(homeItems = midItems, onCardClick = onCardClick)
+        }
         HorizontalDivider()
     }
 
     // Bottom Section
     if (bottomItems.isNotEmpty()) {
-        Column {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_8))
+        ) {
             Text(
-                text = "Upcoming Information",
+                text = stringResource(R.string.events_and_workshops),
                 style = Typography.titleMedium.copy(
                     color = fypColours.mainText
                 )
             )
-            HomeCardHorizontalScroll(
-                homeItems = bottomItems,
-                onCardClick = onCardClick
-            )
+            if (bottomItems.size == 1) {
+                HomeCard(
+                    homeItem = bottomItems.first(),
+                    modifier = Modifier.fillMaxWidth(),
+                    onCardClick = onCardClick
+                )
+            } else {
+                HomeCardHorizontalScroll(
+                    homeItems = bottomItems,
+                    onCardClick = onCardClick
+                )
+            }
         }
     }
 }

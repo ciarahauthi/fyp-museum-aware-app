@@ -8,7 +8,7 @@ sealed interface HomeUiState {
     data object Error: HomeUiState
     data class Success(
         val topSection: List<HomeItem> = emptyList(),
-        val midSection: HomeItem? = null,
+        val midSection: List<HomeItem> = emptyList(),
         val bottomSection: List<HomeItem> = emptyList(),
         val selectedCard: HomeItem? = null,
         val popular: List<ExhibitModel> = emptyList(),
