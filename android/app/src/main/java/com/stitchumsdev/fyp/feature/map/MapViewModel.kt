@@ -26,7 +26,7 @@ class MapViewModel (
             beaconRepository.currentLocation.collect { loc ->
                 val state = _uiState.value
                 if (state is MapUiState.Success) {
-                    _uiState.value = state.copy(currentLocation = loc)
+                    _uiState.value = state.copy(userLocation = loc)
                 }
             }
         }
@@ -48,7 +48,7 @@ class MapViewModel (
                     else MapUiState.Success(locations = locObjMap)
 
             } catch (t: Throwable) {
-                Timber.e(t, "MapViewModel load failed")
+                Timber.e(t, "!! MapViewModel load failed")
                 _uiState.value = MapUiState.Error
             }
         }

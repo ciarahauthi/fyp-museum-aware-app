@@ -184,26 +184,24 @@ fun AppNavigation(
             val searchUiState = searchViewModel.uiState.collectAsState()
             val routeUiState = routeViewModel.uiState.collectAsState()
 
-            val selectedStops =
-                (routeUiState.value as? RouteUiState.Default)
-                    ?.selectedStops.orEmpty()
+            val selectedExhibits = (routeUiState.value as? RouteUiState.Default)?.selectedExhibits.orEmpty()
 
-            val selectedIds = selectedStops.map { it.id }.toSet()
+            val selectedIds = selectedExhibits.map { it.id }.toSet()
 
             RouteSelectionScreen(
                 navHostController = navHostController,
                 uiState = searchUiState.value,
                 onSearchAction = { searchViewModel.onAction(it) },
-                selectedStopsCount = selectedStops.size,
-                canStart = selectedStops.isNotEmpty(),
+                selectedStopsCount = selectedExhibits.size,
+                canStart = selectedExhibits.isNotEmpty(),
                 selectedIds = selectedIds,
                 onClearStops = { routeViewModel.onAction(RouteAction.ClearStops) },
                 onStart = {
-                    routeViewModel.onAction(RouteAction.StartRouting(selectedStops))
+                    routeViewModel.onAction(RouteAction.GetRoutingFromExhibits(selectedExhibits))
                     navHostController.popBackStack()
                 },
                 onToggleSelect = { obj ->
-                    routeViewModel.onAction(RouteAction.ToggleStopById(obj.location))
+                    routeViewModel.onAction(RouteAction.ToggleExhibit(obj))
                 }
             )
         }

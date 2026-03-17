@@ -17,7 +17,7 @@ class HomeCardOut(BaseModel):
 
 class HomeResponse(BaseModel):
     top_section: List[HomeCardOut] = []
-    mid_section: Optional[HomeCardOut] = None
+    mid_section: List[HomeCardOut] = []
     bottom_section: List[HomeCardOut] = []
 
 class HomeCreate(BaseModel):

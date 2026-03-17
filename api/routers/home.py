@@ -21,7 +21,7 @@ def get_home(request: Request, db: Session = Depends(get_db)):
 
     top_section = []
     bottom_section = []
-    mid_section = None
+    mid_section  = []
 
     for h in homes:
         image_url = h.image_url
@@ -38,8 +38,7 @@ def get_home(request: Request, db: Session = Depends(get_db)):
         if h.section.value == "top":
             top_section.append(card)
         elif h.section.value == "mid":
-            if mid_section is None:
-                mid_section = card
+            mid_section.append(card)
         elif h.section.value == "bottom":
             bottom_section.append(card)
 

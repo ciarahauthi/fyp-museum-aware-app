@@ -37,4 +37,10 @@
     <string name="enable_bluetooth">Open Bluetooth Settings</string>
     <string name="no_location">Could not detect your location</string>
     <string name="no_location_desc">Make sure Bluetooth is enabled and you are near a beacon, then try again.</string>
+    <string name="map_key">Map Key</string>
+    <string name="you_are_here">You are here</string>
+    <string name="events_and_workshops">Events and Workshops</string>
+    <string name="news">News</string>
+    <string name="home_heading">Welcome to the Western Gateway Building</string>
+    <string name="interested_exhibits">Exhibits you may be interested in</string>
 </resources>

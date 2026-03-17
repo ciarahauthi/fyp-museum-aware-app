@@ -5,6 +5,7 @@ import { exhibitsService } from "../../services/exhibits";
 import { routesService } from "../../services/routes";
 import { imagesService } from "../../services/images";
 import { homeService } from "../../services/home";
+import { lazy } from "react";
 
 export const categories = [
     "Beacons",
@@ -55,7 +56,11 @@ export const tableConfigs = {
     },
     routes: {
         tableName: "routes",
-        columns: [{ key: "id", cellClassName: "bold" }, { key: "name" }],
+        columns: [
+            { key: "id", cellClassName: "bold" }, 
+            { key: "name" },
+            { key: "exhibits" },
+        ],
     },
     users: {
         tableName: "users",
@@ -138,6 +143,7 @@ export const editFields = {
             valueKey: "id",
             labelKey: "name",
         },
+        { key: "active", label: "Active", type: "boolean" },
         {
             key: "image_url",
             label: "Image",
@@ -148,6 +154,15 @@ export const editFields = {
     routes: [
         { key: "name", label: "Name", type: "text" },
         { key: "description", label: "Description", type: "textarea" },
+        { key: "active", label: "Active", type: "boolean" },
+        {
+            key: "stops",
+            label: "Exhibits",
+            type: "referencearrayinput",
+            optionsKey: "all-exhibits",
+            valueKey: "id",
+            labelKey: "title",
+        },
         {
             key: "image_url",
             label: "Image",
@@ -196,6 +211,7 @@ export const optionLoaders = {
     "exhibit-images": () => imagesService.getImages("exhibits"),
     "route-images": () => imagesService.getImages("routes"),
     "home-images": () => imagesService.getImages("home"),
+    "all-exhibits": () => exhibitsService.getAll(),
     "home-sections": () => Promise.resolve([
         { value: "top", label: "Top" },
         { value: "mid", label: "Mid" },

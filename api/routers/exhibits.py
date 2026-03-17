@@ -17,6 +17,7 @@ def create_exhibit(data: ExhibitCreate, db: Session = Depends(get_db), current_u
     exhibit = Exhibit(
         title=data.title,
         description=data.description,
+        active=data.active,
         child_friendly=data.child_friendly,
         is_loud=data.is_loud,
         is_crowded=data.is_crowded,
@@ -36,7 +37,7 @@ def create_exhibit(data: ExhibitCreate, db: Session = Depends(get_db), current_u
 # One for mobile app
 @router.get("", response_model=list[ExhibitReadPublic])
 def get_exhibits(request: Request, db: Session = Depends(get_db)):
-    exhibits = db.query(Exhibit).all()
+    exhibits = db.query(Exhibit).filter(Exhibit.active == True).all()
     base = str(request.base_url).rstrip("/")
 
     for e in exhibits:

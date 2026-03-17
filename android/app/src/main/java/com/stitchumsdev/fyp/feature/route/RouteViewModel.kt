@@ -5,6 +5,7 @@ import com.stitchumsdev.fyp.core.base.BaseViewModel
 import com.stitchumsdev.fyp.core.data.repository.BeaconRepository
 import com.stitchumsdev.fyp.core.data.repository.MuseumRepository
 import com.stitchumsdev.fyp.core.data.repository.UserRepository
+import com.stitchumsdev.fyp.core.model.ExhibitModel
 import com.stitchumsdev.fyp.core.model.LocationModel
 import com.stitchumsdev.fyp.core.model.RouteModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,11 +32,11 @@ class RouteViewModel (
             RouteAction.EndRouting -> endRouting()
             RouteAction.NextStop -> nextStop()
             RouteAction.RetryStart -> pendingRoute?.let { startRoute(it) }
-            is RouteAction.ToggleStop -> toggleStop(action.stop)
             RouteAction.ClearStops -> clearStops()
+            is RouteAction.ToggleExhibit -> toggleExhibit(action.exhibit)
             is RouteAction.StartRouting -> startRoute(action.route)
+            is RouteAction.GetRoutingFromExhibits -> getRouteFromExhibits(action.exhibits)
             is RouteAction.SelectRoute -> getSelectedRoute(action.routeId)
-            is RouteAction.ToggleStopById -> toggleStopById(action.locationId)
         }
     }
 
@@ -50,7 +51,7 @@ class RouteViewModel (
                     val updated = state.copy(currentLocation = location)
                     _uiState.value = updated
 
-                    val target = updated.currentTarget
+                    val target = updated.nextTarget
                     if (location != null && target != null && location.id == target.id) {
                         if (stopIndex != updated.currentIndex) {
                             stopIndex = updated.currentIndex
@@ -120,7 +121,7 @@ class RouteViewModel (
                 pendingRoute = null
 
                 // Trigger if starting position == start of route
-                if (routingState.currentTarget?.id == currentLocation.id) {
+                if (routingState.nextTarget?.id == currentLocation.id) {
                     stopIndex = 0
                     nextStop()
                 }
@@ -155,33 +156,30 @@ class RouteViewModel (
         }
     }
 
-    private fun toggleStop(stop: LocationModel) {
+    private fun toggleExhibit(exhibit: ExhibitModel) {
         val state = _uiState.value as? RouteUiState.Default ?: return
-        val exists = state.selectedStops.any { it.id == stop.id }
+        val exists = state.selectedExhibits.any { it.id == exhibit.id }
         _uiState.value = if (exists) {
-            state.copy(selectedStops = state.selectedStops.filterNot { it.id == stop.id })
+            state.copy(selectedExhibits = state.selectedExhibits.filterNot { it.id == exhibit.id })
         } else {
-            state.copy(selectedStops = state.selectedStops + stop)
+            state.copy(selectedExhibits = state.selectedExhibits + exhibit)
         }
     }
 
     private fun clearStops() {
         val state = _uiState.value as? RouteUiState.Default ?: return
-        _uiState.value = state.copy(selectedStops = emptyList())
+        _uiState.value = state.copy(selectedExhibits = emptyList())
     }
 
-    private fun toggleStopById(locationId: Int) {
-        val state = _uiState.value as? RouteUiState.Default ?: return
+    // Function that gets unique location IDs from selected exhibits then calls for a custom route from the server
+    private fun getRouteFromExhibits(exhibits: List<ExhibitModel>) {
         viewModelScope.launch {
             val cache = museumRepository.load()
-            val stop = cache.locationById[locationId] ?: return@launch
-
-            val exists = state.selectedStops.any { it.id == stop.id }
-            _uiState.value = if (exists) {
-                state.copy(selectedStops = state.selectedStops.filterNot { it.id == stop.id })
-            } else {
-                state.copy(selectedStops = state.selectedStops + stop)
-            }
+            val uniqueLocations = exhibits
+                .map { it.location }
+                .distinct()
+                .mapNotNull { cache.locationById[it] }
+            startRoute(uniqueLocations)
         }
     }
 
@@ -193,10 +191,10 @@ class RouteViewModel (
                 val cache = museumRepository.load()
                 _uiState.value = RouteUiState.Default(
                     routes = cache.routes,
-                    selectedStops = emptyList()
+                    selectedExhibits = emptyList()
                 )
             } catch (t: Throwable) {
-                Timber.e(t, "Failed to end routing")
+                Timber.e(t, "!! Failed to end routing")
                 _uiState.value = RouteUiState.Error
             }
         }

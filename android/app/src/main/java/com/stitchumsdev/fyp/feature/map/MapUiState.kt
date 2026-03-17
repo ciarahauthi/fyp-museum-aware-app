@@ -8,6 +8,6 @@ sealed interface MapUiState {
     data object Error: MapUiState
     data class Success(
         val locations: Map<LocationModel, List<ExhibitModel>>,
-        val currentLocation: LocationModel? = null
+        val userLocation: LocationModel? = null
     ) : MapUiState
 }

@@ -19,4 +19,5 @@
     <dimen name="app_bar_height">128dp</dimen>
     <dimen name="corner_small">8dp</dimen>
     <dimen name="corner_medium">12dp</dimen>
+    <dimen name="width_200">200dp</dimen>
 </resources>

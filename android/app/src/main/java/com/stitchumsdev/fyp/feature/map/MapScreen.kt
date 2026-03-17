@@ -16,7 +16,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -102,19 +102,18 @@ fun MapScreen(
 
 // Success state when map loads properly
 // Displays current user location
-// While routing, also shows current location, where the current targets are and where next stop is
+// While routing, also shows current location, where the next stop is
 @Composable
 fun MapSuccess(
     uiState: MapUiState.Success,
     routeUiState: RouteUiState,
     onClick: (RoomHeatPoint) -> Unit
 ) {
-    val userLocId = uiState.currentLocation?.id
+    val userLocId = uiState.userLocation?.id
     val rooms = remember { uiState.locations.keys.map { it.toHmPoint() } }
 
     // For Routing state
     val routing = routeUiState as? RouteUiState.Routing
-    val currentId = routing?.currentTarget?.id
     val nextId = routing?.nextTarget?.id
 
     Box(
@@ -138,8 +137,7 @@ fun MapSuccess(
                 val overlay = HeatOverlayView(context).apply {
                     imageView = mapView
                     points = rooms
-                    currentTargetId = currentId
-                    nextTargetId = nextId
+                    currentTargetId = nextId
                     userLocationId = userLocId
                 }
 
@@ -187,21 +185,19 @@ fun MapSuccess(
             update = { container ->
                 val overlay = container.getChildAt(1) as HeatOverlayView
                 overlay.points = rooms
-                overlay.currentTargetId = currentId
-                overlay.nextTargetId = nextId
+                overlay.currentTargetId = nextId
                 overlay.userLocationId = userLocId
             }
         )
 
         // Map Legend
-        if (routing != null) {
-            DotLegend(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(dimensionResource(R.dimen.padding_8))
-                    .wrapContentSize()
-            )
-        }
+        DotLegend(
+            routing = routeUiState is RouteUiState.Routing,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(dimensionResource(R.dimen.padding_8))
+                .width(dimensionResource(R.dimen.width_200))
+        )
     }
 }
 
@@ -249,15 +245,13 @@ class HeatOverlayView(context: Context) : View(context) {
     var currentTargetId: Int? = null
         set(value) { field = value; invalidate() }
 
-    var nextTargetId: Int? = null
-        set(value) { field = value; invalidate() }
-
     var userLocationId: Int? = null
         set(value) { field = value; invalidate() }
 
     private val basePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
     private val ringPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE }
     private var pulse: Float = 0f
+    // Animation for current loc and next loc
     private val pulseAnimator = android.animation.ValueAnimator.ofFloat(0f, 1f).apply {
         duration = 900L
         repeatMode = android.animation.ValueAnimator.REVERSE
@@ -298,7 +292,6 @@ class HeatOverlayView(context: Context) : View(context) {
             val radius = p.radiusPx * iv.scale
 
             val isCurrent = (p.id == currentTargetId)
-            val isNext = (p.id == nextTargetId)
 
             // Base dot
             basePaint.color = Color.argb(120, 255, 0, 0)
@@ -308,7 +301,6 @@ class HeatOverlayView(context: Context) : View(context) {
             when {
                 isUserLocation -> drawGlow(canvas, v.x, v.y, radius, Color.BLUE)
                 isCurrent -> drawGlow(canvas, v.x, v.y, radius, Color.GREEN)
-                isNext -> drawGlow(canvas, v.x, v.y, radius, Color.YELLOW)
             }
         }
     }
@@ -340,6 +332,7 @@ class HeatOverlayView(context: Context) : View(context) {
 
 @Composable
 fun DotLegend(
+    routing: Boolean,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -352,15 +345,16 @@ fun DotLegend(
         verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_8))
     ) {
         Text(
-            text = "Map key",
+            text = stringResource(R.string.map_key),
             style = Typography.titleSmall,
             color = fypColours.mainText
         )
         HorizontalDivider()
 
-        LegendRow(color = composeColor.Blue, label = "You are here")
-        LegendRow(color = composeColor.Green, label = "Current stop")
-        LegendRow(color = composeColor.Yellow, label = "Next stop")
+        LegendRow(color = RoomColours.current, label = stringResource(R.string.you_are_here))
+        if (routing) {
+            LegendRow(color = RoomColours.next, label = stringResource(R.string.next_stop))
+        }
     }
 }
 
@@ -423,4 +417,9 @@ private fun MapModalContent(
             }
         }
     }
+}
+
+object RoomColours {
+    val current = composeColor.Blue
+    val next = composeColor.Green
 }

@@ -10,6 +10,7 @@ Contains all the exhibit schemas
 class ExhibitCreate(BaseModel):
     title: str
     description: str
+    active: bool = True
     child_friendly: bool = False
     is_loud: bool = False
     is_crowded: bool = False
@@ -22,6 +23,7 @@ class ExhibitRead(BaseModel):
     id: int
     title: str
     description: str
+    active: bool
     child_friendly: bool
     is_loud: bool
     is_crowded: bool
@@ -38,6 +40,7 @@ class ExhibitRead(BaseModel):
 class ExhibitUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
+    active: Optional[bool] = None
     child_friendly: Optional[bool] = None
     is_loud: Optional[bool] = None
     is_crowded: Optional[bool] = None

@@ -90,7 +90,7 @@ data class RateRequest(
 @Serializable
 data class HomeResponse(
     @SerialName("top_section") val topSection: List<HomeItem> = emptyList(),
-    @SerialName("mid_section") val midSection: HomeItem? = null,
+    @SerialName("mid_section") val midSection: List<HomeItem> = emptyList(),
     @SerialName("bottom_section") val bottomSection: List<HomeItem> = emptyList()
 )
 

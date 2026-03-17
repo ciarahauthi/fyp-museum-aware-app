@@ -10,6 +10,8 @@ import com.stitchumsdev.fyp.R
 import com.stitchumsdev.fyp.core.model.ExhibitModel
 import com.stitchumsdev.fyp.core.ui.components.CommonTextButton
 import com.stitchumsdev.fyp.core.ui.components.TopBar
+import com.stitchumsdev.fyp.core.ui.theme.Typography
+import com.stitchumsdev.fyp.core.ui.theme.fypColours
 import com.stitchumsdev.fyp.feature.search.SearchAction
 import com.stitchumsdev.fyp.feature.search.SearchUiState
 
@@ -30,7 +32,11 @@ fun RouteSelectionScreen(
         topBar = {
             TopBar(
                 navHostController = navHostController ,
-                title = { Text(text = stringResource(R.string.create_a_route)) },
+                title = {
+                    Text(
+                        text = stringResource(R.string.create_a_route),
+                        style = Typography.titleMedium,
+                        color = fypColours.mainText) },
                 actions = {
                     CommonTextButton(
                         text = stringResource(R.string.clear),
