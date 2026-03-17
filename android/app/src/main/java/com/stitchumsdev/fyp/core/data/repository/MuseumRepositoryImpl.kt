@@ -78,8 +78,8 @@ class MuseumRepositoryImpl(
         locations: List<LocationItemEntity>,
         routes: List<RouteItemEntity>
     ) = withContext(Dispatchers.IO) {
-        appDatabase.exhibitItemDao().upsertAll(exhibits)
-        appDatabase.locationItemDao().upsertAll(locations)
-        appDatabase.routeItemDao().upsertAll(routes)
+        appDatabase.exhibitItemDao().run { deleteAll(); insertAll(exhibits) }
+        appDatabase.locationItemDao().run { deleteAll(); insertAll(locations) }
+        appDatabase.routeItemDao().run { deleteAll(); insertAll(routes) }
     }
 }
