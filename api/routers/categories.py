@@ -2,9 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from api.db.database import get_db
-from api.db.models import Category, User
+from api.db.models import Category, User, ChangeType
 from api.schemas.categories import CategoryRead, CategoryCreate, CategoryUpdate
 from api.core.auth import get_current_user
+from api.core.changelog import log_change
 
 router = APIRouter()
 
@@ -19,6 +20,7 @@ def create_category(data: CategoryCreate, db: Session = Depends(get_db), current
     db.add(category)
     db.commit()
     db.refresh(category)
+    log_change(db, ChangeType.CREATE, "category", {"id": category.id, "name": category.name, "description" : category.description}, current_user.id)
     return category
 
 @router.get("", response_model= list[CategoryRead])
@@ -42,4 +44,5 @@ def update_category(category_id: int, data: CategoryUpdate, db: Session = Depend
     category.updated_employee_id = current_user.id
     db.commit()
     db.refresh(category)
+    log_change(db, ChangeType.UPDATE, "category", {"id": category.id, "name": category.name, "changes": data.model_dump(exclude_unset=True)}, current_user.id)
     return category
