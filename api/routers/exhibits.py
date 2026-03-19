@@ -5,10 +5,11 @@ from typing import Annotated
 from datetime import timezone
 
 from api.db.database import get_db
-from api.db.models import Exhibit, Beacon, Category
+from api.db.models import Exhibit, Beacon, Category, ChangeType
 from api.schemas.exhibits import ExhibitRead, ExhibitReadPublic, ExhibitCreate, ExhibitUpdate
 from api.schemas.exhibits import RateRequest
 from api.core.auth import get_current_user
+from api.core.changelog import log_change
 
 router = APIRouter()
 
@@ -31,6 +32,7 @@ def create_exhibit(data: ExhibitCreate, db: Session = Depends(get_db), current_u
     db.add(exhibit)
     db.commit()
     db.refresh(exhibit)
+    log_change(db, ChangeType.CREATE, "exhibit", {"id": exhibit.id, "title": exhibit.title, "description": exhibit.description}, current_user.id)
     return exhibit
 
 # Exhibit Queries
@@ -71,6 +73,7 @@ def update_exhibit(exhibit_id: int, data: ExhibitUpdate, db: Session = Depends(g
     exhibit.updated_employee_id = current_user.id
     db.commit()
     db.refresh(exhibit)
+    log_change(db, ChangeType.UPDATE, "exhibit", {"id": exhibit.id, "title": exhibit.title, "changes": data.model_dump(exclude_unset=True)}, current_user.id)
     return exhibit
 
 # Rating feature

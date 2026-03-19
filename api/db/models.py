@@ -174,3 +174,21 @@ class BeaconEvents(Base):
         Index("ix_beacon_events_beacon_recorded", "beacon_id", "recorded_at"),
         Index("ix_beacon_events_session_recorded", "session_id", "recorded_at"),
     )
+
+class ChangeType(enum.Enum):
+    CREATE = "create"
+    UPDATE = "update"
+    DELETE = "delete"
+
+class Changes(Base):
+    __tablename__ = "changes"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    change =  Column(Enum(ChangeType), nullable=False) # Create, Update ...
+    table_name = Column(String(100), nullable=False)
+    details = Column(JSON, nullable=False)
+
+    timestamp = Column(TIMESTAMP(timezone=True), nullable=False, server_default=TS_DEFAULT)
+
+    employee_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)

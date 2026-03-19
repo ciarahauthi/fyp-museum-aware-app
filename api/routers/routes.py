@@ -1,12 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException, Request, Query
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
-from typing import Annotated
 
 from api.db.database import get_db
-from api.db.models import Node, Route, User
+from api.db.models import Node, Route, User, ChangeType
 from api.schemas.routes import NodeRead, RouteRead, RouteReadAdmin, RouteCreate, RouteUpdate
 from api.core.auth import get_current_user
-import api.services.graph as graph
+from api.db.models import Exhibit
+from api.core.changelog import log_change
 
 '''
     Not to be confused with Route.py
@@ -16,7 +16,6 @@ import api.services.graph as graph
 router = APIRouter()
 
 def derive_node_ids(exhibit_ids: list[int], db: Session) -> list[int]:
-    from api.db.models import Exhibit
     exhibits = db.query(Exhibit).filter(Exhibit.id.in_(exhibit_ids)).all()
     seen = set()
     node_ids = []
@@ -42,6 +41,7 @@ def create_route(data: RouteCreate, db: Session = Depends(get_db), current_user:
     db.add(route)
     db.commit()
     db.refresh(route)
+    log_change(db, ChangeType.CREATE, "route", {"id": route.id, "name": route.name, "description": route.description}, current_user.id)
     return route
 
 # Routes
@@ -76,4 +76,5 @@ def update_route(route_id: int, data: RouteUpdate, db: Session = Depends(get_db)
     route.updated_employee_id = current_user.id
     db.commit()
     db.refresh(route)
+    log_change(db, ChangeType.UPDATE, "route", {"id": route.id, "name": route.name, "changes": data.model_dump(exclude_unset=True)}, current_user.id)
     return route

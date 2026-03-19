@@ -2,9 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from api.db.database import get_db
-from api.db.models import Beacon, User
+from api.db.models import Beacon, User, ChangeType
 from api.schemas.beacons import BeaconCreate, BeaconRead, BeaconUpdate
 from api.core.auth import get_current_user
+from api.core.changelog import log_change
 
 router = APIRouter()
 
@@ -18,6 +19,7 @@ def create_beacon(data: BeaconCreate, db: Session = Depends(get_db), current_use
     db.add(beacon)
     db.commit()
     db.refresh(beacon)
+    log_change(db, ChangeType.CREATE, "beacon", {"id": beacon.id, "name": beacon.name, "description": beacon.description}, current_user.id)
     return beacon
 
 @router.get("/{beacon_id}", response_model= BeaconRead)
@@ -37,4 +39,5 @@ def update_beacon(beacon_id: int, data: BeaconUpdate, db: Session = Depends(get_
     beacon.updated_employee_id = current_user.id
     db.commit()
     db.refresh(beacon)
+    log_change(db, ChangeType.UPDATE, "beacon", {"id": beacon.id, "name": beacon.name, "changes": data.model_dump(exclude_unset=True)}, current_user.id)
     return beacon
