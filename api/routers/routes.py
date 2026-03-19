@@ -26,7 +26,7 @@ def derive_node_ids(exhibit_ids: list[int], db: Session) -> list[int]:
             node_ids.append(loc)
     return node_ids
 
-@router.post("", response_model=RouteReadAdmin)
+@router.post("/admin", response_model=RouteReadAdmin)
 def create_route(data: RouteCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     route = Route(
         name=data.name,
@@ -64,7 +64,7 @@ def get_routes_admin(db: Session = Depends(get_db)):
 def get_nodes(db: Session = Depends(get_db)):
     return db.query(Node).all()
 
-@router.put("/{route_id}", response_model=RouteReadAdmin)
+@router.put("/admin/{route_id}", response_model=RouteReadAdmin)
 def update_route(route_id: int, data: RouteUpdate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     route = db.query(Route).filter(Route.id == route_id).first()
     if route is None:

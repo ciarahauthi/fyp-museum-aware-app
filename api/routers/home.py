@@ -53,7 +53,7 @@ def get_home(request: Request, db: Session = Depends(get_db)):
 def get_home_admin(db: Session = Depends(get_db)):
     return db.query(Home).all()
 
-@router.post("", response_model=HomeResponseAdmin)
+@router.post("/admin", response_model=HomeResponseAdmin)
 def create_home(data: HomeCreate, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
     home = Home(
         title=data.title,
@@ -70,7 +70,7 @@ def create_home(data: HomeCreate, db: Session = Depends(get_db), current_user=De
     log_change(db, ChangeType.CREATE, "home", {"id": home.id, "title": home.title, "section": home.section.value, "description": home.description}, current_user.id)
     return home
 
-@router.put("/{home_id}", response_model=HomeResponseAdmin)
+@router.put("/admin/{home_id}", response_model=HomeResponseAdmin)
 def update_home(home_id: int, data: HomeUpdate, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
     home = db.query(Home).filter(Home.id == home_id).first()
     if home is None:
