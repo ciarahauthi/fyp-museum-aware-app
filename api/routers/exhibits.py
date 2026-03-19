@@ -13,7 +13,7 @@ from api.core.changelog import log_change
 
 router = APIRouter()
 
-@router.post("", response_model=ExhibitRead)
+@router.post("/admin", response_model=ExhibitRead)
 def create_exhibit(data: ExhibitCreate, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
     exhibit = Exhibit(
         title=data.title,
@@ -56,14 +56,14 @@ def get_exhibits(request: Request, db: Session = Depends(get_db)):
 def get_exhibits_admin(db: Session = Depends(get_db)):
     return db.query(Exhibit).all()
 
-@router.get("/{exhibit_id}", response_model= ExhibitRead)
+@router.get("/admin/{exhibit_id}", response_model= ExhibitRead)
 def get_exhibit(exhibit_id: int, db: Session = Depends(get_db)):
     exhibit = db.query(Exhibit).filter(Exhibit.id == exhibit_id).first()
     if exhibit is None:
         raise HTTPException(status_code=404, detail="Exhibit could not be found.")
     return exhibit
 
-@router.put("/{exhibit_id}", response_model=ExhibitRead)
+@router.put("/admin/{exhibit_id}", response_model=ExhibitRead)
 def update_exhibit(exhibit_id: int, data: ExhibitUpdate, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
     exhibit = db.query(Exhibit).filter(Exhibit.id == exhibit_id).first()
     if exhibit is None:

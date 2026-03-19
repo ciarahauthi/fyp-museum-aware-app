@@ -6,13 +6,13 @@ export const routesService = {
     getLocations: () => apiFetch("/api/routes/locations"),
 
     create: (data) =>
-        apiFetch("/api/routes", {
+        apiFetch("/api/routes/admin", {
             method: "POST",
             body: JSON.stringify(data),
         }),
 
     update: (id, data) =>
-        apiFetch(`/api/routes/${id}`, {
+        apiFetch(`/api/routes/admin/${id}`, {
             method: "PUT",
             body: JSON.stringify(data),
         }),
