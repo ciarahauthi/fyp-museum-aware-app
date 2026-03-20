@@ -16,4 +16,7 @@ export const categoriesService = {
             method: "PUT",
             body: JSON.stringify(data),
         }),
+
+    delete: (id) =>
+        apiFetch(`/api/categories/${id}`, { method: "DELETE" }),
 };

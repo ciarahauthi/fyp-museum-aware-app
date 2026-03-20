@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from sqlalchemy.orm import Session
 
 from api.db.database import get_db
@@ -82,3 +82,13 @@ def update_home(home_id: int, data: HomeUpdate, db: Session = Depends(get_db), c
     db.refresh(home)
     log_change(db, ChangeType.UPDATE, "home", {"id": home.id, "title": home.title, "changes": data.model_dump(exclude_unset=True)}, current_user.id)
     return home
+
+@router.delete("/admin/{home_id}", status_code=204)
+def delete_home(home_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    home = db.query(Home).filter(Home.id == home_id).first()
+    if home is None:
+        raise HTTPException(status_code=404, detail="Home item not found.")
+    log_change(db, ChangeType.DELETE, "home", {"id": home.id, "title": home.title, "section": home.section.value}, current_user.id)
+    db.delete(home)
+    db.commit()
+    return Response(status_code=204)

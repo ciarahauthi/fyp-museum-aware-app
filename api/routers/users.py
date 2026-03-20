@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy import tuple_
 from sqlalchemy.orm import Session
 
@@ -45,6 +45,16 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
     if user is None:
         raise HTTPException(status_code=404, detail="User could not be found.")
     return user
+
+@router.delete("/{user_id}", status_code=204)
+def delete_user(user_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    user = db.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User could not be found.")
+    log_change(db, ChangeType.DELETE, "users", {"id": user.id, "email": user.email}, current_user.id)
+    db.delete(user)
+    db.commit()
+    return Response(status_code=204)
 
 @router.put("/{user_id}", response_model=UserRead)
 def update_user(user_id: int, data: UserUpdate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):

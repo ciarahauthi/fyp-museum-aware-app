@@ -16,4 +16,7 @@ export const exhibitsService = {
             method: "PUT",
             body: JSON.stringify(data),
         }),
+
+    delete: (id) =>
+        apiFetch(`/api/exhibits/admin/${id}`, { method: "DELETE" }),
 };

@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { MdMoreHoriz } from "react-icons/md";
 import "./ManageContent.css";
-import { categories, tableConfigs, services } from "./ManageContentData";
+import { categories, tableConfigs, services, deleteServices, TABLE_SINGULAR } from "./ManageContentData";
 import { getUser } from "../../services/auth";
 import Header from "../../components/header/Header";
+import ConfirmPopup from "../../components/confirm_popup/ConfirmPopup";
+import ActionMenu from "../../components/action_menu/ActionMenu";
 
 const CategoryPill = ({ label, active, onClick }) => (
     <button
@@ -35,9 +36,7 @@ const EmptyState = ({ tableName }) => (
 );
 
 // Reusable table component
-const GenericTable = ({ data, loading, error, config, onEdit }) => {
-    const [openMenuId, setOpenMenuId] = useState(null);
-
+const GenericTable = ({ data, loading, error, config, onEdit, onDelete }) => {
     if (!config) {
         return (
             <section className="manage-content-error">
@@ -63,29 +62,10 @@ const GenericTable = ({ data, loading, error, config, onEdit }) => {
                         </section>
                     ))}
                     <section className="manage-table-actions">
-                        <button
-                            className="manage-table-action-btn"
-                            onClick={() =>
-                                setOpenMenuId(
-                                    openMenuId === item.id ? null : item.id,
-                                )
-                            }
-                        >
-                            <MdMoreHoriz size={20} />
-                        </button>
-                        {openMenuId === item.id && (
-                            <section className="manage-table-dropdown">
-                                <button
-                                    className="manage-table-dropdown-item"
-                                    onClick={() => {
-                                        setOpenMenuId(null);
-                                        onEdit(item);
-                                    }}
-                                >
-                                    Edit entry
-                                </button>
-                            </section>
-                        )}
+                        <ActionMenu
+                            onEdit={() => onEdit(item)}
+                            onDelete={() => onDelete(item)}
+                        />
                     </section>
                 </section>
             ))}
@@ -101,6 +81,8 @@ export default function ManageContent() {
     const [errors, setErrors] = useState({});
 
     const [currentUser, setCurrentUser] = useState(null);
+    const [deleteItem, setDeleteItem] = useState(null);
+    const [deleting, setDeleting] = useState(false);
 
     useEffect(() => {
         getUser()
@@ -138,6 +120,23 @@ export default function ManageContent() {
 
     const activeKey = activeCategory?.toLowerCase();
     const activeConfig = activeKey ? tableConfigs[activeKey] : null;
+
+    const handleDelete = async () => {
+        if (!deleteItem || !activeKey) return;
+        setDeleting(true);
+        try {
+            await deleteServices[activeKey](deleteItem.id);
+            setTableData((prev) => ({
+                ...prev,
+                [activeKey]: prev[activeKey].filter((i) => i.id !== deleteItem.id),
+            }));
+            setDeleteItem(null);
+        } catch (err) {
+            console.error("Delete failed:", err);
+        } finally {
+            setDeleting(false);
+        }
+    };
 
     return (
         <section className="manage-content">
@@ -201,11 +200,22 @@ export default function ManageContent() {
                                 state: { item, tableType: activeKey },
                             })
                         }
+                        onDelete={(item) => setDeleteItem(item)}
                     />
                 ) : (
                     <section className="manage-content-empty">
                         Select a category to view its data
                     </section>
+                )}
+
+                {deleteItem && (
+                    <ConfirmPopup
+                        message={`Are you sure you want to delete this ${TABLE_SINGULAR[activeKey] ?? "item"}? This cannot be undone.`}
+                        confirmLabel="Delete"
+                        saving={deleting}
+                        onConfirm={handleDelete}
+                        onCancel={() => setDeleteItem(null)}
+                    />
                 )}
             </section>
         </section>

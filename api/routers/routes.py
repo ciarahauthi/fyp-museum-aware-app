@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from sqlalchemy.orm import Session
 
 from api.db.database import get_db
@@ -63,6 +63,16 @@ def get_routes_admin(db: Session = Depends(get_db)):
 @router.get("/locations", response_model= list[NodeRead])
 def get_nodes(db: Session = Depends(get_db)):
     return db.query(Node).all()
+
+@router.delete("/admin/{route_id}", status_code=204)
+def delete_route(route_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    route = db.query(Route).filter(Route.id == route_id).first()
+    if route is None:
+        raise HTTPException(status_code=404, detail="Route could not be found.")
+    log_change(db, ChangeType.DELETE, "route", {"id": route.id, "name": route.name}, current_user.id)
+    db.delete(route)
+    db.commit()
+    return Response(status_code=204)
 
 @router.put("/admin/{route_id}", response_model=RouteReadAdmin)
 def update_route(route_id: int, data: RouteUpdate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):

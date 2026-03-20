@@ -99,6 +99,14 @@ export const updateServices = {
     homescreen: (id, data) => homeService.update(id, data),
 };
 
+export const deleteServices = {
+    beacons: (id) => beaconsService.delete(id),
+    categories: (id) => categoriesService.delete(id),
+    exhibits: (id) => exhibitsService.delete(id),
+    routes: (id) => routesService.delete(id),
+    users: (id) => usersService.delete(id),
+};
+
 // Fields curators are allowed to edit
 export const editFields = {
     beacons: [

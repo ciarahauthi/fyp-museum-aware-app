@@ -16,5 +16,9 @@ export async function apiFetch(endpoint, options = {}) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
 
+    if (response.status === 204 || response.headers.get("content-length") === "0") {
+        return null;
+    }
+
     return response.json();
 }
