@@ -76,6 +76,16 @@ def update_exhibit(exhibit_id: int, data: ExhibitUpdate, db: Session = Depends(g
     log_change(db, ChangeType.UPDATE, "exhibit", {"id": exhibit.id, "title": exhibit.title, "changes": data.model_dump(exclude_unset=True)}, current_user.id)
     return exhibit
 
+@router.delete("/admin/{exhibit_id}", status_code=204)
+def delete_exhibit(exhibit_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    exhibit = db.query(Exhibit).filter(Exhibit.id == exhibit_id).first()
+    if exhibit is None:
+        raise HTTPException(status_code=404, detail="Exhibit could not be found.")
+    log_change(db, ChangeType.DELETE, "exhibit", {"id": exhibit.id, "title": exhibit.title}, current_user.id)
+    db.delete(exhibit)
+    db.commit()
+    return Response(status_code=204)
+
 # Rating feature
 @router.post("/rate", status_code=status.HTTP_204_NO_CONTENT)
 def set_rating(payload: RateRequest, db: Session = Depends(get_db)):

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy.orm import Session
 
 from api.db.database import get_db
@@ -33,6 +33,16 @@ def get_category(category_id: int, db: Session = Depends(get_db)):
     if category is None:
         raise HTTPException(status_code=404, detail="Category could not be found.")
     return category
+
+@router.delete("/{category_id}", status_code=204)
+def delete_category(category_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    category = db.query(Category).filter(Category.id == category_id).first()
+    if category is None:
+        raise HTTPException(status_code=404, detail="Category could not be found.")
+    log_change(db, ChangeType.DELETE, "category", {"id": category.id, "name": category.name}, current_user.id)
+    db.delete(category)
+    db.commit()
+    return Response(status_code=204)
 
 @router.put("/{category_id}", response_model=CategoryRead)
 def update_category(category_id: int, data: CategoryUpdate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
