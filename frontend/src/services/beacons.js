@@ -18,7 +18,5 @@ export const beaconsService = {
         }),
 
     delete: (id) =>
-        apiFetch(`/api/beacons/${id}`, {
-            method: "DELETE",
-        }),
+        apiFetch(`/api/beacons/${id}`, { method: "DELETE" }),
 };

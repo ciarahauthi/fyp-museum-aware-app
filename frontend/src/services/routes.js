@@ -16,4 +16,7 @@ export const routesService = {
             method: "PUT",
             body: JSON.stringify(data),
         }),
+
+    delete: (id) =>
+        apiFetch(`/api/routes/admin/${id}`, { method: "DELETE" }),
 };
