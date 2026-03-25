@@ -260,7 +260,8 @@ fun RouteRouting(
     onInfoBoxClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val stopNames = uiState.stops.map { it.name }
+    val remainingStops = uiState.stops.drop(uiState.currentIndex)
+    val stopNames = remainingStops.map { it.name }
     val currLoc = uiState.currentLocation
 
     Column(
