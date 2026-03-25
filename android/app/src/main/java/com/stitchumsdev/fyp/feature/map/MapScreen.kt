@@ -26,6 +26,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,9 +57,17 @@ fun MapScreen(
     uiState: MapUiState,
     routeUiState: RouteUiState,
     navHostController: NavHostController,
+    initialLocationId: Int? = null,
     onRetry: () -> Unit
 ) {
     var selectedPoint by remember { mutableStateOf<RoomHeatPoint?>(null) }
+
+    LaunchedEffect(initialLocationId, uiState) {
+        if (initialLocationId != null && uiState is MapUiState.Success) {
+            val room = uiState.locations.keys.firstOrNull { it.id == initialLocationId }?.toHmPoint()
+            if (room != null) selectedPoint = room
+        }
+    }
 
     Scaffold(
         bottomBar = { BottomNavigationBar(navHostController) },
@@ -78,6 +87,7 @@ fun MapScreen(
                 is MapUiState.Success -> MapSuccess(
                     uiState = uiState,
                     routeUiState = routeUiState,
+                    selectedId = selectedPoint?.id,
                     onClick = { point ->
                         selectedPoint = point
                     }
@@ -107,6 +117,7 @@ fun MapScreen(
 fun MapSuccess(
     uiState: MapUiState.Success,
     routeUiState: RouteUiState,
+    selectedId: Int? = null,
     onClick: (RoomHeatPoint) -> Unit
 ) {
     val userLocId = uiState.userLocation?.id
@@ -139,6 +150,7 @@ fun MapSuccess(
                     points = rooms
                     currentTargetId = nextId
                     userLocationId = userLocId
+                    selectedLocationId = selectedId
                 }
 
                 // Detect point clicks
@@ -187,12 +199,14 @@ fun MapSuccess(
                 overlay.points = rooms
                 overlay.currentTargetId = nextId
                 overlay.userLocationId = userLocId
+                overlay.selectedLocationId = selectedId
             }
         )
 
         // Map Legend
         DotLegend(
             routing = routeUiState is RouteUiState.Routing,
+            hasSelection = selectedId != null,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(dimensionResource(R.dimen.padding_8))
@@ -248,6 +262,9 @@ class HeatOverlayView(context: Context) : View(context) {
     var userLocationId: Int? = null
         set(value) { field = value; invalidate() }
 
+    var selectedLocationId: Int? = null
+        set(value) { field = value; invalidate() }
+
     private val basePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
     private val ringPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE }
     private var pulse: Float = 0f
@@ -288,17 +305,18 @@ class HeatOverlayView(context: Context) : View(context) {
             val sy = p.y.coerceIn(0f, 1f) * iv.sHeight
             val v = iv.sourceToViewCoord(PointF(sx, sy)) ?: continue
             val isUserLocation = (p.id == userLocationId)
+            val isCurrent = (p.id == currentTargetId)
+            val isSelected = (p.id == selectedLocationId)
 
             val radius = p.radiusPx * iv.scale
-
-            val isCurrent = (p.id == currentTargetId)
 
             // Base dot
             basePaint.color = Color.argb(120, 255, 0, 0)
             canvas.drawCircle(v.x, v.y, radius, basePaint)
 
-            // Highlight styles
+            // Highlight styles — selected takes priority
             when {
+                isSelected -> drawGlow(canvas, v.x, v.y, radius, Color.YELLOW)
                 isUserLocation -> drawGlow(canvas, v.x, v.y, radius, Color.BLUE)
                 isCurrent -> drawGlow(canvas, v.x, v.y, radius, Color.GREEN)
             }
@@ -333,6 +351,7 @@ class HeatOverlayView(context: Context) : View(context) {
 @Composable
 fun DotLegend(
     routing: Boolean,
+    hasSelection: Boolean,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -354,6 +373,9 @@ fun DotLegend(
         LegendRow(color = RoomColours.current, label = stringResource(R.string.you_are_here))
         if (routing) {
             LegendRow(color = RoomColours.next, label = stringResource(R.string.next_stop))
+        }
+        if (hasSelection) {
+            LegendRow(color = RoomColours.selected, label = stringResource(R.string.selected_room))
         }
     }
 }
@@ -422,4 +444,5 @@ private fun MapModalContent(
 object RoomColours {
     val current = composeColor.Blue
     val next = composeColor.Green
+    val selected = composeColor.Yellow
 }

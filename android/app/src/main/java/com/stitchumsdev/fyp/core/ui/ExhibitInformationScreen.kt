@@ -32,6 +32,8 @@ import com.stitchumsdev.fyp.core.ui.theme.fypColours
 fun ExhibitInformationScreen(
     navHostController: NavHostController,
     exhibit: ExhibitModel,
+    locationName: String? = null,
+    onLocationClick: () -> Unit = {},
     onRate: (Int, Boolean) -> Unit
 ) {
     val likes = exhibit.likes
@@ -62,6 +64,30 @@ fun ExhibitInformationScreen(
             }
         }
     ) {
+        if (locationName != null) {
+            HorizontalDivider()
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onLocationClick() }
+                    .padding(vertical = dimensionResource(R.dimen.padding_8)),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "${stringResource(R.string.location)} $locationName",
+                    style = Typography.titleSmall,
+                    color = fypColours.secondaryText
+                )
+                Icon(
+                    painter = painterResource(R.drawable.ic_chevron),
+                    contentDescription = null,
+                    tint = fypColours.secondaryText,
+                    modifier = Modifier.size(dimensionResource(R.dimen.icon_medium))
+                )
+            }
+        }
+
         AccessibilityTile(exhibit = exhibit)
 
         HorizontalDivider()

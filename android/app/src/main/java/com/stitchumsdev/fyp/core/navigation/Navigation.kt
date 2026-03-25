@@ -9,11 +9,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import com.stitchumsdev.fyp.core.ui.ExhibitInformationScreen
 import com.stitchumsdev.fyp.core.ui.LoadingScreen
 import com.stitchumsdev.fyp.feature.home.HomeScreen
 import com.stitchumsdev.fyp.feature.home.HomeViewModel
 import com.stitchumsdev.fyp.feature.map.MapScreen
+import com.stitchumsdev.fyp.feature.map.MapUiState
 import com.stitchumsdev.fyp.feature.map.MapViewModel
 import com.stitchumsdev.fyp.feature.route.RouteAction
 import com.stitchumsdev.fyp.feature.route.RouteInformationScreen
@@ -35,7 +37,7 @@ object Splash
 @Serializable
 object Home
 @Serializable
-object Map
+data class Map(val locationId: Int = -1)
 @Serializable
 object Search
 @Serializable
@@ -91,13 +93,15 @@ fun AppNavigation(
                 onRetry = { homeViewModel.loadContent() }
             )
         }
-        composable<Map> {
+        composable<Map> { backStackEntry ->
+            val args = backStackEntry.toRoute<Map>()
             val uiState = mapViewModel.uiState.collectAsState()
             val routeUiState = routeViewModel.uiState.collectAsState()
             MapScreen(
                 uiState = uiState.value,
                 routeUiState = routeUiState.value,
                 navHostController = navHostController,
+                initialLocationId = if (args.locationId != -1) args.locationId else null,
                 onRetry = { mapViewModel.loadMap() })
         }
         composable<Scan> {
@@ -131,7 +135,7 @@ fun AppNavigation(
                 uiState = uiState.value,
                 onAction = { action ->
                     routeViewModel.onAction(action) },
-                onInfoBoxClick = { navHostController.navigate(Map) },
+                onInfoBoxClick = { navHostController.navigate(Map()) },
                 onRetry = { routeViewModel.onAction(RouteAction.RetryStart) }
                 )
         }
@@ -169,10 +173,20 @@ fun AppNavigation(
                 ?.objects
                 ?.firstOrNull { it.id == exhibitId }
 
+            val mapState = mapViewModel.uiState.collectAsState().value
+            val locationName = (mapState as? MapUiState.Success)
+                ?.locations?.keys
+                ?.firstOrNull { it.id == exhibit?.location }
+                ?.name
+
             if (exhibit != null) {
                 ExhibitInformationScreen(
                     navHostController = navHostController,
                     exhibit = exhibit,
+                    locationName = locationName,
+                    onLocationClick = {
+                        navHostController.navigate(Map(locationId = exhibit.location))
+                    },
                     onRate = { id, rating -> searchViewModel.onAction(SearchAction.OnRate(id, rating)) }
                 )
             } else {
