@@ -16,9 +16,28 @@ class ScanViewModel(
     private val beaconRepository: BeaconRepository,
     private val museumRepository: MuseumRepository
 ) : BaseViewModel<ScanScreenAction>() {
-    private val _uiState = MutableStateFlow<ScanUiState>(ScanUiState.NoContent)
+    private val _uiState = MutableStateFlow<ScanUiState>(ScanUiState.Loading)
     val uiState = _uiState.asStateFlow()
     private var searching = false
+
+    init {
+        viewModelScope.launch {
+            beaconRepository.nearbyObjects.collect { beacons ->
+                val state = _uiState.value
+                if (state is ScanUiState.BluetoothDisabled) return@collect
+                try {
+                    val cache = museumRepository.load()
+                    val objects = beacons
+                        .mapNotNull { cache.objectsByBeaconId[it] }
+                        .distinctBy { it.id }
+                    _uiState.value = ScanUiState.Success(objects)
+                } catch (t: Throwable) {
+                    _uiState.value = ScanUiState.Error
+                    Timber.e("!! Error: $t")
+                }
+            }
+        }
+    }
 
     override fun onAction(action: ScanScreenAction) {
         when (action) {
@@ -31,7 +50,7 @@ class ScanViewModel(
         return btManager?.adapter?.isEnabled == true
     }
 
-    // Avoid multiple searches
+    // Manual refresh that also checks BT state
     private fun getObjects() {
         if (searching) return
         searching = true
@@ -51,9 +70,7 @@ class ScanViewModel(
                     .mapNotNull { cache.objectsByBeaconId[it] }
                     .distinctBy { it.id }
 
-                _uiState.value =
-                    if (objects.isEmpty()) ScanUiState.NoContent
-                    else ScanUiState.Success(objects)
+                _uiState.value = ScanUiState.Success(objects)
             } catch (t: Throwable) {
                 _uiState.value = ScanUiState.Error
                 Timber.e("!! Error: $t")
