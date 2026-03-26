@@ -37,6 +37,8 @@
     <string name="enable_bluetooth">Open Bluetooth Settings</string>
     <string name="no_location">Could not detect your location</string>
     <string name="no_location_desc">Make sure Bluetooth is enabled and you are near a beacon, then try again.</string>
+    <string name="select_your_location">Where are you?</string>
+    <string name="select_your_location_desc">We couldn\'t detect your location. Select the room you\'re currently in to start routing.</string>
     <string name="map_key">Map Key</string>
     <string name="you_are_here">You are here</string>
     <string name="events_and_workshops">Events and Workshops</string>
@@ -45,6 +47,9 @@
     <string name="interested_exhibits">Exhibits you may be interested in</string>
     <string name="nearby_exhibits">Nearby Exhibits</string>
     <string name="no_exhibits_nearby">No nearby exhibits detected.</string>
+    <string name="scan_help_box">Nearby an object and the app isn\'t detecting it?</string>
+    <string name="scan_help_title">Not detecting nearby objects?</string>
+    <string name="scan_help_body">Make sure Bluetooth is enabled on your device. Try moving closer to the exhibit and wait a moment while the app scans. If the problem persists, try refreshing using the button at the top of the screen.</string>
     <string name="location">Location:</string>
     <string name="selected_room">Selected room</string>
 </resources>
