@@ -5,6 +5,7 @@ import android.provider.Settings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,11 +14,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -32,6 +38,8 @@ import com.stitchumsdev.fyp.R
 import com.stitchumsdev.fyp.core.model.ExhibitModel
 import com.stitchumsdev.fyp.core.ui.GenericErrorScreen
 import com.stitchumsdev.fyp.core.ui.LoadingScreen
+import com.stitchumsdev.fyp.core.ui.components.AppInfoBox
+import com.stitchumsdev.fyp.core.ui.components.AppModal
 import com.stitchumsdev.fyp.core.ui.components.BottomNavigationBar
 import com.stitchumsdev.fyp.core.ui.components.CommonButton
 import com.stitchumsdev.fyp.core.ui.components.ExhibitRow
@@ -39,6 +47,7 @@ import com.stitchumsdev.fyp.core.ui.theme.FypTheme
 import com.stitchumsdev.fyp.core.ui.theme.Typography
 import com.stitchumsdev.fyp.core.ui.theme.fypColours
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScanScreen(
     navHostController: NavHostController,
@@ -46,6 +55,22 @@ fun ScanScreen(
     onAction: (ScanScreenAction) -> Unit,
     onObjectClick: (ExhibitModel) -> Unit,
 ) {
+    var showHelpModal by remember { mutableStateOf(false) }
+
+    if (showHelpModal) {
+        AppModal(
+            visible = true,
+            onDismiss = { showHelpModal = false },
+            title = stringResource(R.string.scan_help_title)
+        ) {
+            Text(
+                text = stringResource(R.string.scan_help_body),
+                style = Typography.bodyMedium,
+                color = fypColours.secondaryText
+            )
+        }
+    }
+
     Scaffold(
         bottomBar = { BottomNavigationBar(navHostController) },
         modifier = Modifier.fillMaxSize()
@@ -90,7 +115,8 @@ fun ScanScreen(
 
                 is ScanUiState.Success -> Content(
                     list = uiState.objects,
-                    onObjectClick = onObjectClick
+                    onObjectClick = onObjectClick,
+                    onHelpClick = { showHelpModal = true }
                 )
             }
         }
@@ -138,28 +164,48 @@ fun BluetoothDisabledContent(
 @Composable
 fun Content(
     list: List<ExhibitModel>,
-    onObjectClick: (ExhibitModel) -> Unit
+    onObjectClick: (ExhibitModel) -> Unit,
+    onHelpClick: () -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_8))
-    ) {
+    Column(modifier = Modifier.fillMaxSize()) {
         if (list.isEmpty()) {
-            Text(
-                text = stringResource(R.string.no_exhibits_nearby),
-                style = Typography.titleMedium,
-                color = fypColours.secondaryText
-            )
-        } else {
-            list.forEach { item ->
-                ExhibitRow(
-                    obj = item,
-                    modifier = Modifier.clickable { onObjectClick(item) }
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = stringResource(R.string.no_exhibits_nearby),
+                    style = Typography.titleMedium,
+                    color = fypColours.secondaryText
                 )
             }
+        } else {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_8))
+            ) {
+                list.forEach { item ->
+                    ExhibitRow(
+                        obj = item,
+                        modifier = Modifier.clickable { onObjectClick(item) }
+                    )
+                }
+            }
         }
+
+        AppInfoBox(
+            title = stringResource(R.string.scan_help_box),
+            clickable = true,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onHelpClick() }
+                .padding(vertical = dimensionResource(R.dimen.padding_8))
+        )
     }
 }
 
