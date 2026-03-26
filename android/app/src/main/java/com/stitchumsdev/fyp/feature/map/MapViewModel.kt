@@ -45,7 +45,10 @@ class MapViewModel (
 
                 _uiState.value =
                     if (locObjMap.isEmpty()) MapUiState.Error
-                    else MapUiState.Success(locations = locObjMap)
+                    else MapUiState.Success(
+                        locations = locObjMap,
+                        userLocation = beaconRepository.currentLocation.value
+                    )
 
             } catch (t: Throwable) {
                 Timber.e(t, "!! MapViewModel load failed")

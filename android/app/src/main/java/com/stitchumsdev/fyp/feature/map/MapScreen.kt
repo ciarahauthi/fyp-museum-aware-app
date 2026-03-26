@@ -24,6 +24,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -61,6 +64,14 @@ fun MapScreen(
     onRetry: () -> Unit
 ) {
     var selectedPoint by remember { mutableStateOf<RoomHeatPoint?>(null) }
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    val userLocation = (uiState as? MapUiState.Success)?.userLocation
+    LaunchedEffect(userLocation) {
+        if (userLocation != null) {
+            snackbarHostState.showSnackbar("New location detected: ${userLocation.name}")
+        }
+    }
 
     LaunchedEffect(initialLocationId, uiState) {
         if (initialLocationId != null && uiState is MapUiState.Success) {
@@ -91,6 +102,17 @@ fun MapScreen(
                     onClick = { point ->
                         selectedPoint = point
                     }
+                )
+            }
+
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier.align(Alignment.TopCenter)
+            ) { data ->
+                Snackbar(
+                    snackbarData = data,
+                    containerColor = fypColours.secondaryBackground,
+                    contentColor = fypColours.mainText
                 )
             }
 
