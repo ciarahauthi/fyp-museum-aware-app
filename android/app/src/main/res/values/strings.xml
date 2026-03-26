@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">fyp</string>
+    <string name="app_name">Location-Aware Museum App</string>
     <string name="oops">Oops! Something went wrong. </string>
     <string name="internet_try_again">Please check your internet connection and try again.</string>
     <string name="try_again">Try again</string>
@@ -43,4 +43,8 @@
     <string name="news">News</string>
     <string name="home_heading">Welcome to the Western Gateway Building</string>
     <string name="interested_exhibits">Exhibits you may be interested in</string>
+    <string name="nearby_exhibits">Nearby Exhibits</string>
+    <string name="no_exhibits_nearby">No nearby exhibits detected.</string>
+    <string name="location">Location:</string>
+    <string name="selected_room">Selected room</string>
 </resources>
