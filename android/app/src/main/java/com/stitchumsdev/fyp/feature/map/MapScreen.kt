@@ -17,8 +17,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -125,7 +123,8 @@ fun MapScreen(
                 ) {
                     MapModalContent(
                         uiState = uiState,
-                        selectedPoint = selectedPoint)
+                        selectedPoint = selectedPoint
+                    )
                 }
             }
         }
@@ -229,8 +228,9 @@ fun MapSuccess(
         DotLegend(
             routing = routeUiState is RouteUiState.Routing,
             hasSelection = selectedId != null,
+            hasUserLocation = uiState.userLocation != null,
             modifier = Modifier
-                .align(Alignment.BottomEnd)
+                .align(Alignment.TopEnd)
                 .padding(dimensionResource(R.dimen.padding_8))
                 .width(dimensionResource(R.dimen.width_200))
         )
@@ -290,6 +290,7 @@ class HeatOverlayView(context: Context) : View(context) {
     private val basePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
     private val ringPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE }
     private var pulse: Float = 0f
+
     // Animation for current loc and next loc
     private val pulseAnimator = android.animation.ValueAnimator.ofFloat(0f, 1f).apply {
         duration = 900L
@@ -336,7 +337,7 @@ class HeatOverlayView(context: Context) : View(context) {
             basePaint.color = Color.argb(120, 255, 0, 0)
             canvas.drawCircle(v.x, v.y, radius, basePaint)
 
-            // Highlight styles — selected takes priority
+            // Highlight styles
             when {
                 isSelected -> drawGlow(canvas, v.x, v.y, radius, Color.YELLOW)
                 isUserLocation -> drawGlow(canvas, v.x, v.y, radius, Color.BLUE)
@@ -374,6 +375,7 @@ class HeatOverlayView(context: Context) : View(context) {
 fun DotLegend(
     routing: Boolean,
     hasSelection: Boolean,
+    hasUserLocation: Boolean,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -392,7 +394,9 @@ fun DotLegend(
         )
         HorizontalDivider()
 
-        LegendRow(color = RoomColours.current, label = stringResource(R.string.you_are_here))
+        if (hasUserLocation) {
+            LegendRow(color = RoomColours.current, label = stringResource(R.string.you_are_here))
+        }
         if (routing) {
             LegendRow(color = RoomColours.next, label = stringResource(R.string.next_stop))
         }
@@ -449,16 +453,12 @@ private fun MapModalContent(
             color = fypColours.secondaryText
         )
     } else {
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_8))
-        ) {
-            items(items) { obj ->
-                Text(
-                    text = "• ${obj.title}",
-                    style = Typography.bodyMedium,
-                    color = fypColours.secondaryText
-                )
-            }
+        items.forEach { obj ->
+            Text(
+                text = "• ${obj.title}",
+                style = Typography.bodyMedium,
+                color = fypColours.secondaryText
+            )
         }
     }
 }
