@@ -37,6 +37,7 @@ class RouteViewModel (
             is RouteAction.StartRouting -> startRoute(action.route)
             is RouteAction.GetRoutingFromExhibits -> getRouteFromExhibits(action.exhibits)
             is RouteAction.SelectRoute -> getSelectedRoute(action.routeId)
+            is RouteAction.SelectCurrentLocation -> startRouteWithLocation(action.location)
         }
     }
 
@@ -94,23 +95,24 @@ class RouteViewModel (
         viewModelScope.launch {
             try {
                 val cache = museumRepository.load()
-
                 val currentLocation = beaconRepository.currentLocation.value
-                    ?: run {
-                        _uiState.value = RouteUiState.NoLocation
-                        return@launch
-                    }
 
-                val targetIds: List<Int> = route.map { it.id }
-
-                val pathIds: List<Int> = userRepository.getRoute(
-                    current = currentLocation.id,
-                    targets = targetIds
-                )
-
-                val pathStops: List<LocationModel> = pathIds.mapNotNull { id ->
-                    cache.locationById[id]
+                if (currentLocation == null) {
+                    // No location detected — ask user to pick their current room
+                    _uiState.value = RouteUiState.SelectLocation(
+                        pendingRoute = route,
+                        locations = cache.locations
+                    )
+                    pendingRoute = null
+                    return@launch
                 }
+
+                // Location known — use graph API for optimal path
+                val pathIds = userRepository.getRoute(
+                    current = currentLocation.id,
+                    targets = route.map { it.id }
+                )
+                val pathStops = pathIds.mapNotNull { cache.locationById[it] }
 
                 val routingState = RouteUiState.Routing(
                     stops = pathStops,
@@ -120,7 +122,6 @@ class RouteViewModel (
                 _uiState.value = routingState
                 pendingRoute = null
 
-                // Trigger if starting position == start of route
                 if (routingState.nextTarget?.id == currentLocation.id) {
                     stopIndex = 0
                     nextStop()
@@ -180,6 +181,37 @@ class RouteViewModel (
                 .distinct()
                 .mapNotNull { cache.locationById[it] }
             startRoute(uniqueLocations)
+        }
+    }
+
+    private fun startRouteWithLocation(selectedLocation: LocationModel) {
+        val state = _uiState.value as? RouteUiState.SelectLocation ?: return
+        val route = state.pendingRoute
+
+        viewModelScope.launch {
+            try {
+                val cache = museumRepository.load()
+                val pathIds = userRepository.getRoute(
+                    current = selectedLocation.id,
+                    targets = route.map { it.id }
+                )
+                val pathStops = pathIds.mapNotNull { cache.locationById[it] }
+
+                if (pathStops.isEmpty()) {
+                    _uiState.value = RouteUiState.Error
+                    return@launch
+                }
+
+                val routingState = RouteUiState.Routing(
+                    stops = pathStops,
+                    currentIndex = 0,
+                    currentLocation = beaconRepository.currentLocation.value
+                )
+                _uiState.value = routingState
+            } catch (e: Exception) {
+                Timber.e(e, "!! Failed to start route with selected location")
+                _uiState.value = RouteUiState.Error
+            }
         }
     }
 

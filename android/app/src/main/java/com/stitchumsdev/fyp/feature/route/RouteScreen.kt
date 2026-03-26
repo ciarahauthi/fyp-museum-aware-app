@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.compose.material3.CircularProgressIndicator
+import com.stitchumsdev.fyp.core.model.LocationModel
 import coil.compose.SubcomposeAsyncImage
 import com.stitchumsdev.fyp.R
 import com.stitchumsdev.fyp.core.model.RouteModel
@@ -55,8 +56,15 @@ fun RouteScreen(
     ) { innerPadding ->
         when (uiState) {
             RouteUiState.Error -> OfflineErrorScreen(onRetry = onRetry)
-            RouteUiState.NoLocation -> NoLocationContent(onRetry = onRetry)
             RouteUiState.Loading -> LoadingScreen()
+            is RouteUiState.SelectLocation -> SelectLocationContent(
+                uiState = uiState,
+                onAction = onAction,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .background(fypColours.mainBackground)
+            )
             is RouteUiState.Default -> RouteDefault(
                 navHostController = navHostController,
                 uiState = uiState,
@@ -79,39 +87,56 @@ fun RouteScreen(
 }
 
 @Composable
-fun NoLocationContent(onRetry: () -> Unit) {
+fun SelectLocationContent(
+    uiState: RouteUiState.SelectLocation,
+    onAction: (RouteAction) -> Unit,
+    modifier: Modifier = Modifier
+) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(fypColours.mainBackground)
-            .padding(dimensionResource(R.dimen.padding_32)),
-        verticalArrangement = Arrangement.spacedBy(
-            dimensionResource(R.dimen.spacing_16),
-            Alignment.CenterVertically
-        ),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = modifier
+            .verticalScroll(rememberScrollState())
+            .padding(dimensionResource(R.dimen.padding_8)),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_8))
     ) {
-        Icon(
-            painter = painterResource(R.drawable.ic_no_scan),
-            contentDescription = null,
-            tint = fypColours.mainText,
-            modifier = Modifier.size(dimensionResource(R.dimen.image_large))
-        )
         Text(
-            text = stringResource(R.string.no_location),
-            style = Typography.titleMedium,
-            textAlign = TextAlign.Center,
+            text = stringResource(R.string.select_your_location),
+            style = Typography.headlineMedium,
             color = fypColours.mainText
         )
         Text(
-            text = stringResource(R.string.no_location_desc),
+            text = stringResource(R.string.select_your_location_desc),
             style = Typography.bodyMedium,
-            textAlign = TextAlign.Center,
             color = fypColours.secondaryText
         )
-        CommonButton(
-            text = stringResource(R.string.try_again),
-            onClick = onRetry
+        HorizontalDivider()
+        uiState.locations.forEach { location ->
+            LocationPickerRow(
+                location = location,
+                onClick = { onAction(RouteAction.SelectCurrentLocation(location)) }
+            )
+        }
+    }
+}
+
+@Composable
+private fun LocationPickerRow(
+    location: LocationModel,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .background(
+                color = fypColours.secondaryBackground,
+                shape = RoundedCornerShape(dimensionResource(R.dimen.corner_medium))
+            )
+            .padding(dimensionResource(R.dimen.padding_8))
+    ) {
+        Text(
+            text = location.name,
+            style = Typography.bodyLarge,
+            color = fypColours.mainText
         )
     }
 }
@@ -278,10 +303,12 @@ fun RouteRouting(
 
         HorizontalDivider()
 
-        Text(
-            text = stringResource(R.string.current_loc) + " ${currLoc?.name}",
-            style = Typography.bodyLarge,
-            color = fypColours.mainText)
+        currLoc?.name?.let {
+            Text(
+                text = stringResource(R.string.current_loc) + " ${currLoc.name}",
+                style = Typography.bodyLarge,
+                color = fypColours.mainText)
+        }
 
         Text(
             text = stringResource(R.string.next_stops) + stopNames,

@@ -7,7 +7,11 @@ import com.stitchumsdev.fyp.core.model.RouteModel
 sealed interface RouteUiState {
     data object Loading : RouteUiState
     data object Error: RouteUiState
-    data object NoLocation : RouteUiState
+    // Shown when user starts routing but BT location is not detected so lets user pick their room manually
+    data class SelectLocation(
+        val pendingRoute: List<LocationModel>,
+        val locations: List<LocationModel>
+    ) : RouteUiState
     // Not routing state
     data class Default(
         val routes: List<RouteModel> = emptyList(),
