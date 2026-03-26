@@ -201,6 +201,15 @@
     color: var(--color-hover-text);
 }
 
+.manage-table-dropdown-item--danger {
+    color: #dc2626;
+}
+
+.manage-table-dropdown-item--danger:hover {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
 .manage-table-action-btn {
     padding: 0.4rem;
     background: none;

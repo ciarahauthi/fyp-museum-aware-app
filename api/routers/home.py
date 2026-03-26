@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from sqlalchemy.orm import Session
 
 from api.db.database import get_db
-from api.db.models import Home
+from api.db.models import Home, ChangeType
 from api.schemas.home import HomeResponse, HomeResponseAdmin, HomeCreate, HomeUpdate
 from api.core.auth import get_current_user
+from api.core.changelog import log_change
 
 router = APIRouter()
 
@@ -52,7 +53,7 @@ def get_home(request: Request, db: Session = Depends(get_db)):
 def get_home_admin(db: Session = Depends(get_db)):
     return db.query(Home).all()
 
-@router.post("", response_model=HomeResponseAdmin)
+@router.post("/admin", response_model=HomeResponseAdmin)
 def create_home(data: HomeCreate, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
     home = Home(
         title=data.title,
@@ -66,9 +67,10 @@ def create_home(data: HomeCreate, db: Session = Depends(get_db), current_user=De
     db.add(home)
     db.commit()
     db.refresh(home)
+    log_change(db, ChangeType.CREATE, "home", {"id": home.id, "title": home.title, "section": home.section.value, "description": home.description}, current_user.id)
     return home
 
-@router.put("/{home_id}", response_model=HomeResponseAdmin)
+@router.put("/admin/{home_id}", response_model=HomeResponseAdmin)
 def update_home(home_id: int, data: HomeUpdate, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
     home = db.query(Home).filter(Home.id == home_id).first()
     if home is None:
@@ -78,4 +80,15 @@ def update_home(home_id: int, data: HomeUpdate, db: Session = Depends(get_db), c
     home.updated_employee_id = current_user.id
     db.commit()
     db.refresh(home)
+    log_change(db, ChangeType.UPDATE, "home", {"id": home.id, "title": home.title, "changes": data.model_dump(exclude_unset=True)}, current_user.id)
     return home
+
+@router.delete("/admin/{home_id}", status_code=204)
+def delete_home(home_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    home = db.query(Home).filter(Home.id == home_id).first()
+    if home is None:
+        raise HTTPException(status_code=404, detail="Home item not found.")
+    log_change(db, ChangeType.DELETE, "home", {"id": home.id, "title": home.title, "section": home.section.value}, current_user.id)
+    db.delete(home)
+    db.commit()
+    return Response(status_code=204)

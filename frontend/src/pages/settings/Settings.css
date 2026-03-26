@@ -1,0 +1,171 @@
+.settings {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.settings-body {
+    flex: 1;
+    padding: 2rem;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Tile */
+.settings-tile {
+    background: white;
+    border-radius: 0.75rem;
+    border: 1px solid #ede9fe;
+    overflow: hidden;
+}
+
+.settings-tile-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #f3f0ff;
+}
+
+.settings-tile-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin: 0;
+}
+
+.settings-tile-subtitle {
+    font-size: 0.8rem;
+    color: #aaa;
+    margin: 0;
+}
+
+.settings-expand-btn {
+    padding: 0.35rem 0.9rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid #e0e0e0;
+    background: white;
+    color: #7c3aed;
+    transition: all 0.2s ease;
+}
+
+.settings-expand-btn:hover {
+    border-color: #7c3aed;
+    background: #f5f3ff;
+}
+
+/* Changelog list */
+.changelog-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.changelog-entry {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.85rem 1.5rem;
+    border-bottom: 1px solid #f9f9f9;
+    font-size: 0.875rem;
+    color: #444;
+}
+
+.changelog-entry:last-child {
+    border-bottom: none;
+}
+
+.changelog-pill {
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    flex-shrink: 0;
+}
+
+.changelog-pill.create {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.changelog-pill.update {
+    background: #fef9c3;
+    color: #ca8a04;
+}
+
+.changelog-pill.delete {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.changelog-table {
+    font-weight: 500;
+    color: #1a1a2e;
+    min-width: 80px;
+    flex-shrink: 0;
+    text-transform: capitalize;
+}
+
+.changelog-details {
+    flex: 1;
+    color: #888;
+    font-size: 0.8rem;
+    font-family: monospace;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.changelog-user {
+    color: #a78bfa;
+    font-size: 0.78rem;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.changelog-time {
+    color: #bbb;
+    font-size: 0.78rem;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+/* Loading / error / empty */
+.settings-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 0;
+}
+
+.settings-spinner {
+    width: 2rem;
+    height: 2rem;
+    border: 2px solid #e0e0e0;
+    border-bottom-color: #7c3aed;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.settings-empty {
+    padding: 3rem;
+    text-align: center;
+    color: #aaa;
+    font-size: 0.9rem;
+}
+
+.settings-error {
+    padding: 3rem;
+    text-align: center;
+    color: #e53e3e;
+    font-size: 0.9rem;
+}

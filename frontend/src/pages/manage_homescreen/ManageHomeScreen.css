@@ -8,6 +8,7 @@
   margin-bottom: 2rem;
   display: flex;
   flex-direction: column;
+  height: auto;
 }
 
 .horizontal-scroll-header {
@@ -31,8 +32,15 @@
   min-width: 160px;
   background-color: #f0f0f0;
   border-radius: 0.75rem;
-  padding: 1rem;
+  padding: 3rem;
   flex-shrink: 0;
+  position: relative;
+}
+
+.horizontal-scroll-card-actions {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
 }
 
 .horizontal-scroll-card p {
