@@ -17,4 +17,5 @@ sealed class RouteAction : Action() {
     data class ToggleExhibit(val exhibit: ExhibitModel) : RouteAction()
 
     data class SelectRoute(val routeId: Int) : RouteAction()
+    data class SelectCurrentLocation(val location: LocationModel) : RouteAction()
 }

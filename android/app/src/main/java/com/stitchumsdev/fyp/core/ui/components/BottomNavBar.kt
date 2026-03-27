@@ -24,7 +24,7 @@ sealed class NavItem(
     val icon: Int
 ) {
     data object HomeItem: NavItem(Home, R.drawable.ic_home)
-    data object MapItem: NavItem(Map, R.drawable.ic_map)
+    data object MapItem: NavItem(Map(), R.drawable.ic_map)
     data object SearchItem: NavItem(Search, R.drawable.ic_search)
     data object ScanItem: NavItem(Scan, R.drawable.ic_scan)
     data object RouteItem: NavItem(Route, R.drawable.ic_route)

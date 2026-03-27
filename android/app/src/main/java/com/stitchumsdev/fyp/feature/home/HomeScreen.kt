@@ -56,6 +56,7 @@ import com.stitchumsdev.fyp.core.ui.components.CommonButton
 import com.stitchumsdev.fyp.core.ui.theme.FypTheme
 import com.stitchumsdev.fyp.core.ui.theme.Typography
 import com.stitchumsdev.fyp.core.ui.theme.fypColours
+import timber.log.Timber
 
 @Composable
 fun HomeScreen(
@@ -98,18 +99,44 @@ fun HomeScreen(
         }
 
         selectedCard?.let {
+            Timber.d(("!! IMG ${it.imageUrl}"))
             AppModal(
                 visible = modalVisible,
                 onDismiss = { modalVisible = false },
                 title = it.title
             ) {
-                if (it.imageUrl != null) {
-                    AsyncImage(
-                        model = it.imageUrl,
+                val imageUrl = it.imageUrl?.takeIf { it.isNotBlank() }
+                val imageModifier = Modifier
+                    .fillMaxWidth()
+                    .height(dimensionResource(R.dimen.image_x_large))
+                    .clip(RoundedCornerShape(dimensionResource(R.dimen.corner_medium)))
+                if (imageUrl != null) {
+                    SubcomposeAsyncImage(
+                        model = imageUrl,
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier.heightIn(max = dimensionResource(R.dimen.image_large))
+                        modifier = imageModifier,
+                        loading = {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                            }
+                        }
                     )
+                } else {
+                    Box(
+                        modifier = imageModifier.background(fypColours.secondaryBackground),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_no_image),
+                            contentDescription = null,
+                            modifier = Modifier.size(32.dp),
+                            tint = fypColours.secondaryText
+                        )
+                    }
                 }
                 Text(it.description)
             }
@@ -248,6 +275,7 @@ fun HomeSuccess(
         }
     }
 }
+
 @Composable
 fun HomeCardHorizontalScroll(
     homeItems: List<HomeItem>? = null,
@@ -288,7 +316,7 @@ fun HomeCardHorizontalScroll(
 @Composable
 fun HomeCard(
     homeItem: HomeItem,
-    modifier: Modifier= Modifier,
+    modifier: Modifier = Modifier,
     onCardClick: (HomeItem) -> Unit
 ) {
     val hasImage = !homeItem.imageUrl.isNullOrBlank()
@@ -306,18 +334,7 @@ fun HomeCard(
                 .padding(dimensionResource(R.dimen.padding_8)),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_4))
         ) {
-            if (hasImage) {
-                AsyncImage(
-                    model = homeItem.imageUrl,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(140.dp)
-                        .clip(RoundedCornerShape(dimensionResource(R.dimen.corner_medium)))
-                )
-            }
-
-            // Title
+            // Title always on top
             Text(
                 text = homeItem.title,
                 style = Typography.titleSmall,
@@ -325,9 +342,18 @@ fun HomeCard(
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
-            
-            // Description
-            if (!hasImage) {
+
+            if (hasImage) {
+                AsyncImage(
+                    model = homeItem.imageUrl,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 120.dp, max = 200.dp)
+                        .clip(RoundedCornerShape(dimensionResource(R.dimen.corner_medium)))
+                )
+            } else {
                 Text(
                     text = homeItem.description,
                     style = Typography.bodyMedium,
@@ -343,7 +369,7 @@ fun HomeCard(
 @Composable
 fun ExhibitHomeCard(
     exhibit: ExhibitModel,
-    modifier: Modifier= Modifier,
+    modifier: Modifier = Modifier,
     onExhibitClick: (ExhibitModel) -> Unit
 ) {
 
@@ -372,7 +398,10 @@ fun ExhibitHomeCard(
                     contentScale = ContentScale.Crop,
                     modifier = imageModifier,
                     loading = {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
                             CircularProgressIndicator(modifier = Modifier.size(24.dp))
                         }
                     }
