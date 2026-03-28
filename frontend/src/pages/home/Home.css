@@ -1,0 +1,140 @@
+.home {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.home-body {
+    flex: 1;
+    padding: 2rem;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Controls */
+.home-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    background-color: white;
+    border: 1px solid #ede9fe;
+    border-radius: 0.75rem;
+    padding: 1rem 1.25rem;
+}
+
+.home-date-row {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.home-date-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #555;
+}
+
+.home-date-input {
+    padding: 0.35rem 0.6rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    color: #333;
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+.home-date-input:focus {
+    border-color: #7c3aed;
+}
+
+.home-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+/* Card */
+.home-card {
+    background-color: white;
+    border: 1px solid #ede9fe;
+    border-radius: 0.75rem;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.home-card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin: 0;
+}
+
+/* Loading */
+.home-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 0;
+}
+
+.home-spinner {
+    width: 2rem;
+    height: 2rem;
+    border: 2px solid #e0e0e0;
+    border-bottom-color: #7c3aed;
+    border-radius: 50%;
+    animation: home-spin 0.7s linear infinite;
+}
+
+@keyframes home-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Error */
+.home-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 0;
+    color: #e53e3e;
+    gap: 0.5rem;
+}
+
+.home-error p {
+    margin: 0;
+}
+
+.home-error-detail {
+    font-size: 0.875rem;
+    color: #888;
+}
+
+/* Empty */
+.home-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 0;
+    color: #aaa;
+    font-size: 0.9rem;
+}
+
+.home-empty p {
+    margin: 0;
+}
+
+.home-note {
+    font-size: 0.8rem;
+    color: #888;
+    margin: 0;
+}
