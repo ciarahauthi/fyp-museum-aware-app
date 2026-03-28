@@ -1,3 +1,7 @@
+import random
+import uuid
+from datetime import datetime, timedelta, timezone
+
 from api.db.database import engine, Base, SessionLocal
 from api.db.models import *
 from api.core.auth import hash_password
@@ -289,6 +293,27 @@ def init():
                 updated_employee_id=user.id
             ),
         ])
+        db.commit()
+
+        # Dummy beacon events 10000 random entries over the past year
+        all_beacons = [beacon, beacon2, beacon3, beacon4]
+        now = datetime.now(timezone.utc).replace(tzinfo=None)
+        events = []
+        for i in range(10000):
+            b = random.choice(all_beacons)
+            recorded_at = now - timedelta(seconds=random.randint(0, 365 * 24 * 3600))
+            events.append(BeaconEvents(
+                session_id=str(uuid.uuid4()),
+                beacon_id=b.id,
+                beacon_uuid=b.uuid,
+                beacon_major=b.major,
+                beacon_minor=b.minor,
+                rssi=random.randint(-95, -75),
+                tx_power=-99,
+                recorded_at=recorded_at,
+                received_at=recorded_at + timedelta(milliseconds=random.randint(50, 500)),
+            ))
+        db.add_all(events)
         db.commit()
 
     print("Added dummy data")
