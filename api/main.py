@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from api.core.lifespan import lifespan
-from api.routers import auth, users, beacons, exhibits, categories, route, routes, home, beacon_events, images, changes
+from api.routers import auth, users, beacons, exhibits, categories, route, routes, home, beacon_events, images, changes, analytics
 from api.core.settings import get_settings
 
 settings = get_settings()
@@ -33,3 +33,4 @@ app.include_router(home.router, prefix="/api/home", tags=["home"])
 app.include_router(beacon_events.router, prefix="/api/beacon_events", tags=["beacon-events"])
 app.include_router(images.router, prefix="/api/images", tags=["images"])
 app.include_router(changes.router, prefix="/api/changes", tags=["changes"])
+app.include_router(analytics.router, prefix="/api/analytics", tags=["analytics"])
