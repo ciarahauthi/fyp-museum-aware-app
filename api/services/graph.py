@@ -34,6 +34,116 @@ def buildGraph(nodes, edges):
 
     return graph
 
+
+MIN_SESSIONS = 10
+MAX_MULTIPLIER = 2.5
+
+def applyWeights(db: Session, base_graph: nx.Graph) -> nx.Graph:
+    '''
+    Returns a copy of base_graph with edge weights scaled by historical congestion for the current (day of week, hour).
+    >= 10 distinct sessions to apply a multiplier.
+    Max 2.5x multiplier value.
+    '''
+    now = datetime.now(timezone.utc)
+    dayOfWeek = now.isoweekday() % 7 + 1
+    hour = now.hour
+
+    sessionsByNode = getCurrentSlotSessions(db, dayOfWeek, hour)
+    if not any(count >= MIN_SESSIONS for count in sessionsByNode.values()):
+        return base_graph
+
+    avgSessionsByNode = getAvgSessionsForDay(db, dayOfWeek)
+    multipliers = calcMultipliers(sessionsByNode, avgSessionsByNode)
+    if not multipliers:
+        return base_graph
+
+    return applyMultipliersToGraph(base_graph, multipliers)
+
+
+def getCurrentSlotSessions(db: Session, dayOfWeek: int, hour: int):
+
+    # Distinct session counts per node for a given (day of week, hour)
+    rows = (
+        db.query(
+            Beacon.location_id.label("nodeId"),
+            func.count(func.distinct(BeaconEvents.session_id)).label("count")
+        )
+        .join(BeaconEvents, BeaconEvents.beacon_id == Beacon.id)
+        .filter(
+            func.dayofweek(BeaconEvents.recorded_at) == dayOfWeek,
+            func.hour(BeaconEvents.recorded_at) == hour
+        )
+        .group_by(Beacon.location_id)
+        .all()
+    )
+    return {row.nodeId: row.count for row in rows}
+
+
+def getAvgSessionsForDay(db: Session, dayOfWeek: int):
+
+    # Average sessions per hour per node for a given day of week
+    hourlyCounts = (
+        db.query(
+            Beacon.location_id.label("nodeId"),
+            func.count(func.distinct(BeaconEvents.session_id)).label("sessionCount")
+        )
+        .join(BeaconEvents, BeaconEvents.beacon_id == Beacon.id)
+        .filter(func.dayofweek(BeaconEvents.recorded_at) == dayOfWeek)
+        .group_by(Beacon.location_id, func.hour(BeaconEvents.recorded_at))
+        .subquery()
+    )
+
+    rows = (
+        db.query(
+            hourlyCounts.c.nodeId,
+            func.avg(hourlyCounts.c.sessionCount).label("avgCount")
+        )
+        .group_by(hourlyCounts.c.nodeId)
+        .all()
+    )
+    return {row.nodeId: float(row.avgCount) for row in rows}
+
+
+def calcMultipliers(sessionsByNode: dict, avgByNode: dict) -> dict:
+    '''
+    Computes multiplier per node
+    Average busyness = 1.0x. Scales up to 2.5x
+    Quieter nodes stay at 1.0x
+    '''
+    multipliers = {}
+    for nodeId, count in sessionsByNode.items():
+        if count < MIN_SESSIONS:
+            continue
+        avg = avgByNode.get(nodeId, 1.0)
+        if avg <= 0:
+            continue
+        ratio = count / avg
+        multipliers[nodeId] = 1.0 + min(max(ratio - 1.0, 0.0), MAX_MULTIPLIER - 1.0)
+    return multipliers
+
+
+def applyMultipliersToGraph(base_graph: nx.Graph, multipliers: dict) -> nx.Graph:
+    '''
+    Scales edge weights using the busier of the two endpoint multipliers
+    Works on a copy of base graph
+    '''
+    adjusted = base_graph.copy()
+    for u, v, data in base_graph.edges(data=True):
+        edgeMultiplier = max(multipliers.get(u, 1.0), multipliers.get(v, 1.0))
+        adjusted[u][v]["weight"] = round(data.get("weight", 1) * edgeMultiplier, 2)
+    return adjusted
+
+
+def routeDistance(g: nx.Graph, path: list) -> float:
+
+    # Sum of edge weights along consecutive nodes in a path
+    total = 0.0
+    for i in range(len(path) - 1):
+        data = g.get_edge_data(path[i], path[i + 1])
+        if data:
+            total += data.get("weight", 0)
+    return total
+
 # Greedy ALgorithm
 
 # def getRoute(graph, current, nodes):
