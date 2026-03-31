@@ -23,6 +23,8 @@ def init():
 
         # Dummy Graph
         nodes = ["G20 - Middle", "G20 - West Side", "Hallway", "G20 - East Side"]
+        print(nodes) # Debugging
+        
         edges = [
             ("G20 - Middle", "G20 - West Side", 1),
 
