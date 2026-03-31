@@ -22,20 +22,20 @@ def init():
         db.commit()
 
         # Dummy Graph
-        nodes = ["G20", "G24", "Hallway", "Canteen"]
+        nodes = ["G20 - Middle", "G20 - West Side", "Hallway", "G20 - East Side"]
         edges = [
-            ("G20", "Hallway", 3),
+            ("G20 - Middle", "G20 - West Side", 1),
 
-            ("G24", "Hallway", 3),
+            ("G20 - Middle", "G20 - East Side", 1),
 
-            ("Hallway", "Canteen", 2)
+            ("Hallway", "G20 - East Side", 2)
         ]
 
         coords = {
-            "G20": (0.17, 0.55),
-            "G24": (0.37, 0.55),
+            "G20 - Middle": (0.17, 0.55),
+            "G20 - West Side": (0.1, 0.55),
             "Hallway": (0.25, 0.63),
-            "Canteen": (0.50, 0.67),
+            "G20 - East Side": (0.22, 0.55),
         }
 
         nodeObj = {}
@@ -65,52 +65,52 @@ def init():
         # Dummy Beacons
         beacon = Beacon(
             name="Test beacon",
-            description="Test beacon - the green one. It is in G20",
+            description="Test beacon - the green one. It is in G20 - West Side",
             uuid="B9407F30-F5F8-466E-AFF9-25556B57FE6D",
             major=1,
             minor=4,
             creator_employee_id=user.id,
             updated_employee_id=user.id,
-            location_id=nodeObj["G20"]
+            location_id=nodeObj["G20 - West Side"]
         )
         db.add(beacon)
         db.commit()
 
         beacon2 = Beacon(
             name="Test beacon 2",
-            description="Test beacon 2 - the white one. It is in G24.",
+            description="Test beacon 2 - the white one. It is in G24 - Middle.",
             uuid="B9407F30-F5F8-466E-AFF9-25556B57FE6D",
             major=1,
             minor=3,
             creator_employee_id=user.id,
             updated_employee_id=user.id,
-            location_id=nodeObj["G24"]
+            location_id=nodeObj["G20 - Middle"]
         )
         db.add(beacon2)
         db.commit()
 
         beacon3 = Beacon(
             name="Test beacon 3",
-            description="Test beacon 3 - the navy one. It is in the hallway.",
+            description="Test beacon 3 - the navy one. It is in the G20 - East Side.",
             uuid="B9407F30-F5F8-466E-AFF9-25556B57FE6D",
             major=1,
             minor=2,
             creator_employee_id=user.id,
             updated_employee_id=user.id,
-            location_id=nodeObj["Hallway"]
+            location_id=nodeObj["G20 - East Side"]
         )
         db.add(beacon3)
         db.commit()
 
         beacon4 = Beacon(
             name="Test beacon 4",
-            description="Test beacon 4 - the light blue one. It is in the canteen.",
+            description="Test beacon 4 - the light blue one. It is in the Hallway.",
             uuid="B9407F30-F5F8-466E-AFF9-25556B57FE6D",
             major=1,
             minor=1,
             creator_employee_id=user.id,
             updated_employee_id=user.id,
-            location_id=nodeObj["Canteen"]
+            location_id=nodeObj["Hallway"]
         )
         db.add(beacon4)
         db.commit()
@@ -301,7 +301,9 @@ def init():
         events = []
         for i in range(20000):
             b = random.choice(all_beacons)
-            recorded_at = now - timedelta(seconds=random.randint(0, 365 * 24 * 3600))
+            recorded_at = (now - timedelta(seconds=random.randint(0, 365 * 24 * 3600))).replace(microsecond=0)
+            if recorded_at.hour == 1:
+                recorded_at = recorded_at.replace(hour=2)
             events.append(BeaconEvents(
                 session_id=str(uuid.uuid4()),
                 beacon_id=b.id,
