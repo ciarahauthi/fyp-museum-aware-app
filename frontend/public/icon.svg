@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" width="108" height="108">
+  <rect width="108" height="108" fill="#EDEBE7"/>
+  <!-- M shape -->
+  <path d="M34,72 L34,36 L54,60 L74,36 L74,72"
+    fill="none" stroke="#262424" stroke-width="8"
+    stroke-linecap="round" stroke-linejoin="miter"/>
+  <!-- Pin teardrop -->
+  <path d="M54,55 C59.3,49.6 64.5,44.8 64.5,38.8 C64.5,32.8 59.8,28 54,28 C48.2,28 43.5,32.8 43.5,38.8 C43.5,44.8 48.8,49.6 54,55 Z"
+    fill="none" stroke="#262424" stroke-width="3"
+    stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Pin inner circle -->
+  <path d="M54,43 C56.5,43 58.5,41 58.5,38.5 C58.5,36 56.5,34 54,34 C51.5,34 49.5,36 49.5,38.5 C49.5,41 51.5,43 54,43 Z"
+    fill="none" stroke="#262424" stroke-width="3"
+    stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
