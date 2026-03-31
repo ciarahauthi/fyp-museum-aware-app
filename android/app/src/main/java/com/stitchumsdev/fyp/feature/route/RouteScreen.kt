@@ -318,6 +318,11 @@ fun RouteRouting(
             text = stringResource(R.string.left_stops) + " ${stopNames.size}",
             style = Typography.bodyLarge,
             color = fypColours.mainText)
+        Text(
+            text = "Estimated time: ${uiState.estimatedMinutes} min",
+            style = Typography.bodyLarge,
+            color = fypColours.secondaryText
+        )
 
         CommonButton(
             text = stringResource(R.string.next_stop),

@@ -6,6 +6,7 @@ import com.stitchumsdev.fyp.core.model.HomeResponse
 import com.stitchumsdev.fyp.core.model.LocationResponse
 import com.stitchumsdev.fyp.core.model.ExhibitResponse
 import com.stitchumsdev.fyp.core.model.RateRequest
+import com.stitchumsdev.fyp.core.model.RouteResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -26,7 +27,7 @@ interface ApiService {
     suspend fun getRoute(
         @Query("current") current: Int,
         @Query("targets") targets: List<Int>
-    ): List<Int>
+    ): RouteResponse
 
     @POST("/api/exhibits/rate")
     suspend fun sendRating(

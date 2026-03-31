@@ -21,7 +21,8 @@ sealed interface RouteUiState {
     data class Routing(
         val stops: List<LocationModel>,
         val currentIndex: Int = 0,
-        val currentLocation: LocationModel? = null // Where I am from scanning
+        val currentLocation: LocationModel? = null, // Where I am from scanning
+        val estimatedMinutes: Int = 0
     ) : RouteUiState {
         // Derive from stops list
         val nextTarget: LocationModel? get() = stops.getOrNull(currentIndex)

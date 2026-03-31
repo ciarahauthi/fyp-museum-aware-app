@@ -107,17 +107,18 @@ class RouteViewModel (
                     return@launch
                 }
 
-                // Location known — use graph API for optimal path
-                val pathIds = userRepository.getRoute(
+                // Location known
+                val response = userRepository.getRoute(
                     current = currentLocation.id,
                     targets = route.map { it.id }
                 )
-                val pathStops = pathIds.mapNotNull { cache.locationById[it] }
+                val pathStops = response.path.mapNotNull { cache.locationById[it] }
 
                 val routingState = RouteUiState.Routing(
                     stops = pathStops,
                     currentIndex = 0,
-                    currentLocation = currentLocation
+                    currentLocation = currentLocation,
+                    estimatedMinutes = response.estimatedMinutes
                 )
                 _uiState.value = routingState
                 pendingRoute = null
@@ -191,11 +192,11 @@ class RouteViewModel (
         viewModelScope.launch {
             try {
                 val cache = museumRepository.load()
-                val pathIds = userRepository.getRoute(
+                val response = userRepository.getRoute(
                     current = selectedLocation.id,
                     targets = route.map { it.id }
                 )
-                val pathStops = pathIds.mapNotNull { cache.locationById[it] }
+                val pathStops = response.path.mapNotNull { cache.locationById[it] }
 
                 if (pathStops.isEmpty()) {
                     _uiState.value = RouteUiState.Error
@@ -205,7 +206,8 @@ class RouteViewModel (
                 val routingState = RouteUiState.Routing(
                     stops = pathStops,
                     currentIndex = 0,
-                    currentLocation = beaconRepository.currentLocation.value
+                    currentLocation = beaconRepository.currentLocation.value,
+                    estimatedMinutes = response.estimatedMinutes
                 )
                 _uiState.value = routingState
             } catch (e: Exception) {

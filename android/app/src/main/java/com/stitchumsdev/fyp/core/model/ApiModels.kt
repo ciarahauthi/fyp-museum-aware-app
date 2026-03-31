@@ -109,3 +109,9 @@ data class BeaconEventsRequest(
     @SerialName("session_id") val sessionId: String,
     val events: List<BeaconEvent>
 )
+
+@Serializable
+data class RouteResponse(
+    val path: List<Int>,
+    @SerialName("estimated_minutes") val estimatedMinutes: Int
+)
