@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, Request, Query, Request
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, HTTPException, Request, Query
 from typing import Annotated
 
-import api.services.graph as graph
+from api.schemas.routes import RouteResponse
+import api.services.graph as graph_service
 
 '''
     Not to be confused with Routes.py
@@ -11,13 +11,18 @@ import api.services.graph as graph
 
 router = APIRouter()
 
-def getGraph(request: Request):
-    graph = request.app.state.graph
-    if graph is None:
-        raise HTTPException(status_code=503, detail="Graph not loaded")
-    return graph
+MINUTES_PER_EXHIBIT = 5
 
-@router.get("", response_model=list[int])
+def getGraph(request: Request):
+    g = request.app.state.graph
+    if g is None:
+        raise HTTPException(status_code=503, detail="Graph not loaded")
+    return g
+
+'''
+5 mins per exhibit added on to route cost
+'''
+@router.get("", response_model=RouteResponse)
 def get_route(
     request: Request,
     current: int,
@@ -31,4 +36,8 @@ def get_route(
     if missing:
         raise HTTPException(status_code=400, detail=f"target nodes not in graph: {missing}")
 
-    return graph.getRoute(g, current, targets)
+    path = graph_service.getRoute(g, current, targets)
+    cost = graph_service.routeDistance(g, path)
+    estimated_minutes = round(cost + len(targets) * MINUTES_PER_EXHIBIT)
+
+    return RouteResponse(path=path, estimated_minutes=estimated_minutes)

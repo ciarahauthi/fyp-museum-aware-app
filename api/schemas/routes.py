@@ -45,3 +45,7 @@ class RouteUpdate(BaseModel):
     active: Optional[bool] = None
     stops: Optional[list[int]] = None
     image_url: Optional[str] = None
+
+class RouteResponse(BaseModel):
+    path: list[int]
+    estimated_minutes: int
