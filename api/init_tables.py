@@ -24,11 +24,11 @@ def init():
         # Dummy Graph
         nodes = ["G20", "G24", "Hallway", "Canteen"]
         edges = [
-            ("G20", "Hallway", 10),
+            ("G20", "Hallway", 3),
 
-            ("G24", "Hallway", 9),
+            ("G24", "Hallway", 3),
 
-            ("Hallway", "Canteen", 6)
+            ("Hallway", "Canteen", 2)
         ]
 
         coords = {
@@ -299,7 +299,7 @@ def init():
         all_beacons = [beacon, beacon2, beacon3, beacon4]
         now = datetime.now(timezone.utc).replace(tzinfo=None)
         events = []
-        for i in range(10000):
+        for i in range(20000):
             b = random.choice(all_beacons)
             recorded_at = now - timedelta(seconds=random.randint(0, 365 * 24 * 3600))
             events.append(BeaconEvents(
