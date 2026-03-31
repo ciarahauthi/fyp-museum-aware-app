@@ -1,6 +1,7 @@
 package com.stitchumsdev.fyp.core.ble
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -21,6 +22,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
+import timber.log.Timber
 
 class BleScanService: Service() {
     private lateinit var scanner: BleScanner
@@ -28,6 +30,8 @@ class BleScanService: Service() {
     private val scope = CoroutineScope(Dispatchers.IO)
 
     private val flushInterval = 15 * 60 * 1_000L // 15 mins
+    private val restartInterval = 3 * 60 * 1_000L // 3 mins (Samsung stops at 5 mins for some reason)
+    private val failureRestartDelay = 5_000L // 5 seconds
 
     @RequiresApi(Build.VERSION_CODES.S)
     @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
@@ -37,16 +41,38 @@ class BleScanService: Service() {
 
         scope.launch {
             while (isActive) {
+                delay(restartInterval)
+                restartScanner()
+            }
+        }
+
+        scope.launch {
+            while (isActive) {
                 delay(flushInterval)
                 repository.uploadClearPackets()
             }
         }
 
-        scanner = BleScanner(this) { beacon ->
-            scope.launch {
-                repository.onBeacon(beacon)
+        scanner = BleScanner(
+            context = this,
+            onBeacon = { beacon ->
+                scope.launch { repository.onBeacon(beacon) }
+            },
+            onFailed = {
+                scope.launch {
+                    delay(failureRestartDelay)
+                    restartScanner()
+                }
             }
-        }
+        )
+        scanner.start()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    @SuppressLint("MissingPermission")
+    private fun restartScanner() {
+        Timber.d("!! Restarting BLE scanner")
+        scanner.stop()
         scanner.start()
     }
 
@@ -60,6 +86,7 @@ class BleScanService: Service() {
         repository.endSession()
 
         scope.cancel()
+        Timber.d("!! BLE scanner stopped")
     }
 
     override fun onBind(intent: Intent?): IBinder? = null

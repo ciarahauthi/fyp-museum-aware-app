@@ -14,11 +14,12 @@ import timber.log.Timber
 
 class BleScanner(
     private val context: Context,
-    private val onBeacon: (IBeaconData) -> Unit
+    private val onBeacon: (IBeaconData) -> Unit,
+    private val onFailed: (() -> Unit)? = null
 ) {
     private val btManager by lazy { context.getSystemService(BluetoothManager::class.java) }
     private val scanner get() = btManager?.adapter?.bluetoothLeScanner
-    private var scanning = false
+    @Volatile private var scanning = false
 
     // Function that starts the BLE service
     @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
@@ -53,13 +54,15 @@ class BleScanner(
 
         val s = scanner ?: return
         s.stopScan(scanCallback)
+        Timber.d("!! Scan stopped")
     }
 
-    // Callback used to capture packets. ToDo: do the post API call periodically
+    // Callback used to capture packets.
     private val scanCallback = object : ScanCallback() {
         override fun onScanFailed(e: Int) {
             scanning = false
             Timber.e("!! Scan failed: $e")
+            onFailed?.invoke()
         }
 
         override fun onScanResult(callbackType: Int, result: ScanResult) {
@@ -67,8 +70,7 @@ class BleScanner(
             val beacon = IBeaconParser.parse(record, result.rssi)
 
             if (beacon != null) {
-                // ToDo make this UUID dynamic
-                if (!beacon.uuid.equals("B9407F30-F5F8-466E-AFF9-25556B57FE6D", ignoreCase = true)) return
+                if (!beacon.uuid.equals("B38DED04-E6DD-4A33-B3D0-98182F6EFF6D", ignoreCase = true)) return
                 Timber.d("!! UUID: ${beacon.uuid}, major: ${beacon.major}, minor: ${beacon.minor}, rssi: ${beacon.rssi}, tx pow: ${beacon.txPower}")
                 onBeacon(beacon)
             }

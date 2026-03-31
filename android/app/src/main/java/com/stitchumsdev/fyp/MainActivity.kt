@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
 
     @RequiresApi(Build.VERSION_CODES.S)
     private val permissions = arrayOf(
-        Manifest.permission.FOREGROUND_SERVICE_LOCATION,
+        Manifest.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE,
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.BLUETOOTH_SCAN
     )

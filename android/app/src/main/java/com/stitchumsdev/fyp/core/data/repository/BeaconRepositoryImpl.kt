@@ -21,8 +21,8 @@ class BeaconRepositoryImpl(
     private val userRepository: UserRepository
 ) : BeaconRepository {
     private val maxCacheSize: Int = 10000
-    // 10s
-    private val updateNearbyCacheTime: Long = 10000L
+    // 30s
+    private val updateNearbyCacheTime: Long = 20000L // 30 sec nearby objects cache
     private val beaconCache = BeaconCache(maxCacheSize)
     private val nearbyObjectsCache = NearbyObjectsCache(updateNearbyCacheTime)
     private val mutex = Mutex()
@@ -104,8 +104,6 @@ class BeaconRepositoryImpl(
                 cache.subList(maxSize, cache.size).clear()
             }
         }
-
-        fun size(): Int = cache.size
     }
 
     // Using a map to only show the nearby unique objects
