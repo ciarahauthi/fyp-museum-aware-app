@@ -56,7 +56,7 @@ def get_routes(request: Request, db: Session = Depends(get_db)):
     return routes
 
 @router.get("/admin", response_model=list[RouteReadAdmin])
-def get_routes_admin(db: Session = Depends(get_db)):
+def get_routes_admin(db: Session = Depends(get_db), _=Depends(get_current_user)):
     return db.query(Route).all()
 
 # Location / Node queries

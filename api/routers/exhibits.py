@@ -53,11 +53,11 @@ def get_exhibits(request: Request, db: Session = Depends(get_db)):
     return exhibits
 
 @router.get("/admin", response_model=list[ExhibitRead])
-def get_exhibits_admin(db: Session = Depends(get_db)):
+def get_exhibits_admin(db: Session = Depends(get_db), _=Depends(get_current_user)):
     return db.query(Exhibit).all()
 
 @router.get("/admin/{exhibit_id}", response_model= ExhibitRead)
-def get_exhibit(exhibit_id: int, db: Session = Depends(get_db)):
+def get_exhibit(exhibit_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
     exhibit = db.query(Exhibit).filter(Exhibit.id == exhibit_id).first()
     if exhibit is None:
         raise HTTPException(status_code=404, detail="Exhibit could not be found.")

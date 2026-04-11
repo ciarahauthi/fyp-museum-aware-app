@@ -50,7 +50,7 @@ def get_home(request: Request, db: Session = Depends(get_db)):
     }
 
 @router.get("/admin", response_model=list[HomeResponseAdmin])
-def get_home_admin(db: Session = Depends(get_db)):
+def get_home_admin(db: Session = Depends(get_db), _=Depends(get_current_user)):
     return db.query(Home).all()
 
 @router.post("/admin", response_model=HomeResponseAdmin)
