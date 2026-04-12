@@ -187,8 +187,7 @@ def routeDistance(g: nx.Graph, path: list) -> float:
 
     1. Precompute - Run dijkstras to make 
         dist: dist[A] = {S: 5, A: 0, B: 3, C: 7 ..... } - map. K = node, V = { K = another node, V = shortest distance value }
-        paths: paths[A] = {S: [A, X, S], A: [A], B: [A, B], C: [A, X, Y, C] ..... } - K = Node, V = { K = another node, V = list of nodes to reach that node (shortest path)}
-
+        
     2. Build an initial route using Nearest Neighbour
 
         Starting with current, take the nearest unvisited node given
@@ -215,11 +214,9 @@ def getRoute(graph, current, nodes):
 
     # Precompute
     dist = {}
-    paths = {}
     for node in required:
-        d, p = nx.single_source_dijkstra(graph, node, weight="weight")
+        d, _ = nx.single_source_dijkstra(graph, node, weight="weight")
         dist[node] = d
-        paths[node] = p
 
     # Construct initial ordering with NN
     remainingNodes = set(required)
